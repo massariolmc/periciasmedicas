@@ -1,0 +1,49 @@
+.help {
+  color: red;
+  font-size: 12px;
+}
+.errorlist{
+	margin-left: 5px;
+	display: inline;
+	color: #B94A48;
+
+}
+
+.field_with_errors{
+	display: inline;
+	label{ color: $error-text-color; }
+
+	input[type=text], input[type=password], textarea{
+		border: 1px solid rgba(189,74,72, 0.5);
+		
+
+		&:focus { border: 1px solid rgba(189,74,72,0.6) }
+	}
+}
+
+ul.messages{
+	padding: 0;		
+}
+ul.messages li{
+	list-style: none;
+}
+
+.ver {
+	border-color: #B94A48;
+	border-width: 1px;
+	border-style: solid;
+}
+
+/* Usado na no arquivo custom_edit.html da App Report, na tab Visualização */
+.imp-tab{
+	margin-top: 50px;	
+}
+.imp-tab-link{
+	margin: 10px;
+}
+.fa-check-square{
+	color: green;
+}
+.fa-minus-square{
+	color: red;
+}

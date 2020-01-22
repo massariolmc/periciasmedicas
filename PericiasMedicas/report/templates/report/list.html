@@ -1,0 +1,152 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block content %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}  
+    <li  {% if message.tags %} class="alert alert-{{message.tags}}" {% endif %}> {{ message }} 
+      {% if message.extra_tags %} {{ message.extra_tags }} {% endif %}    
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+          <!-- DataTales Example -->
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <div class="row">
+                <div class="col-sm-6">
+                  <h6 class="m-0 font-weight-bold text-primary">{{ title }}</h6>
+                </div>
+                <div class="col-sm-6">
+                  <span class="float-right">
+                    <a href="{% url 'url_report_create' %}">
+                      <button type="button" class="btn btn-success">Adicionar
+                      </button>
+                    </a>
+                  </span>
+              </div>
+            </div>
+          </div>
+
+            <div class="card-body">
+              <div class="row">
+              <form id="id_form_radio" method="get" novalidate>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="status" id="id_status1" value="1">
+                  <label class="form-check-label" for="inlineRadio1">Em produção</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="status" id="id_status2" value="2">
+                  <label class="form-check-label" for="inlineRadio1">Aprovados</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="status" id="id_status3" value="3">
+                  <label class="form-check-label" for="inlineRadio2">Cancelados</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="status" id="id_status4" value="">
+                  <label class="form-check-label" for="inlineRadio2">Todos</label>
+                </div>                
+              <form>
+              </div>
+              <br/>
+              <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead>
+                    <tr>
+                      <th class="text-sm-center">Status</th>
+                      <th class="text-sm-center">Autor(a)</th>
+                      <th class="text-sm-center">Natureza da Ação</th>
+                      <th class="text-sm-center">Número do Processo</th>
+                      <th class="text-sm-center">Perito</th>                      
+                      <th class="text-sm-center">Opções</th>                                                            
+                    </tr>
+                  </thead>
+                  <tfoot>
+                    <tr> 
+                      <th class="text-sm-center">Status</th>   
+                      <th class="text-sm-center">Autor(a)</th>
+                      <th class="text-sm-center">Natureza da Ação</th>
+                      <th class="text-sm-center">Número do Processo</th>
+                      <th class="text-sm-center">Perito</th>                       
+                      <th class="text-sm-center">Opções</th>                    
+                    </tr>
+                  </tfoot>
+                  <tbody>
+                    {% for report in reports %}
+                    <tr>
+                      {% ifequal report.report_status.id 1  %}
+                        <td><i class="fa fa-edit fa_custom" aria-hidden="true">{{ report.report_status }}</i></td>
+                      {% endifequal %}
+                      {% ifequal report.report_status.id 2  %}
+                        <td><i class="fa fa-check-circle fa_custom" aria-hidden="true">{{ report.report_status }}</i></td>
+                      {% endifequal %}
+                      {% ifequal report.report_status.id 3  %}
+                        <td><i class="fa fa-minus-circle" aria-hidden="true">{{ report.report_status }}</i></td>
+                      {% endifequal %}
+                      {% ifequal report.report_status.id 4  %}
+                        <td>{{ report.report_status }}</td>
+                      {% endifequal %}
+                      <td>{{ report.autor }}</td>                      
+                      <td>{{ report.nature_of_action }}</td>
+                      <td>{{ report.process_number }}</td>                                                                                 
+                      <td>{{ report.profile_person_type }}</td>
+                      <td class="text-center">
+                      <!-- REPORT EM PRODUÇÃO-->                        
+                      {% ifequal report.report_status.id 1 %}
+                        <a href="" data-toggle="modal" data-target="#id_aprovar">  <i class="fas fa-save" aria-hidden="true"></i> </a>
+                        {% include "report/list_modal_aprovar.html" %} 
+                        <a href="{% url 'url_report_detail' report.id %}">  <i class="fa fa-list" aria-hidden="true"></i> </a>
+                        <a href="{% url 'url_report_edit' report.id %}">    <i class="fa fa-edit" aria-hidden="true"></i> </a>
+                        <a href="" data-toggle="modal" data-target="#id_deletar"><i class="fa fa-times" aria-hidden="true"></i></a>
+                        {% include "report/list_modal_deletar.html" %} 
+                      {% endifequal %}
+                      <!-- REPORT APROVADA-->                        
+                      {% ifequal report.report_status.id 2 %}
+                      <a href="" data-toggle="modal" data-target="#id_print">  <i class="fa fa-print" aria-hidden="true"></i> </a>
+                      {% include "report/list_modal_print.html" %} 
+                      <a href="{% url 'url_report_detail' report.id %}">  <i class="fa fa-list" aria-hidden="true"></i> </a>                        
+                      <a href="" data-toggle="modal" data-target="#id_cancelar">  <i class="fa fa-minus-circle" aria-hidden="true"></i> </a>                        
+                      {% include "report/list_modal_cancelar.html" %} 
+                      {% endifequal %}
+                      <!-- REPORT CANCELADA-->                        
+                      {% ifequal report.report_status.id 3 %}
+                      <a href="{% url 'url_report_detail' report.id %}">  <i class="fa fa-list" aria-hidden="true"></i> </a>                        
+                      {% endifequal %}
+                      </td>
+                    </tr>                 
+                    {% endfor %} 
+                  </tbody>
+                </table>
+              </div>
+            </div>
+             
+           
+
+{% endblock content %}
+
+{% block js %}
+<script src="{% static 'js/datatables_user.js'%}"> 
+</script>
+
+<script>
+$(document).ready( function(){
+   $("#id_status1").change(function() {                         
+        $("#id_form_radio").submit();                    
+    });    
+    $("#id_status2").change(function() {                         
+        $("#id_form_radio").submit();                    
+    });
+    $("#id_status3").change(function() {                         
+        $("#id_form_radio").submit();                    
+    });  
+    $("#id_status4").change(function() {                         
+        $("#id_form_radio").submit();                    
+    });  
+});
+</script>
+
+{% endblock js %}
+    

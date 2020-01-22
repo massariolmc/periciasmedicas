@@ -1,0 +1,26 @@
+<div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead>
+                    <tr>                      
+                      <th class="text-sm-center">Quesito</th>
+                      <th class="text-sm-center">Opções</th>                                                                                  
+                    </tr>
+                  </thead>
+                  <tfoot>
+                    <tr>   
+                      <th class="text-sm-center">Quesito</th>
+                      <th class="text-sm-center">Opções</th>                      
+                    </tr>
+                  </tfoot>
+                  <tbody>
+                    {% for type_item in type_items %}
+                    <tr>                                            
+                      <td>{{ type_item.name}}</td>                                                                                 
+                      <td class="text-center">                        
+                        <a href="{% url 'url_item_check_report' report.id type_item.id %}"><i class="fa fa-file" aria-hidden="true"></i></a>                        
+                      </td>
+                    </tr>                 
+                    {% endfor %}   
+                  </tbody>
+                </table>
+              </div>

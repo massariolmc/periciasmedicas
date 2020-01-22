@@ -1,0 +1,74 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block content %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li  {% if message.tags %} class="alert alert-{{ message.tags }} " {% endif %}> {{ message }} </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+          <!-- DataTales Example -->
+          <div class="card">
+            <div class="card-header">
+              <div class="row">
+                <div class="col-sm-6">
+                  <h6 class="m-0 font-weight-bold text-primary">{{ report }}</h6>
+                  <h6 class="m-0 font-weight-bold text-primary">{{ type_item }}</h6>
+                </div>
+                <div class="col-sm-6">
+                  <span class="float-right">
+                    <a href="{% url 'url_report_edit' report.id %}" class="btn btn-warning">Voltar</a>
+                  </span>
+              </div>
+            </div>
+          </div>
+
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead>
+                    <tr>                                            
+                      <th class="text-sm-center">Perguntas</th>                                                                                           
+                      <th class="text-sm-center">Status da Resposta</th>
+                      <th class="text-sm-center">Opções</th>                                                                                  
+                    </tr>
+                  </thead>
+                  <tfoot>
+                    <tr>    
+                      <th class="text-sm-center">Perguntas</th>       
+                      <th class="text-sm-center">Status da Resposta</th>                                                                                    
+                      <th class="text-sm-center">Opções</th>                      
+                    </tr>
+                  </tfoot>
+                  <tbody>
+                    {% for item in items %}
+                    <tr>                                            
+                      <td>{{ item.question }}</td> 
+                      {% if item.answer_status %}
+                        <td class="text-sm-center"><a href="{% url 'url_item2_answer' item.id %}" > <i class="fa fa-check-square" aria-hidden="true"></i> </a></td>
+                      {% else %}
+                        <td class="text-sm-center"> <a href="{% url 'url_item2_answer' item.id %}" >  <i class="fa fa-minus-square" aria-hidden="true"></i> </a> </td>
+                      {% endif %}
+                      <td class="text-center">                        
+                        <a href="{% url 'url_item2_edit' item.id %}">    <i class="fa fa-edit" aria-hidden="true"></i> </a>
+                        <a href="{% url 'url_item2_delete' item.id %}" onclick="return confirm('Excluir?')"><i class="fa fa-times" aria-hidden="true"></i></a>
+                      </td>
+                    </tr>                 
+                    {% endfor %}   
+                  </tbody>
+                </table>
+              </div>
+            </div>
+             
+
+
+{% endblock content %}
+
+{% block js %}
+<script src="{% static 'js/datatables_user.js'%}"> 
+</script>
+{% endblock js %}
+    

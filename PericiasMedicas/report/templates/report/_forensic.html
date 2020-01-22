@@ -1,0 +1,33 @@
+{% if marc %}
+
+<div class="form-row justify-content-center">   
+    <div class="form-group col-md-4">                     
+        <div class="card">
+            <h5 class="card-header">TÍTULOS E CURRÍCULO DO PERITO</h5>
+            <div class="card-body">                
+                <p class="card-text">{{ doctor.course }}</p>                
+            </div>
+        </div>
+    </div>       
+    <div class="form-group col-md-4">                     
+        <div class="card">
+            <h5 class="card-header">CIRCUNSTÂNCIAS DO EXAME PERICIAL</h5>
+            <div class="card-body">                
+                <p class="card-text">{{ forensicscan.forensicscan }}</p>                
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group col-md-4">
+        <div class="card">
+            <h5 class="card-header">OBJETIVOS</h5>
+            <div class="card-body">                
+                <p class="card-text">{{ forensicscan.goal }}</p>                
+            </div>
+        </div>                                       
+    </div>
+</div>
+{% else %}
+<div>
+</div>
+{% endif %}

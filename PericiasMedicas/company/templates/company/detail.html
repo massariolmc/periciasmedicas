@@ -1,0 +1,94 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Informações Detalhadas</h6>
+    </div>
+    <div class="card-body">
+    <div class="row">
+        <div class="col-sm-4">
+            <a href="{% url 'url_companies_list'%}" class="btn btn-info float-left">Listar todos</a>
+        </div>
+        <div class="col-sm-4">
+            <h3><strong>{{ company.name }}</strong></h3>
+        </div>
+        <div class="col-sm-4">
+            <span class="float-right">
+                <a href="{% url 'url_company_edit' company.id %}">
+                    <button type="button" class="btn btn-success">Editar
+                    </button>
+                </a>
+            </span>
+        </div>
+    </div>
+    </br>
+        <div class="col-sm-12">
+            <table class="table table-user-information">
+                <tbody>
+                    <tr>
+                        <th class="text-right">Nome</th>
+                        <td>{{ company.name }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">CNPJ</th>
+                        <td class="cnpj">{{ company.cnpj }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Inscrição Estadual</th>                       
+                        <td>{{ company.state_registration }}</td>                       
+                    </tr>
+                    <tr>
+                        <th class="text-right">Regime Tributário</th>
+                        <td>{{ company.tax_regime }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Tipo de Empresa</th>
+                        <td>{{ company.company_type }}</td>
+                    </tr>                                 
+                    <tr>
+                        <th class="text-right">Endereço</th>
+                        <td>{{ company.address}} - {{ company.address_num}}, {{company.address_burgh}}, {{company.state_city}} - <span class="cep">{{company.zip_code}}</span></td>
+                    </tr> 
+                    <tr>
+                        <th class="text-right">Criado por:</th>
+                        <td>{{ company.user_created }} - {{ company.created_at }}</td>
+                    </tr>                    
+                    <tr>
+                        <th class="text-right">Última Atualização</th>
+                        <td>{{ company.user_updated }} - {{ company.updated_at }}</td>
+                    </tr>   
+                                                        
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}
+
+{% block js %}
+
+<script src="{% static 'vendor/jquery/jquery-mask/jquery.mask.min.js'%}"></script>
+
+<script>
+  $(document).ready(function(){
+    //$('.date').mask('11/11/1111');
+    //$('.time').mask('00:00:00');
+    //$('.date_time').mask('00/00/0000 00:00:00');
+    $('.cep').mask('00000-000');
+    //$('.phone').mask('0000-0000');
+    //$('.phone_with_ddd').mask('(00) 0000-0000');
+    //$('.phone_with_ddd_cel').mask('(00) 00000-0000');
+    //$('.phone_us').mask('(000) 000-0000');
+    //$('.mixed').mask('AAA 000-S0S');
+    //$('.cpf').mask('000.000.000-00', {reverse: true});
+    $('.cnpj').mask('00.000.000/0000-00', {reverse: true});
+    //$('.money').mask('000.000.000.000.000,00', {reverse: true});
+
+});
+</script>
+
+{% endblock js %}

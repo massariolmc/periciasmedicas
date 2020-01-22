@@ -1,0 +1,348 @@
+{% extends 'core/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %} {{ title }}
+{% endblock title %}
+
+{% block content %}
+
+ <div class="row" >
+  <div class="card w-100 ">
+    <div class="card-header">
+        <h6 class="m-0 font-weight-bold text-primary">{{ title }}</h6>                 
+    </div>    
+    <div class="card-body"> 
+      {% if create %} 
+        {% include "report/custom_create.html" %}                
+      {% endif %}
+      {% if edit %}
+        {% include "report/custom_edit.html" %}                
+      {% endif %}
+    </div>
+  </div>
+ </div>
+{% endblock content %}
+
+{% block js %}
+
+<!-- Submete o formulário no EDIT para atualizar o forensic,na parte do perito no report-->
+<script>
+$(document).ready( function(){
+   $("#id_nature_of_action").change(function() {                         
+        $("#id_form_edit").submit();                    
+    });     
+    $("#id_profile_person_type").change(function() {                         
+        $("#id_form_edit").submit();                    
+    });
+});
+</script>
+
+
+<!-- SCRIPT QUE AO SETAR UMA TAB ELE PEGA O VALOR DAQUELA TAB PELO ID E PASSA PARA UMA VARIÁVEL. ESSA VARIAVEL É PASSADA PARA OUTRO CAMPO. -->
+<script>
+$(document).ready( function(){
+   $("ul.nav-tabs li a").click(function() {                      
+    var dateTab = $(this).attr("id");        
+    $("#id_value_tab").val(dateTab); 
+    var modo = $('.tab-content').find('.active').attr('id');                    
+    });     
+});
+</script>
+
+<!-- SCRIPT QUE AO MUDAR UM SELECTBOX ELE FAZ UMA REQUISIÇÃO AJAX DE INSERE VALORES EM DETERMINADO CAMPO -->
+<script>
+$(document).ready( function(){
+
+    $('#id_forensic_scan').change(function(){
+        var query = $(this).val(); 
+        $.ajax({
+        type: "GET",
+        url: "{% url 'url_report_forensic' %}",
+        data: {'ff': query},
+        success: function(data){
+            $("#forensic").html(data);
+            $("#id_form_edit").submit();                
+        },
+        failure: function(data){               
+        },
+        });      
+    });
+});
+</script>
+1. Quais as doenças sofridas pelo periciado?
+<!-- SCRIPT QUE TESTA SE UM DETERMINADO ELEMENTO ESTÁ COM UM VALOR E CASO ESTEJA FAZ UMA REQUISIÇÃO AJAX-->
+<script>
+$(document).ready( function(){
+    
+        var query = document.getElementById("id_forensic_scan").value;       
+        if (query != "" && query != null && query != undefined) {
+            
+            $.ajax({
+                type: "GET",
+                url: "{% url 'url_report_forensic' %}",
+                data: {'ff': query},
+                success: function(data){
+                    $("#forensic").html(data);                
+                },
+                failure: function(data){               
+                },
+            }); 
+         }
+            
+});
+</script>
+
+<!-- SCRIPT AJAX PARA PEGAR O VALOR NO BANCO E SETAR NO CKEDITOR-->
+<script>
+$(document).ready( function(){
+
+   function copy(evento) {
+    var context = evento.data;
+    console.log(context.id); // Imprime o ID do elemento que vai ser copiado
+    var query = $("#id_forensic_scan").val();            
+        $.ajax({
+            type: "GET",
+            url: "{% url 'url_forensic_copy_report' %}",
+            data: {'ff': query, 'tab': 'anamnese-tab', 'anamnese': context.id},
+            success: function(data){
+                console.log(data);
+                //var editor = CKEDITOR.instances[context.id];
+                //editor.setData(data);
+                //editor.insertHtml(data);  
+                $('#'+context.id).val(data)
+                $('.modal').modal('hide');              
+            },
+            failure: function(data){  
+                //console.log("erro"+data);             
+            },
+        });
+
+}
+
+$("#copy_anamnesis_history").on("click", { id:"id_anamnesis_history" }, copy);
+$("#copy_anamnesis_personal_background").on("click", { id:"id_anamnesis_personal_background" }, copy);
+$("#copy_anamnesis_family_background").on("click", { id:"id_anamnesis_family_background" }, copy);
+$("#copy_anamnesis_general_exam").on("click", { id:"id_anamnesis_general_exam" }, copy);
+$("#copy_anamnesis_mental_exam").on("click", { id:"id_anamnesis_mental_exam" }, copy);
+
+});//FIM DO DOCUMENT READY
+</script>
+
+<script>
+$(document).ready( function(){
+   $("#copy_discussao").click(function() {                      
+    var query = $("#id_forensic_scan").val();            
+        $.ajax({
+            type: "GET",
+            url: "{% url 'url_forensic_copy_report' %}",
+            data: {'ff': query, 'tab': 'discussao-tab'},
+            success: function(data){
+                //console.log(data);
+                //var editor = CKEDITOR.instances['id_discussion'];
+                //editor.setData(data);
+                //editor.insertHtml(data); 
+                $('#id_discussion').val(data) 
+                $('.modal').modal('hide');              
+            },
+            failure: function(data){  
+                //console.log("erro"+data);             
+            },
+        });                    
+    });     
+});
+</script>
+
+<script>
+$(document).ready( function(){
+   $("#copy_conclusao").click(function() {                      
+    var query = $("#id_forensic_scan").val();            
+        $.ajax({
+            type: "GET",
+            url: "{% url 'url_forensic_copy_report' %}",
+            data: {'ff': query, 'tab': 'conclusao-tab'},
+            success: function(data){
+                //console.log(data);
+                //var editor = CKEDITOR.instances['id_conclusion'];
+                //editor.setData(data);
+                //editor.insertHtml(data);  
+                $('#id_conclusion').val(data)
+                $('.modal').modal('hide');              
+            },
+            failure: function(data){  
+                //console.log("erro"+data);             
+            },
+        });                    
+    });     
+});
+</script>
+
+<script>
+$(document).ready( function(){
+   $("#copy_modal_itemnatureofaction").click(function() {                      
+    var query = $("#id_type_item_by_nature_of_action").val();            
+        $.ajax({
+            type: "GET",
+            url: "{% url 'url_itembynatureaction_copy_item' %}",
+            data: {'ff': query},
+            success: function(data){
+                console.log(data);                
+                var editor = CKEDITOR.instances['id_question'];                                 
+                editor.setData(data);
+                //editor.insertHtml(data);                              
+                $('.modal').modal('hide');              
+            },
+            failure: function(data){  
+                console.log("erro"+data);             
+            },
+        });                    
+    });     
+});
+</script>
+
+<script>
+$(document).ready(function(){ 
+            //Procurar o cid. Isso é usado no Diagnóstico e no Documentos médicos.
+            $(".cid_number").autocomplete({                
+                source: "{% url 'url_cid10_autocomplete' %}",                
+                minLength: 2,             
+              });
+            //Isso é usado para procurar o médico. Usado na aba Documentos Médicos  
+            $("#id_document_medico").autocomplete({                
+                source: "{% url 'url_doctorlist_autocompletar' %}",                
+                minLength: 2,             
+              });         
+});
+</script>
+
+<script>
+$(document).ready( function(){
+    //Isso é usado para inserir o CID no text aread da aba Diagnótico
+   $("#id_button_cid").click(function() {                      
+    var query = $("#id_cid_number").val();            
+        $.ajax({
+            type: "GET",
+            url: "{% url 'url_cid10_ajax' %}",
+            data: {'ff': query},
+            success: function(data){
+                console.log(data);                 
+                $("#id_anamnesis_diagnosis").val(data);
+                $("#id_cid_number").val("");                                    
+            },
+            failure: function(data){  
+                console.log("erro"+data);             
+            },
+        });                    
+    });     
+});
+</script>
+
+<script> 
+// Essa função é usado na tab Documentos Médicos para esolher o tipo de documento que vai ser inserido
+$(document).ready( function(){
+    $("#outro").hide();
+    $("#atestado").show();
+
+    //$("input[name='gender']:checked").val()
+    $("#document1:checked").val()
+
+    $("#document1").click(function(){
+        $("#outro").hide();
+        $("#atestado").show();        
+        $("#id_textarea_document").val("");
+    });
+    $("#document2").click(function(){
+        $("#outro").show();
+        $("#atestado").hide();        
+        $("#id_document_data").val("");
+        $("#id_document_medico").val("");
+        $("#id_document_cid").val(""); 
+    });
+});
+</script>
+
+<script>
+//Função usada para enviar, via AJAX(POST), para o FORM para o metodo medicaldocument_create para criar os documentos médicos
+$(document).ready( function(){
+   $("#id_add_documento").click(function() { 
+    var id_tipo = $("input[name='document']:checked").val();                     
+    var id_data = $("#id_document_data").val();
+    var id_medico = $("#id_document_medico").val();
+    var id_cid = $("#id_document_cid").val();            
+    var id_user_created = $("#id_user_created").val();
+    var id_user_updated = $("#id_user_updated").val();
+    var id_document_report = $("#id_medicaldocument_report").val();
+    var id_textarea_document = $("#id_textarea_document").val().trim();//Retira espaços em branco do TextArea
+    
+    if (id_tipo == 1){    
+        if (id_tipo != "" && id_data != "" && id_data != null && id_data != undefined && id_medico != "" && id_medico != null && id_medico != undefined && id_cid != "" && id_cid != null && id_cid != undefined ){                   
+            $.ajax({
+                type: "POST",
+                url: "{% url 'url_medicaldocument_create' %}",
+                data: {'id_tipo': id_tipo,'id_data': id_data, 'id_medico': id_medico, 'id_cid': id_cid, 'id_user_created': id_user_created, 'id_user_updated': id_user_updated, 'id_document_report': id_document_report},
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                success: function(data){
+                    console.log(data.success); 
+                    console.log("valor do data"+data);                
+                    if (data.success){
+                        alert(data.success);
+                        alert("Dados inseridos com suscesso");
+                        $("#id_document_data").val("");
+                        $("#id_document_medico").val("");
+                        $("#id_document_cid").val(""); 
+                        $("#id_textarea_document").val("");                     
+                        $("#id_form_edit").submit(); //Faço isso para refresh na página
+                    }                             
+                    else{
+                        alert(data.error);
+                    }
+                    
+                },
+                failure: function(data){  
+                    console.log("erro"+data);             
+                },
+            });
+            
+        }
+        else{
+            alert("Todos os campos são obrigatórios.");
+        }
+    }
+    else{
+        if (id_textarea_document != "" && id_textarea_document != null && id_textarea_document != undefined){
+            $.ajax({
+                type: "POST",
+                url: "{% url 'url_medicaldocument_create' %}",
+                data: {'id_tipo': id_tipo,'id_textarea_document': id_textarea_document, 'id_user_created': id_user_created, 'id_user_updated': id_user_updated, 'id_document_report': id_document_report},
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                success: function(data){
+                    console.log(data.success); 
+                    console.log("valor do data"+data);                
+                    if (data.success){
+                        alert(data.success);
+                        alert("Dados inseridos com suscesso");
+                        $("#id_document_data").val("");
+                        $("#id_document_medico").val("");
+                        $("#id_document_cid").val("");
+                        $("#id_textarea_document").val("");                                             
+                        $("#id_form_edit").submit(); //Faço isso para refresh na página
+                    }                             
+                    else{
+                        alert(data.error);
+                    }
+                    
+                },
+                failure: function(data){  
+                    console.log("erro"+data);             
+                },
+            });
+        }
+        else{
+            alert("Todos os campos são obrigatórios.");
+        }
+    }
+                            
+    });     
+});
+</script>
+
+{% endblock js %}

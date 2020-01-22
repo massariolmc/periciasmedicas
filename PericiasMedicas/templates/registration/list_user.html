@@ -1,0 +1,89 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li  {% if message.tags %} class="alert alert-{{ message.tags }} " {% endif %}> {{ message }} </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+          <!-- DataTales Example -->
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <div class="row">
+                <div class="col-sm-6">
+                  <h6 class="m-0 font-weight-bold text-primary">{{ title }}</h6>
+                </div>
+                <div class="col-sm-6">
+                  <span class="float-right">
+                    <a href="{% url 'url_signup' %}">
+                      <button type="button" class="btn btn-success">Adicionar
+                      </button>
+                    </a>
+                  </span>
+              </div>
+            </div>
+          </div> 
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead>
+                    <tr>
+                      <th class="text-sm-center">Usuário</th>
+                      <th class="text-sm-center">Nome</th>
+                      <th class="text-sm-center">Email</th>
+                      <th class="text-sm-center">SuperUser?</th>
+                      <th class="text-sm-center">Ativo?</th> 
+                      <th class="text-sm-center">Opções</th>                             
+                    </tr>
+                  </thead>
+                  <tfoot>
+                    <tr>
+                      <th class="text-sm-center">Usuário</th>
+                      <th class="text-sm-center">Nome</th>
+                      <th class="text-sm-center">Email</th>
+                      <th class="text-sm-center">SuperUser?</th>
+                      <th class="text-sm-center">Ativo?</th> 
+                      <th class="text-sm-center">Opções</th>     
+                    </tr>
+                  </tfoot>
+                  <tbody>
+                    {% for user in users %}
+                    <tr>
+                      <td>{{ user.username }}</td>
+                      <td>{{ user.first_name }} {{ user.last_name }}</td>
+                      <td>{{ user.email }}</td>
+                      {% if user.is_superuser %}
+                        <td class="text-sm-center">Sim</td>     
+                      {% else %}
+                        <td class="text-sm-center">Não</td>
+                      {% endif %}
+                      {% if user.is_active %}
+                        <td class="text-sm-center">Sim</td>                      
+                      {% else %}
+                        <td class="text-sm-center">Não</td>
+                      {% endif %}
+                      <td class="text-center">
+                        <a href="{% url 'url_detail_user' user.id %}">  <i class="fa fa-list" aria-hidden="true"></i> </a>
+                        <a href="{% url 'url_edit_user' user.id %}">    <i class="fa fa-edit" aria-hidden="true"></i> </a>
+                      </td>
+                    </tr> 
+                    </tr>                 
+                    {% endfor %}   
+                  </tbody>
+                </table>
+              </div>
+            </div>
+                
+
+
+{% endblock content %}
+
+{% block js %}
+<script src="{% static 'js/datatables_user.js'%}"> 
+</script>
+{% endblock js %}

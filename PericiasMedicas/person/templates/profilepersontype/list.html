@@ -1,0 +1,82 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block content %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li  {% if message.tags %} class="alert alert-{{ message.tags }} " {% endif %}> {{ message }} </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+          <!-- DataTales Example -->
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="row">
+                    <h6 class="m-0 font-weight-bold text-primary">{{ title1 }} {{ company_name }}</h6>
+                  </div>
+                  <div class="row">
+                    <h6 class="m-0 font-weight-bold text-primary">{{ title2 }} {{ department_name }}</h6>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <span class="float-right">
+                    <a href="{% url 'url_profilepersontype_create' department_id %}">
+                      <button type="button" class="btn btn-success">Adicionar
+                      </button>
+                    </a>
+                  </span>
+              </div>
+            </div>
+          </div>
+
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead>
+                    <tr>
+                      <th class="text-sm-center">Nome</th>
+                      <th class="text-sm-center">Perfil</th>
+                      <th class="text-sm-center">Departamento</th>                      
+                      <th class="text-sm-center">Opções</th>                      
+                    </tr>
+                  </thead>
+                  <tfoot>
+                    <tr>
+                      <th class="text-sm-center">Nome</th>
+                      <th class="text-sm-center">Perfil</th>
+                      <th class="text-sm-center">Departamento</th>                       
+                      <th class="text-sm-center">Opções</th>                      
+                    </tr>
+                  </tfoot>
+                  <tbody>                    
+                      {% for profilepersontype in profilepersontypes %}
+                      <tr>
+                        <td class="text-center">{{ profilepersontype.person }}</td>
+                        <td class="text-center">{{ profilepersontype.person_type }}</td> 
+                        <td class="text-center">{{ profilepersontype.department }}</td>
+                        <td class="text-center">
+                          <a href="{% url 'url_profilepersontype_detail' profilepersontype.id %}">  <i class="fa fa-list" aria-hidden="true"></i> </a>
+                          <a href="{% url 'url_profilepersontype_edit' profilepersontype.id %}">    <i class="fa fa-edit" aria-hidden="true"></i> </a>
+                          <a href="{% url 'url_profilepersontype_delete' profilepersontype.id %}" onclick="return confirm('Excluir este funcionário?')"><i class="fa fa-times" aria-hidden="true"></i></a>
+                        </td>                                               
+                      </tr>                 
+                      {% endfor %} 
+                    
+                  </tbody>
+                </table>
+              </div>
+            </div>
+             
+
+
+{% endblock content %}
+
+{% block js %}
+<script src="{% static 'js/datatables_user.js'%}"> 
+</script>
+{% endblock js %}
+    

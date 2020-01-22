@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+  <title>PDF
+  </title>
+
+    <meta charset="UTF-8">
+
+
+</head>
+
+<body >
+
+<p style="text-align:justify"><strong>LAUDO PERICIAL PSIQUI&Aacute;TRICO</strong></p>
+
+<p style="text-align:justify"><u><strong>1. PRE&Acirc;MBULO:</strong></u></p>
+
+<p style="text-align:justify"><strong>AUTORIDADE REQUISITANTE:</strong> {{ report.authority_requesting }}</p>
+
+<p style="text-align:justify"><strong>NATUREZA DA A&Ccedil;&Atilde;O:</strong> {{ report.nature_of_action }}</p>
+
+<p style="text-align:justify"><strong>PROCESSO N&deg;: </strong>{{ report.process_number }}</p>
+
+<p style="text-align:justify"><strong>AUTOR: </strong>{{ report.autor }}</p>
+
+<p style="text-align:justify"><strong>PERICIANDA:</strong> {{ report.proficient }}</p>
+
+<p style="text-align:justify"><strong>DATA DA PER&Iacute;CIA: </strong>{{ report.date_report }}</p>
+
+<p style="text-align:justify"><strong>T&Iacute;TULOS E CURR&Iacute;CULO DO PERITO: </strong></p>
+
+<p style="text-align:justify">{{ doctor.course }}</p>
+
+<p style="text-align:justify"><strong>CIRCUNST&Acirc;NCIAS DO EXAME PERICIAL: </strong></p>
+
+<p style="text-align:justify">{{ report.forensic_scan.forensicscan }}</p>
+
+<p style="text-align:justify"><strong>OBJETIVOS: </strong></p>
+
+<p style="text-align:justify">{{ report.forensic_scan.goal }}</p>
+
+<p style="text-align:justify"><u><strong>2. IDENTIFICA&Ccedil;&Atilde;O DO PERICIANDO:</strong></u></p>
+
+<p style="text-align:justify"><strong>NOME: </strong>{{ report.proficient.name }}</p>
+
+<p style="text-align:justify"><strong>IDADE: </strong>{{ idade }}</p>
+
+<p style="text-align:justify"><strong>DATA DE NASCIMENTO: </strong>{{ report.proficient.dt_birthday|date:'d/m/Y' }}</p>
+
+<p style="text-align:justify"><strong>RG: </strong>{{ report.proficient.rg }} {{ report.proficient.rg_exped }} {{ report.proficient.rg_uf }}</p>
+
+<p style="text-align:justify"><strong>CPF: </strong>{{ report.proficient.cpf }}</p>
+
+<p style="text-align:justify"><strong>FILIA&Ccedil;&Atilde;O: </strong>{{ report.proficient.name_mother }}/{{ report.proficient.name_father }}</p>
+
+<p style="text-align:justify"><strong>SEXO:</strong> {{ report.proficient.get_sex_display }}</p>
+
+<p style="text-align:justify"><strong>NATURALIDADE: </strong>{{ report.proficient.uf_natural }}</p>
+
+<p style="text-align:justify"><strong>PROCED&Ecirc;NCIA: </strong>{{ report.proficient.origin}}</p>
+
+<p style="text-align:justify"><strong>ESCOLARIDADE: </strong>{{ report.proficient.get_schooling_display }}</p>
+
+<p style="text-align:justify"><strong>ESTADO CIVIL: </strong>{{ report.proficient.maritalstatus.name }}</p>
+
+<p style="text-align:justify"><strong>RELIGI&Atilde;O: </strong>{{ report.proficient.religion.name }}</p>
+
+<p style="text-align:justify"><strong>SITUA&Ccedil;&Atilde;O ATUAL JUNTO AO INSS: </strong>{{ report.proficient.situation_inss }}</p>
+
+<p style="text-align:justify"><strong>ACOMPANHANTE: </strong>{{ report.proficient.scort }} {{ report.proficient.get_scort_type_display }}</p>
+
+<p style="text-align:justify"><u><strong>3. ANAMNESE:</strong></u></p>
+
+<p style="text-align:justify"><strong>Hist&oacute;ria Pregressa da Doen&ccedil;a Atual:</strong><br />
+{{ report.anamnesis_history|safe }}<br />
+<strong>Antecedentes Patol&oacute;gicos Pessoais:</strong><br />
+{{ report.anamnesis_personal_background|safe }}<br />
+<strong>Antecedentes Patol&oacute;gicos Familiares:</strong><br />
+{{ report.anamnesis_history|safe }}<br />
+<strong>Exame F&iacute;sico Geral:</strong><br />
+{{ report.anamnesis_general_exam|safe }}<br />
+<strong>Exame do Estado Mental Atual:</strong><br />
+{{ report.anamnesis_mental_exam|safe }}<br />
+<strong>Documentos M&eacute;dicos (Exames, Atestados, Laudos Etc):</strong><br />
+{{ documents|safe }}
+<strong>Diagn&oacute;stico:</strong><br />
+{{ report.anamnesis_diagnosis|safe }}</p>
+
+<p style="text-align:justify"><u><strong>4. DISCUSS&Atilde;O:</strong></u></p>
+
+<p style="text-align:justify">{{ report.discussion|safe }}</p>
+
+<p style="text-align:justify"><u><strong>5. CONCLUS&Atilde;O:</strong></u></p>
+
+<p style="text-align:justify">{{ report.conclusion|safe }}</p>
+
+<p style="text-align:justify"><u><strong>6. QUESITOS DO JU&Iacute;ZO E DO INSS:</strong></u></p>
+
+<p style="text-align:justify">{{ item_juiz|safe }}</p>
+
+<p style="text-align:justify"><u><strong>7. QUESITOS DA PROCURADORIA DA REP&Uacute;BLICA EM MATO GROSSO DO SUL:</strong></u></p>
+
+<p style="text-align:justify">{{ item_procuradoria|safe }}</p>
+
+<p style="text-align:justify">{% if item_advogado %}</p>
+
+<p style="text-align:justify"><u><strong>8. QUESITOS PARA PER&Iacute;CIA M&Eacute;DICA JUDICIAL DO ADVOGADO:</strong></u></p>
+
+<p style="text-align:justify">{{ item_advogado|safe }}</p>
+
+<p style="text-align:justify">{% endif %}</p>
+
+<p style="text-align:justify">{% if item_periciando %}</p>
+
+<p style="text-align:justify"><u><strong>9. QUESITOS DO R&Eacute;U PARA PER&Iacute;CIA M&Eacute;DICA:</strong></u></p>
+
+<p style="text-align:justify">{{ item_periciando|safe }}</p>
+
+<p style="text-align:justify">{% endif %}</p>
+
+
+</body >
+</html>
+
+
+
