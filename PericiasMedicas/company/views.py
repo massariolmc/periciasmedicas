@@ -2,7 +2,7 @@ from django.shortcuts import render,get_object_or_404, get_list_or_404, redirect
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from pericias.statescity.models import States2, Cities
+from PericiasMedicas.statescity.models import States2, Cities
 from .forms import CompanyForm, DepartmentForm
 from .models import Company, Department
 from crispy_forms.utils import render_crispy_form

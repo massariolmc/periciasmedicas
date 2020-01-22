@@ -4,10 +4,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
 from .forms import AuthorityRequestingForm, ForensicScanForm, ReportStatusForm, ReportForm, NatureOfActionForm, TypeItemForm, TypeItemByNatureOfActionForm, Item2Form
-from pericias.person.models import ProfilePersonType
+from PericiasMedicas.person.models import ProfilePersonType
 from .models import AuthorityRequesting, ReportStatus, CidNumber, ForensicScan, NatureOfAction, Report, MedicalDocument, TypeItem, TypeItemByNatureOfAction, Item2
-from pericias.company.models import Department, Company
-from pericias.person.models import Person, ProfilePersonType, Doctor
+from PericiasMedicas.company.models import Department, Company
+from PericiasMedicas.person.models import Person, ProfilePersonType, Doctor
 from docxtpl import DocxTemplate, RichText # Modulo para exportar em DOCX
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from .utils import render_to_pdf #Modulo de exportar PDF

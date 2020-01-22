@@ -4,8 +4,8 @@ from .forms import PersonForm, PersonTypeForm, ProfilePersonTypeForm, MedicalSpe
 from .models import Person, PersonType, ProfilePersonType, MedicalSpecialty, Doctor, DoctorList, Cid10
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from pericias.statescity.models import States2, Cities
-from pericias.company.models import Department, Company
+from PericiasMedicas.statescity.models import States2, Cities
+from PericiasMedicas.company.models import Department, Company
 from django.db.models import Q
 
 

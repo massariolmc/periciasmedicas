@@ -3,8 +3,8 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .forms import UserCreate, UpdateUserForm
-from pericias.person.models import Person, ProfilePersonType, PersonType
-from pericias.company.models import Company, Department
+from PericiasMedicas.person.models import Person, ProfilePersonType, PersonType
+from PericiasMedicas.company.models import Company, Department
 
 @login_required
 def home(request):

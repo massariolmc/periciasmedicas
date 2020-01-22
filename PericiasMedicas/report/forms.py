@@ -1,8 +1,8 @@
 from django.forms import ModelForm, TextInput, Textarea, DateInput, RadioSelect,Select, SelectDateWidget, HiddenInput, DateTimeInput, EmailInput
 from django import forms
-from pericias.person.models import MedicalSpecialty, PersonType, Person, ProfilePersonType, Doctor, MedicalSpecialty
+from PericiasMedicas.person.models import MedicalSpecialty, PersonType, Person, ProfilePersonType, Doctor, MedicalSpecialty
 from .models import AuthorityRequesting, ForensicScan, ReportStatus, Report, MedicalDocument, NatureOfAction, TypeItem, TypeItemByNatureOfAction, Item2
-from pericias.company.models import Department, Company
+from PericiasMedicas.company.models import Department, Company
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Row, Column, Button, ButtonHolder, HTML, Hidden, Field
 from django.core.exceptions import ValidationError

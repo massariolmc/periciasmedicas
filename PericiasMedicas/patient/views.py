@@ -5,7 +5,7 @@ from .form import PatientForm
 from .models import Patients
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from pericias.statescity.models import States2, Cities
+from PericiasMedicas.statescity.models import States2, Cities
 
 @login_required
 def patient_create(request):
