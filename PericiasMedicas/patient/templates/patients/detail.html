@@ -13,7 +13,7 @@
             <a href="{% url 'url_patients_list'%}" class="btn btn-info float-left">Listar todos</a>
         </div>
         <div class="col-sm-4">
-            <h1>{{ user }}</h1>
+            <h1>{{ patient }}</h1>
         </div>
         <div class="col-sm-4">
             <span class="float-right">
@@ -106,7 +106,7 @@
                     <tr>
                         <th class="text-right">Endereço</th>
                         <td>{{ patient.address}} - {{ patient.address_num}}, {{patient.address_city_uf}} - <span class="cep">{{patient.cep}}</span></td>
-                    </tr>                    
+                    </tr>                                        
                     <tr>
                         <th class="text-right">Última Atualização</th>
                         <td>{{ patient.user }} - {{ patient.updated_at }}</td>

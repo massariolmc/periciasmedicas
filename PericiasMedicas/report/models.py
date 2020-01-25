@@ -109,7 +109,7 @@ class Report(models.Model):
     proficient = models.ForeignKey(Patients, related_name = "proficient_patient_id", verbose_name=("Periciando"), blank=False, null=False, on_delete=models.PROTECT)
     date_report = models.DateField(("Data da Perícia"), auto_now=False, auto_now_add=False, blank=False)
     profile_person_type = models.ForeignKey(ProfilePersonType, verbose_name=("Perito"), on_delete=models.PROTECT)
-    forensic_scan = models.ForeignKey(ForensicScan, blank=True, null=True, verbose_name=("Circunstância da Perícia"), on_delete=models.PROTECT)    
+    forensic_scan = models.ForeignKey(ForensicScan, blank=True, null=True, verbose_name=("Qual modelo?"), on_delete=models.PROTECT)    
     anamnesis_history = models.TextField("Anamnese: História Pregressa da Doença Atual",blank=True)
     anamnesis_personal_background = models.TextField("Anamnese: Antecedentes Patológicos Pessoais",blank=True)
     anamnesis_family_background = models.TextField("Anamnese: Antecedentes Patológicos Familiares",blank=True)
@@ -173,7 +173,7 @@ class TypeItemByNatureOfAction(models.Model):
     class Meta:
         verbose_name = "TypeItemByNatureOfAction"
         verbose_name_plural = "TypeItemByNatureOfActions"
-        ordering = ["version"]
+        ordering = ["version","-id"]
 
     def __str__(self):
         return self.version

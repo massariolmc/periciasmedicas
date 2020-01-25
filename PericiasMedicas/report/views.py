@@ -681,7 +681,7 @@ def print_report(pk):
     item_periciando = ""
 
     if marc:        
-        items = Item2.objects.filter(report_id=report.id)
+        items = Item2.objects.filter(report_id=report.id).order_by("id")
         for item in items:
             #Na tabela type_item tem que ser assim: id: 1 - Quesitos do juiz, 2 - Procuradoria, 3 - ADvogado e 4 - Periciando. Senão for assim, a lógica abaixo vai dar erro.
             if item.type_item_id == 1:               
@@ -1010,7 +1010,7 @@ def copy_item_report(request, report, type_item):
     template_name = 'item2/copy_item_report.html'
     report = Report.objects.get(pk=report)
     type_item = TypeItem.objects.get(pk=type_item)
-    copy = TypeItemByNatureOfAction.objects.filter(nature_of_action=report.nature_of_action, type_item_id=type_item.id)
+    copy = TypeItemByNatureOfAction.objects.filter(nature_of_action=report.nature_of_action, type_item_id=type_item.id).order_by('id')
     context = {
         'type_item_by_nature_of_action': copy,
         'report': report,
@@ -1020,8 +1020,12 @@ def copy_item_report(request, report, type_item):
     user = User.objects.get(username=request.user.username)
     if request.method == 'POST':
         marc = request.POST.get("quesitos","")
+        print("MARC",marc)
+        quesitos_ordenados = request.POST.getlist('quesitos')
+        print("QUesitos ORdenados",quesitos_ordenados)
         if marc:                         
-            for item in request.POST.getlist('quesitos'):                
+            for item in quesitos_ordenados:
+                print("Item",item)
                 for cc in copy:                    
                     if int(item) == int(cc.id):                        
                         qq = Item2(report=report, type_item=type_item, question=cc.question, answer_status=False, user_created=user, user_updated=user)
@@ -1039,7 +1043,8 @@ def items2_list(request, *args, **kwargs):
     type_item_id = kwargs.get('type_item',None)
     report = Report.objects.get(pk=report_id)
     type_item = TypeItem.objects.get(pk=type_item_id)     
-    items2 = Item2.objects.filter(report_id=report_id, type_item_id=type_item_id)                        
+    items2 = Item2.objects.filter(report_id=report_id, type_item_id=type_item_id).order_by('id')
+    print("valores",items2)                         
     context = {
         'items': items2,
         'title': title,  
