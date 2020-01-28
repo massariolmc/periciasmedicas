@@ -49,7 +49,7 @@ $(document).ready( function(){
 });
 </script>
 
-<!-- SCRIPT QUE AO MUDAR UM SELECTBOX ELE FAZ UMA REQUISIÇÃO AJAX DE INSERE VALORES EM DETERMINADO CAMPO -->
+<!-- SCRIPT QUE AO MUDAR UM SELECTBOX DA TAB PERITO, CAMPO QUAL MODELO?, ELE FAZ UMA REQUISIÇÃO AJAX DE INSERE VALORES EM DETERMINADO CAMPO -->
 <script>
 $(document).ready( function(){
 
@@ -98,7 +98,7 @@ $(document).ready( function(){
 
    function copy(evento) {
     var context = evento.data;
-    console.log(context.id); // Imprime o ID do elemento que vai ser copiado
+    //console.log(context.id); // Imprime o ID do elemento que vai ser copiado
     var query = $("#id_forensic_scan").val();            
         $.ajax({
             type: "GET",
@@ -106,10 +106,10 @@ $(document).ready( function(){
             data: {'ff': query, 'tab': 'anamnese-tab', 'anamnese': context.id},
             success: function(data){
                 console.log(data);
-                //var editor = CKEDITOR.instances[context.id];
-                //editor.setData(data);
-                //editor.insertHtml(data);  
-                $('#'+context.id).val(data)
+                var editor = CKEDITOR.instances[context.id];
+                editor.setData(data);
+                editor.insertHtml(data);  
+                //$('#'+context.id).val(data)
                 $('.modal').modal('hide');              
             },
             failure: function(data){  
@@ -138,10 +138,10 @@ $(document).ready( function(){
             data: {'ff': query, 'tab': 'discussao-tab'},
             success: function(data){
                 //console.log(data);
-                //var editor = CKEDITOR.instances['id_discussion'];
-                //editor.setData(data);
-                //editor.insertHtml(data); 
-                $('#id_discussion').val(data) 
+                var editor = CKEDITOR.instances['id_discussion'];
+                editor.setData(data);
+                editor.insertHtml(data); 
+                //$('#id_discussion').val(data) 
                 $('.modal').modal('hide');              
             },
             failure: function(data){  
@@ -162,10 +162,10 @@ $(document).ready( function(){
             data: {'ff': query, 'tab': 'conclusao-tab'},
             success: function(data){
                 //console.log(data);
-                //var editor = CKEDITOR.instances['id_conclusion'];
-                //editor.setData(data);
-                //editor.insertHtml(data);  
-                $('#id_conclusion').val(data)
+                var editor = CKEDITOR.instances['id_conclusion'];
+                editor.setData(data);
+                editor.insertHtml(data);  
+                //$('#id_conclusion').val(data)
                 $('.modal').modal('hide');              
             },
             failure: function(data){  
@@ -224,9 +224,15 @@ $(document).ready( function(){
             url: "{% url 'url_cid10_ajax' %}",
             data: {'ff': query},
             success: function(data){
-                console.log(data);                 
-                $("#id_anamnesis_diagnosis").val(data);
-                $("#id_cid_number").val("");                                    
+                console.log(data);
+                if (data == "CID inválido. - CID 10 ()"){
+                    $("#id_anamnesis_diagnosis").val(data);
+                    $("#id_cid_number").val("");             
+                }
+                else{
+                    $("#id_anamnesis_diagnosis").val(data);    
+                }
+                
             },
             failure: function(data){  
                 console.log("erro"+data);             
@@ -341,6 +347,52 @@ $(document).ready( function(){
         }
     }
                             
+    });     
+});
+</script>
+
+
+<script>
+//Função usada para enviar, via AJAX(POST), para o FORM para o metodo cidnumber_create para criar os cid desta laudo
+$(document).ready( function(){
+   $("#id_add_cid").click(function() {                          
+    var id_cid_number = $("#id_cid_number").val();
+    var id_anamnesis_diagnosis = $("#id_anamnesis_diagnosis").val().trim();                
+    var id_cid_report = $("#id_cid_report").val();
+    var id_user_created = $("#id_user_created").val();
+    var id_user_updated = $("#id_user_updated").val();  
+    
+    if (id_cid_number != "" && id_cid_number != null && id_cid_number != undefined && id_anamnesis_diagnosis != "" && id_anamnesis_diagnosis != null && id_anamnesis_diagnosis != undefined){                   
+        $.ajax({
+            type: "POST",
+            url: "{% url 'url_cidnumber_create' %}",
+            data: {'id_cid_number': id_cid_number,'id_anamnesis_diagnosis': id_anamnesis_diagnosis, 'id_cid_report': id_cid_report, 'id_user_created': id_user_created, 'id_user_updated': id_user_updated},
+            headers: {'X-CSRFToken': '{{ csrf_token }}'},
+            success: function(data){
+                console.log(data.success); 
+                console.log("valor do data"+data);                
+                if (data.success){
+                    alert(data.success);
+                    alert("Dados inseridos com suscesso");
+                    $("#id_cid_number").val("");
+                    $("#id_anamnesis_diagnosis").val("");                                       
+                    $("#id_form_edit").submit(); //Faço isso para refresh na página
+                }                             
+                else{
+                    alert(data.error);
+                }
+                
+            },
+            failure: function(data){  
+                console.log("erro"+data);             
+            },
+        });
+        
+    }
+    else{
+        alert("Todos os campos são obrigatórios.");
+    }  
+    
     });     
 });
 </script>

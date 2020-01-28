@@ -3,9 +3,9 @@ from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
-from .forms import AuthorityRequestingForm, ForensicScanForm, ReportStatusForm, ReportForm, NatureOfActionForm, TypeItemForm, TypeItemByNatureOfActionForm, Item2Form
-from PericiasMedicas.person.models import ProfilePersonType
-from .models import AuthorityRequesting, ReportStatus, CidNumber, ForensicScan, NatureOfAction, Report, MedicalDocument, TypeItem, TypeItemByNatureOfAction, Item2
+from .forms import AuthorityRequestingForm, LocationObjectiveForm, ForensicScanForm, ReportStatusForm, DiscussionConclusionForm, CidNumberForm, ReportForm, NatureOfActionForm, TypeItemForm, TypeItemByNatureOfActionForm, Item2Form
+from PericiasMedicas.person.models import ProfilePersonType,Cid10
+from .models import AuthorityRequesting, ReportStatus, CidNumber, LocationObjective, ForensicScan, NatureOfAction, DiscussionConclusion, Report, MedicalDocument, TypeItem, TypeItemByNatureOfAction, Item2
 from PericiasMedicas.company.models import Department, Company
 from PericiasMedicas.person.models import Person, ProfilePersonType, Doctor
 from docxtpl import DocxTemplate, RichText # Modulo para exportar em DOCX
@@ -95,6 +95,77 @@ def authorityrequesting_delete(request,pk):
 
 ######### FIM AuthorityRequesting ############
 
+######## LOCAL OBJECTIVE ####################
+
+@login_required
+def locationobjective_create(request):
+    template_name = 'locationobjective/form.html'
+    data = {}
+    data['title'] = "Cadastro dos Locaise Objetivos"     
+    if request.method == 'POST':        
+        form = LocationObjectiveForm(request.POST, department_id=get_department(request.user.username))
+        if form.is_valid():
+            form.save()                        
+            return redirect('url_locationobjectives_list')
+        else:
+            print("algo não está valido.")
+    else:
+        form = LocationObjectiveForm(department_id=get_department(request.user.username))             
+    
+    data['form'] = form
+    return render(request,template_name,data)
+
+@login_required
+def locationobjectives_list(request):
+    template_name = "locationobjective/list.html"
+    title = "Lista - Locais e Objetivos do Exames Periciais"    
+    #localobjectives = LocalObjective.objects.all()                    
+    locationobjectives = LocationObjective.objects.filter(profile_person_type__department_id__in=get_department(request.user.username))            
+    context = {
+        'locationobjectives': locationobjectives,
+        'title': title,                      
+    }
+    return render(request,template_name,context)
+
+@login_required
+def locationobjective_detail(request, pk=None, *args, **kwargs):
+    template_name = "locationobjective/detail.html"
+    locationobjective = get_object_or_404(LocationObjective,pk=pk)
+    context = {
+        'locationobjective': locationobjective
+    }
+    return render(request, template_name, context)
+
+@login_required
+def locationobjective_edit(request, pk):    
+    template_name='locationobjective/form.html'
+    data = {} 
+    data['title'] = "Cadastro Circunstâncias"         
+    locationobjective = get_object_or_404(LocationObjective, pk=pk)        
+    user_created = locationobjective.user_created # Esta linha faz com que o user_created não seja modificado, para mostrar quem criou esta pessoa
+    form = LocationObjectiveForm(request.POST or None, instance=locationobjective, department_id=get_department(request.user.username))
+    if form.is_valid():        
+        locationobjective = form.save(commit=False)
+        locationobjective.user_created = user_created               
+        locationobjective.save()
+        return redirect('url_locationobjective_detail',pk=pk)    
+    
+    data['form'] = form
+    return render(request,template_name,data)
+
+@login_required
+def locationobjective_delete(request,pk):
+    locationobjective = get_object_or_404(LocationObjective, pk=pk)    
+    if request.method == 'GET':        
+        locationobjective.delete()
+        messages.success(request, 'Ação concluída com sucesso.')
+        return redirect('url_locationobjectives_list')
+    else:
+        messages.warning(request, 'Ação não concluída.')
+        return redirect('url_locationobjectives_list')
+
+######## FIM LOCAL OBJECTIVE ##############
+
 ######### ForensicScan #######################
 
 @login_required
@@ -120,7 +191,7 @@ def forensicscans_list(request):
     template_name = "forensicscan/list.html"
     title = "Lista das Circunstâncias Periciais"    
     #forensicscans = ForensicScan.objects.all()                    
-    forensicscans = ForensicScan.objects.filter(profile_person_type__department_id__in=get_department(request.user.username))            
+    forensicscans = ForensicScan.objects.filter(location_objective__profile_person_type__department_id__in=get_department(request.user.username))            
     context = {
         'forensicscans': forensicscans,
         'title': title,                      
@@ -235,6 +306,93 @@ def natureofaction_delete(request,pk):
 
 ####### FIM NATURE OF ACTION ################
 
+######## CID NUMBER ##########################
+
+@login_required
+def cidnumber_create(request):      
+    id_cid_number = request.POST.get('id_cid_number',"")
+    id_anamnesis_diagnosis = request.POST.get('id_anamnesis_diagnosis',"")
+    id_cid_report = request.POST.get('id_cid_report',"")
+    id_user_created = request.POST.get('id_user_created',"")
+    id_user_updated = request.POST.get('id_user_updated',"")
+
+    report = Report.objects.get(pk=id_cid_report)
+    cid = CidNumber.objects.filter(report_id=report.id, type_cid=True).exists()
+    if cid:
+        type_cid = False
+    else:
+        type_cid = True
+    results = {}
+    if request.method == 'POST':
+        if id_cid_number != "" and id_anamnesis_diagnosis != "" and id_cid_report != "" and id_user_created != "" and id_user_updated != "":            
+            report = Report.objects.get(pk=int(id_cid_report))
+            user = User.objects.get(pk=int(id_user_created))                                           
+            cid = CidNumber(category=id_cid_number, description=id_anamnesis_diagnosis, report=report, type_cid = type_cid, user_created=user, user_updated=user)
+            cid.save()          
+            results['success'] = "Os dados foram inseridos com sucesso."
+            return JsonResponse(results,status=200)
+
+        else:
+            results['error'] = "Informações incompletas. Todos os campos devem ser preenchidos."
+            return JsonResponse(results,status=400)
+
+    else:        
+        results['error'] = "Requisição incorreta. Procure o administrador."
+        return JsonResponse(results,status=400)
+
+@login_required
+def cidnumbers_list(request):
+    template_name = "cidnumber/list.html"
+    title = "Tipos de Status de Laudos"
+    cidnumbers = CidNumber.objects.all()    
+    context = {
+        'cidnumbers': cidnumbers,
+        'title': title      
+    }
+    return render(request,template_name,context)
+
+@login_required
+def cidnumber_detail(request, pk=None, *args, **kwargs):
+    template_name = "cidnumber/detail.html"
+    cidnumber = get_object_or_404(CidNumber,pk=pk)
+    context = {
+        'cidnumber': cidnumber
+    }
+    return render(request, template_name, context)
+
+@login_required
+def cidnumber_edit(request, pk):    
+    template_name='cidnumber/form.html'
+    data = {} 
+    cidnumber = get_object_or_404(CidNumber, pk=pk)        
+    user_created = cidnumber.user_created # Esta linha faz com que o user_created não seja modificado, para mostrar quem criou esta pessoa
+    form = CidNumberForm(request.POST or None, instance=cidnumber)
+    if form.is_valid():        
+        cidnumber = form.save(commit=False)
+        cidnumber.user_created = user_created               
+        cidnumber.save()
+        return redirect('url_cidnumber_detail',pk=pk)    
+    
+    data['form'] = form
+    return render(request,template_name,data)
+
+@login_required
+def cidnumber_delete(request,pk):
+    cidnumber = get_object_or_404(CidNumber, pk=pk)  
+    report_id = cidnumber.report_id  
+    if request.method == 'GET':        
+        cidnumber.delete()
+        request.session['tabs'] = 'diagnostico-tab'
+        messages.success(request, 'Ação concluída com sucesso.')
+        return redirect('url_report_edit', report_id)
+    else:        
+        request.session['tabs'] = 'diagnostico-tab'
+        messages.warning(request, 'Ação não concluída.')
+        return redirect('url_report_edit', report_id)
+
+######## FIM CID NUMBER ######################
+
+
 ####### REPORT STATUS #######################
 
 @login_required
@@ -304,6 +462,76 @@ def reportstatus_delete(request,pk):
 
 ###### FIM REPORT STATUS ###################
 
+###### DISCUSSION CONCLUSION ##############
+
+@login_required
+def discussionconclusion_create(request):
+    template_name = 'discussionconclusion/form.html'
+    data = {}
+    data['title'] = "Cadastro dos Modelos de Discussão e Conclusão"        
+    if request.method == 'POST':        
+        form = DiscussionConclusionForm(request.POST)
+        if form.is_valid():
+            form.save()                        
+            return redirect('url_discussionconclusions_list')
+        else:
+            print("algo não está valido.")
+    else:
+        form = DiscussionConclusionForm()             
+    
+    data['form'] = form
+    return render(request,template_name,data)
+
+@login_required
+def discussionconclusions_list(request):
+    template_name = "discussionconclusion/list.html"
+    title = "Modelos de Discussão e Conclusão"
+    discussionconclusions = DiscussionConclusion.objects.all()    
+    context = {
+        'discussionconclusions': discussionconclusions,
+        'title': title      
+    }
+    return render(request,template_name,context)
+
+@login_required
+def discussionconclusion_detail(request, pk=None, *args, **kwargs):
+    template_name = "discussionconclusion/detail.html"
+    discussionconclusion = get_object_or_404(DiscussionConclusion,pk=pk)
+    context = {
+        'discussionconclusion': discussionconclusion
+    }
+    return render(request, template_name, context)
+
+@login_required
+def discussionconclusion_edit(request, pk):    
+    template_name='discussionconclusion/form.html'
+    data = {} 
+    discussionconclusion = get_object_or_404(DiscussionConclusion, pk=pk)        
+    user_created = discussionconclusion.user_created # Esta linha faz com que o user_created não seja modificado, para mostrar quem criou esta pessoa
+    form = DiscussionConclusionForm(request.POST or None, instance=discussionconclusion)
+    if form.is_valid():        
+        discussionconclusion = form.save(commit=False)
+        discussionconclusion.user_created = user_created               
+        discussionconclusion.save()
+        return redirect('url_discussionconclusion_detail',pk=pk)    
+    
+    data['form'] = form
+    return render(request,template_name,data)
+
+@login_required
+def discussionconclusion_delete(request,pk):
+    discussionconclusion = get_object_or_404(DiscussionConclusion, pk=pk)    
+    if request.method == 'GET':        
+        discussionconclusion.delete()
+        messages.success(request, 'Ação concluída com sucesso.')
+        return redirect('url_discussionconclusion_list')
+    else:
+        messages.warning(request, 'Ação não concluída.')
+        return redirect('url_discussionconclusion_list')
+
+
+###### FIM DISCUSSION CONCLUSION ##########
+
 ###### REPORT #############################
 
 @login_required
@@ -372,8 +600,7 @@ def get_report_tab(tab):
 @login_required
 def report_edit(request, pk):   
     #Isso é um marcador das TABS. Quando o perito salvar, vai redirecionar para a aba/tab que ele estava usando    
-    if request.method == "POST":
-        print("entrei na função",request.POST)
+    if request.method == "POST":        
         tabs = get_report_tab(request.POST["value_tab"])
         if not tabs.isdigit():
             request.session['tabs'] = tabs                           
@@ -383,6 +610,7 @@ def report_edit(request, pk):
     report = get_object_or_404(Report, pk=pk)
     type_items = TypeItem.objects.all()# Isso é para o Mostrar os quesitos possíveis    
     medicaldocuments = MedicalDocument.objects.filter(report_id=report.id)# Isso é para o Mostrar os documentos possíveis    
+    cidnumbers = CidNumber.objects.filter(report_id=report.id)# Isso é para o Mostrar os cid deste laudo
     data = {
         'title': title,
         'edit': 'edit',# Marcador para saber que estou editando
@@ -390,6 +618,7 @@ def report_edit(request, pk):
         'report': report,  
         'type_items': type_items,
         'medicaldocuments': medicaldocuments,
+        'cidnumbers': cidnumbers,
     } 
     user_created = report.user_created # Esta linha faz com que o user_created não seja modificado, para mostrar quem criou esta pessoa
     form = ReportForm(request.POST or None, instance=report, department_id=get_department(request.user.username), user_id=request.user.id)
@@ -426,7 +655,7 @@ def get_report_forensic(request):
         print("Valor do forensic",forensicscan)
         marc = 1
         context['forensicscan'] = forensicscan 
-        context['doctor'] = Doctor.objects.get(profile_person_type_id=forensicscan.profile_person_type)
+        context['doctor'] = Doctor.objects.get(profile_person_type_id=forensicscan.location_objective.profile_person_type)
     
     context['marc'] = marc
     return render(request, 'report/_forensic.html',context)
@@ -462,6 +691,7 @@ def forensic_copy_report(request):
     return render(request, 'report/_forensic_copy_report.html',context)
 
 #Função que valida se o Laudo pode ser aprovado
+@login_required
 def valid_report_item(request,pk):    
     
     report = Report.objects.get(pk=pk)    
@@ -540,6 +770,7 @@ def valid_report_item(request,pk):
     return redirect('url_reports_list')
 
 #Função que cancela o laudo
+@login_required
 def cancelar_report(request,pk):
     report = Report.objects.get(pk=pk)
     cancelar = ReportStatus.objects.get(id=3)# Esse é o id para cancelar
@@ -549,6 +780,7 @@ def cancelar_report(request,pk):
     
     return redirect('url_reports_list')
 
+@login_required
 def print_docx(request,pk):
     context = print_report(pk)
     #Faz parte do modulo docxtpl    
@@ -634,6 +866,7 @@ def print_docx(request,pk):
     response['Content-Disposition'] = content        
     return response
 
+@login_required
 def print_pdf(request,pk):
     context = print_report(pk)
 
@@ -713,6 +946,7 @@ def print_report(pk):
     return context
 
 #Lista os Laudo aprovados e cancelados
+@login_required
 def search_reports(request,status):
     template_name = 'report/searchs_report.html'
     title = "Laudos aprovados e cancelados"
@@ -747,8 +981,9 @@ def medicaldocument_create(request):
         if int(tipo) == 1:
             if tipo != "" and dt != "" and medico != "" and cid != "" and user_created != "" and user_updated != "" and report_id != "":            
                 report = Report.objects.get(pk=int(report_id))
-                user = User.objects.get(pk=int(user_created))                               
-                document = "-Atestado emitido em {} pelo médico(a) psiquiatra {},  com diagnóstico de {}.".format(dt.strip(),medico.strip(),cid.strip())                
+                user = User.objects.get(pk=int(user_created)) 
+                cid_completo = Cid10.objects.get(category=cid)                              
+                document = "-Atestado emitido em {} pelo médico(a) psiquiatra {},  com diagnóstico de Cid10 {} - {}.".format(dt.strip(),medico.strip(),cid.strip(), cid_completo.description.strip())                
                 md = MedicalDocument(report=report, document=document, user_created=user, user_updated=user)
                 md.save()          
                 results['success'] = "Os dados foram inseridos com sucesso."

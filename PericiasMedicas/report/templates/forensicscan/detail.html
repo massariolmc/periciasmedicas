@@ -29,7 +29,7 @@
                 <tbody>
                     <tr>
                         <th class="text-right">Perito</th>
-                        <td>{{ forensicscan.profile_person_type }}</td>
+                        <td>{{ forensicscan.location_objective }}</td>
                     </tr> 
                     <tr>
                         <th class="text-right">Natureza da Ação</th>
@@ -40,13 +40,9 @@
                         <td>{{ forensicscan.version }}</td>
                     </tr> 
                     <tr>
-                        <th class="text-right">Circunstância da Perícia</th>
-                        <td>{{ forensicscan.forensicscan }}</td>
-                    </tr>                   
-                    <tr>
-                        <th class="text-right">Objetivo</th>
-                        <td>{{ forensicscan.goal }}</td>
-                    </tr> 
+                        <th class="text-right">Anamnese: Diagnóstico</th>
+                        <td class="text-justify">{{ forensicscan.anamnesis_diagnosis|safe }}</td>
+                    </tr>                                       
                     <tr>
                         <th class="text-right">Anamnese: História Pregressa da Doença Atual </th>
                         <td class="text-justify">{{ forensicscan.anamnesis_history|safe }}</td>
@@ -66,11 +62,7 @@
                      <tr>
                         <th class="text-right">Anamnese: Exame do Estado Mental Atual</th>
                         <td class="text-justify">{{ forensicscan.anamnesis_mental_exam|safe }}</td>
-                    </tr>                    
-                    <tr>
-                        <th class="text-right">Anamnese: Diagnóstico</th>
-                        <td class="text-justify">{{ forensicscan.anamnesis_diagnosis|safe }}</td>
-                    </tr>
+                    </tr>                  
                     <tr>
                         <th class="text-right">Discussão</th>
                         <td class="text-justify">{{ forensicscan.discussion|safe }}</td>

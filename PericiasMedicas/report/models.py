@@ -22,26 +22,10 @@ class ReportStatus(models.Model):
 
     def __str__(self):
         return self.status
-
-
-class CidNumber(models.Model):
-    codigo = models.CharField("Código", max_length=10,blank=False)
-    name = models.CharField("Nome", max_length=100, blank=False)
-    created_at = models.DateTimeField('Criado em',auto_now_add=True)
-    updated_at = models.DateTimeField('Atualizado em', auto_now=True) 
-    user_created = models.ForeignKey(User, related_name="cidnumbers_user_created_id", verbose_name="Criado por", on_delete=models.PROTECT)
-    user_updated = models.ForeignKey(User, related_name="cidnumbers_user_updated_id", verbose_name="Atualizado por", on_delete=models.PROTECT)
-    class Meta:
-        verbose_name = "CidNumber"
-        verbose_name_plural = "CidNumbers"
-        ordering = ["name"]
-
-    def __str__(self):
-        return self.codigo
-    
+  
 
 class AuthorityRequesting(models.Model):
-    name = models.CharField("Nome", max_length=100, blank=False)
+    name = models.CharField("Forma de tratamento da Autoridade", max_length=100, blank=False)
     abbreviation = models.CharField("OBS", max_length=100, blank=True)
     profile_person_type = models.ForeignKey(ProfilePersonType, verbose_name=("Perito"), default="7", on_delete=models.PROTECT)    
     created_at = models.DateTimeField('Criado em',auto_now_add=True)
@@ -72,21 +56,36 @@ class NatureOfAction(models.Model):
     def __str__(self):
         return self.type_action
 
+class LocationObjective(models.Model):
+    forensic_scan = RichTextField("Circunstância da Perícia", blank=False, null=False, default="")
+    goal = RichTextField("Objetivo", blank=False, null=False)    
+    profile_person_type = models.ForeignKey(ProfilePersonType, verbose_name=("Perito"), on_delete=models.PROTECT)
+    version = models.CharField("Versão", max_length=100, blank=False, null=False, default="")
+    created_at = models.DateTimeField('Criado em',auto_now_add=True)
+    updated_at = models.DateTimeField('Atualizado em', auto_now=True) 
+    user_created = models.ForeignKey(User, related_name="locationobjective_user_created_id", verbose_name="Criado por", on_delete=models.PROTECT)
+    user_updated = models.ForeignKey(User, related_name="locationobjective_user_updated_id", verbose_name="Atualizado por", on_delete=models.PROTECT)
+    class Meta:
+        verbose_name = "LocationObjective"
+        verbose_name_plural = "LocationObjectives" 
+
+    def __str__(self):
+        return "Modelo - Local e Objetivos - Versão: {} - Perito: {}".format(self.version,self.profile_person_type)
+
 class ForensicScan(models.Model):
-    forensicscan = models.TextField("Circunstância da Perícia", blank=False, null=False)
-    goal = models.TextField("Objetivo", blank=False, null=False, default="")    
-    profile_person_type = models.ForeignKey(ProfilePersonType, verbose_name=("Perito"), default=1, on_delete=models.PROTECT)    
+    
+    location_objective = models.ForeignKey(LocationObjective, verbose_name=("Circunstacia da Perícia"), on_delete=models.PROTECT, default=1)
     nature_of_action = models.ForeignKey(NatureOfAction, verbose_name=("Natureza da Ação"), on_delete=models.PROTECT)
-    version = models.CharField(("Versão"), max_length=100, default="", blank=False, null=False)
-    anamnesis_history = models.TextField("Anamnese: História Pregressa da Doença Atual",blank=True)
-    anamnesis_personal_background = models.TextField("Anamnese: Antecedentes Patológicos Pessoais",blank=True)
-    anamnesis_family_background = models.TextField("Anamnese: Antecedentes Patológicos Familiares",blank=True)
-    anamnesis_general_exam = models.TextField("Anamnese: Exame Físico Geral",blank=True)
-    anamnesis_mental_exam = models.TextField("Anamnese: Exame do Estado Mental",blank=True)    
+    version = models.CharField(("Versão"), max_length=100, blank=False, null=False)
+    anamnesis_history = RichTextField("Anamnese: História Pregressa da Doença Atual",blank=True)
+    anamnesis_personal_background = RichTextField("Anamnese: Antecedentes Patológicos Pessoais",blank=True)
+    anamnesis_family_background = RichTextField("Anamnese: Antecedentes Patológicos Familiares",blank=True)
+    anamnesis_general_exam = RichTextField("Anamnese: Exame Físico Geral",blank=True)
+    anamnesis_mental_exam = RichTextField("Anamnese: Exame do Estado Mental",blank=True)    
     anamnesis_diagnosis = models.TextField("Anamnese: Diagnóstico",blank=True)
     cid_number = models.CharField(("Informe o CID"), max_length=100, blank=True)    
-    discussion = models.TextField("Discussão",blank=True)
-    conclusion = models.TextField("Conclusão",blank=True)
+    discussion = RichTextField("Discussão",blank=True)
+    conclusion = RichTextField("Conclusão",blank=True)
     created_at = models.DateTimeField('Criado em',auto_now_add=True)
     updated_at = models.DateTimeField('Atualizado em', auto_now=True) 
     user_created = models.ForeignKey(User, related_name="forensicscans_user_created_id", verbose_name="Criado por", on_delete=models.PROTECT)
@@ -96,8 +95,29 @@ class ForensicScan(models.Model):
         verbose_name_plural = "ForensicScans" 
 
     def __str__(self):
-        return self.version     
+        return "Modelo: Circunstância da Perícia - Versão: {}".format(self.version)
 
+class DiscussionConclusion(models.Model):
+
+    INABILITY_PROFESSIONAL_CHOICES = [("uniprofissional","uniprofissional"),("multiprofissional", "multiprofissional"), ("omniprofissional", "omniprofissional")]    
+    INABILITY_TEMPORAL_CHOICES = [("temporária","temporária"),("permanente", "permanente")]    
+
+    cid_number = models.CharField(("Informe o CID"), max_length=7, blank=False, null=False)    
+    discussion = RichTextField("Discussão",blank=True)
+    conclusion = RichTextField("Conclusão",blank=True)
+    inability_professional = models.CharField("Incapacidade Profissional", choices=INABILITY_PROFESSIONAL_CHOICES, max_length=100, blank=False, null=False)
+    inability_temporal = models.CharField("Duração da Incapacidade", max_length=100, choices=INABILITY_TEMPORAL_CHOICES, blank=False, null=False)
+    version = models.CharField("Versão", max_length=100, blank=False, null=False)
+    created_at = models.DateTimeField('Criado em',auto_now_add=True)
+    updated_at = models.DateTimeField('Atualizado em', auto_now=True) 
+    user_created = models.ForeignKey(User, related_name="discussionconclusion_user_created_id", verbose_name="Criado por", on_delete=models.PROTECT)
+    user_updated = models.ForeignKey(User, related_name="discussionconclusion_user_updated_id", verbose_name="Atualizado por", on_delete=models.PROTECT)
+    class Meta:
+        verbose_name = "DiscussionConclusion"
+        verbose_name_plural = "DiscussionConclusions" 
+
+    def __str__(self):
+        return "Modelo - Conclusão e Discussão - Cid: {} - Incapacidade Profissional: {} - Incapacidade Temporária: {}".format(self.cid_number,self.inability_professional,self.inability_temporal)
 
 
 # A partir daqui tem que criar o report primeiro
@@ -110,15 +130,14 @@ class Report(models.Model):
     date_report = models.DateField(("Data da Perícia"), auto_now=False, auto_now_add=False, blank=False)
     profile_person_type = models.ForeignKey(ProfilePersonType, verbose_name=("Perito"), on_delete=models.PROTECT)
     forensic_scan = models.ForeignKey(ForensicScan, blank=True, null=True, verbose_name=("Qual modelo?"), on_delete=models.PROTECT)    
-    anamnesis_history = models.TextField("Anamnese: História Pregressa da Doença Atual",blank=True)
-    anamnesis_personal_background = models.TextField("Anamnese: Antecedentes Patológicos Pessoais",blank=True)
-    anamnesis_family_background = models.TextField("Anamnese: Antecedentes Patológicos Familiares",blank=True)
-    anamnesis_general_exam = models.TextField("Anamnese: Exame Físico Geral",blank=True)
-    anamnesis_mental_exam = models.TextField("Anamnese: Exame do Estado Mental",blank=True)    
-    anamnesis_diagnosis =  models.TextField("Anamnese: Diagnóstico",blank=True)        
-    cid_number = models.CharField(("Informe o CID"), max_length=100, blank=True)    
-    discussion = models.TextField("Discussão",blank=True)    
-    conclusion = models.TextField("Conclusão",blank=True)
+    anamnesis_history = RichTextField("Anamnese: História Pregressa da Doença Atual",blank=True)
+    anamnesis_personal_background = RichTextField("Anamnese: Antecedentes Patológicos Pessoais",blank=True)
+    anamnesis_family_background = RichTextField("Anamnese: Antecedentes Patológicos Familiares",blank=True)
+    anamnesis_general_exam = RichTextField("Anamnese: Exame Físico Geral",blank=True)
+    anamnesis_mental_exam = RichTextField("Anamnese: Exame do Estado Mental",blank=True)    
+    anamnesis_diagnosis =  models.TextField("Anamnese: Diagnóstico",blank=True)            
+    discussion = RichTextField("Discussão",blank=True)    
+    conclusion = RichTextField("Conclusão",blank=True)
     report_status = models.ForeignKey(ReportStatus, verbose_name=("Status"), on_delete=models.PROTECT)
     obs = models.TextField(("Observação"), blank=True)
     created_at = models.DateTimeField('Criado em',auto_now_add=True)
@@ -134,6 +153,24 @@ class Report(models.Model):
         patient = Patients.objects.get(pk=self.autor.id)        
         var = "Periciando(a): {} - Processo: {}".format(patient.name,self.process_number)
         return var
+
+
+class CidNumber(models.Model):
+    category = models.CharField("Categoria", max_length=7,blank=False, null=False)    
+    description = models.TextField("Descrição", blank=False, null=False)
+    report = models.ForeignKey(Report, verbose_name=("Laudo"), on_delete=models.CASCADE, blank=False, null=False)
+    type_cid = models.BooleanField("Informe o CID primário", blank=False, default=False)
+    created_at = models.DateTimeField('Criado em',auto_now_add=True)
+    updated_at = models.DateTimeField('Atualizado em', auto_now=True) 
+    user_created = models.ForeignKey(User, related_name="cidnumbers_user_created_id", verbose_name="Criado por", on_delete=models.PROTECT)
+    user_updated = models.ForeignKey(User, related_name="cidnumbers_user_updated_id", verbose_name="Atualizado por", on_delete=models.PROTECT)
+    class Meta:
+        verbose_name = "CidNumber"
+        verbose_name_plural = "CidNumbers"
+        ordering = ["-type_cid","category"]
+
+    def __str__(self):
+        return "Categoria: {} / Descrição: {}".format(self.category, self.description)
 
 class MedicalDocument(models.Model):
     document = models.TextField("Documentos", blank=True)
@@ -164,8 +201,10 @@ class TypeItemByNatureOfAction(models.Model):
     type_item = models.ForeignKey(TypeItem, verbose_name=("Tipo do Quesito"), on_delete=models.PROTECT)
     version = models.TextField(("Versão"), blank=True)
     nature_of_action = models.ForeignKey(NatureOfAction, verbose_name=("Natureza da Ação"), on_delete=models.PROTECT)
-    question = models.TextField("Pergunta?", blank=True)    
+    question = RichTextField("Pergunta?", blank=True)
+    answer = RichTextField("Resposta", blank=True)   
     company = models.ForeignKey(Company, verbose_name=("Empresa"), default=13,on_delete=models.PROTECT)
+    cid_number = models.CharField("CID-10", max_length=100, blank=False, null=False)
     created_at = models.DateTimeField('Criado em',auto_now_add=True)
     updated_at = models.DateTimeField('Atualizado em', auto_now=True) 
     user_created = models.ForeignKey(User, related_name="typeitembynatureofaction_user_created_id", verbose_name="Criado por", on_delete=models.PROTECT)
@@ -178,13 +217,12 @@ class TypeItemByNatureOfAction(models.Model):
     def __str__(self):
         return self.version
 
-
 class Item2(models.Model):
     #type_item_by_nature_of_action = models.ForeignKey(TypeItemByNatureOfAction, verbose_name=("Tipo do Quesito"), on_delete=models.PROTECT)
     type_item = models.ForeignKey(TypeItem ,verbose_name=("Tipo do Quesito"), on_delete=models.CASCADE)
     report = models.ForeignKey(Report, verbose_name=("Laudo"), on_delete=models.CASCADE)
-    question = models.TextField("Pergunta?", blank=True) 
-    answer = models.TextField("Resposta", blank=True)
+    question = RichTextField("Pergunta?", blank=True) 
+    answer = RichTextField("Resposta", blank=True)
     answer_status = models.BooleanField("Finalizar", blank=True)    
     created_at = models.DateTimeField('Criado em',auto_now_add=True)
     updated_at = models.DateTimeField('Atualizado em', auto_now=True) 

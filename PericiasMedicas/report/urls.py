@@ -9,6 +9,13 @@ urlpatterns = [
     path('authorityrequesting/<int:pk>/edit', views.authorityrequesting_edit, name='url_authorityrequesting_edit'),
     path('authorityrequesting/<int:pk>/delete', views.authorityrequesting_delete, name='url_authorityrequesting_delete'),
 
+    #locationobjective
+    path('locationobjectives/', views.locationobjectives_list, name='url_locationobjectives_list'),
+    path('locationobjective-create/', views.locationobjective_create, name='url_locationobjective_create'),        
+    path('locationobjective/<int:pk>', views.locationobjective_detail, name='url_locationobjective_detail'),
+    path('locationobjective/<int:pk>/edit', views.locationobjective_edit, name='url_locationobjective_edit'),
+    path('locationobjective/<int:pk>/delete', views.locationobjective_delete, name='url_locationobjective_delete'),
+
     #ForensicScan
     path('forensicscans/', views.forensicscans_list, name='url_forensicscans_list'),
     path('forensicscan-create/', views.forensicscan_create, name='url_forensicscan_create'),        
@@ -29,6 +36,20 @@ urlpatterns = [
     path('reportstatus/<int:pk>', views.reportstatus_detail, name='url_reportstatus_detail'),
     path('reportstatus/<int:pk>/edit', views.reportstatus_edit, name='url_reportstatus_edit'),
     path('reportstatus/<int:pk>/delete', views.reportstatus_delete, name='url_reportstatus_delete'),
+
+    #DiscussionConclusion
+    path('discussionconclusions/', views.discussionconclusions_list, name='url_discussionconclusions_list'),
+    path('discussionconclusion-create/', views.discussionconclusion_create, name='url_discussionconclusion_create'),        
+    path('discussionconclusion/<int:pk>', views.discussionconclusion_detail, name='url_discussionconclusion_detail'),
+    path('discussionconclusion/<int:pk>/edit', views.discussionconclusion_edit, name='url_discussionconclusion_edit'),
+    path('discussionconclusion/<int:pk>/delete', views.discussionconclusion_delete, name='url_discussionconclusion_delete'),
+
+    #CidNumber
+    path('cidnumbers/<int:report_id>', views.cidnumbers_list, name='url_cidnumbers_list'),
+    path('cidnumber-create/', views.cidnumber_create, name='url_cidnumber_create'),        
+    path('cidnumber/<int:pk>', views.cidnumber_detail, name='url_cidnumber_detail'),
+    path('cidnumber/<int:pk>/edit', views.cidnumber_edit, name='url_cidnumber_edit'),
+    path('cidnumber/<int:pk>/delete', views.cidnumber_delete, name='url_cidnumber_delete'),
 
     #Report
     path('reports/', views.reports_list, name='url_reports_list'),

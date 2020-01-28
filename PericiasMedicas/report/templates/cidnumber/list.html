@@ -19,12 +19,10 @@
                 </div>
                 <div class="col-sm-6">
                   <span class="float-right">
-                    {% if user.is_superuser %}
-                    <a href="{% url 'url_typeitem_create' %}">
+                    <a href="{% url 'url_cidnumber_create' %}">
                       <button type="button" class="btn btn-success">Adicionar
                       </button>
                     </a>
-                    {% endif %}
                   </span>
               </div>
             </div>
@@ -34,28 +32,26 @@
               <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                   <thead>
-                    <tr>                      
-                      <th class="text-sm-center">Nome</th>                                                                                           
-                      <th class="text-sm-center">Opções</th>                                                                                  
+                    <tr>
+                      <th class="text-sm-center">Category</th>                                                                     
+                      <th class="text-sm-center">Descrição</th>                                                            
                     </tr>
                   </thead>
                   <tfoot>
                     <tr>    
-                      <th class="text-sm-center">Nome</th>                                                                                           
-                      <th class="text-sm-center">Opções</th>                      
+                      <th class="text-sm-center">Category</th>                      
+                      <th class="text-sm-center">Descrição</th>                    
                     </tr>
                   </tfoot>
                   <tbody>
-                    {% for typeitem in typeitems %}
-                    <tr>                      
-                      <td>{{ typeitem.name }}</td>                      
+                    {% for cidnumber in cidnumbers %}
+                    <tr>
+                      <td>{{ cidnumber.category }}</td>
+                      <td>{{ cidnumber.description }}</td>                                                           
                       <td class="text-center">
-                        <a href="{% url 'url_typeitembynatureofactions_list' %}">  <i class="fa fa-list" aria-hidden="true"></i> </a>
-                        {% if user.is_superuser %}
-                          <a href="{% url 'url_typeitem_detail' typeitem.id %}">  <i class="fa fa-list" aria-hidden="true"></i> </a>
-                          <a href="{% url 'url_typeitem_edit' typeitem.id %}">    <i class="fa fa-edit" aria-hidden="true"></i> </a>
-                          <a href="{% url 'url_typeitem_delete' typeitem.id %}" onclick="return confirm('Excluir?')"><i class="fa fa-times" aria-hidden="true"></i></a>
-                        {% endif %}
+                        <a href="{% url 'url_cidnumber_detail' cidnumber.id %}">  <i class="fa fa-list" aria-hidden="true"></i> </a>
+                        <a href="{% url 'url_cidnumber_edit' cidnumber.id %}">    <i class="fa fa-edit" aria-hidden="true"></i> </a>
+                        <a href="{% url 'url_cidnumber_delete' cidnumber.id %}" onclick="return confirm('Excluir?')"><i class="fa fa-times" aria-hidden="true"></i></a>
                       </td>
                     </tr>                 
                     {% endfor %}   

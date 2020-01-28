@@ -9,14 +9,14 @@
     <div class="card-body">
     <div class="row">
         <div class="col-sm-4">
-            <a href="{% url 'url_typeitembynatureofactions_list'%}" class="btn btn-info float-left">Listar todos</a>
+            <a href="{% url 'url_discussionconclusions_list'%}" class="btn btn-info float-left">Listar todos</a>
         </div>
         <div class="col-sm-4">
             <h3><strong>  </strong></h3>
         </div>
         <div class="col-sm-4">
             <span class="float-right">
-                <a href="{% url 'url_typeitembynatureofaction_edit' typeitembynatureofaction.id %}">
+                <a href="{% url 'url_discussionconclusion_edit' discussionconclusion.id %}">
                     <button type="button" class="btn btn-success">Editar
                     </button>
                 </a>
@@ -28,32 +28,36 @@
             <table class="table table-user-information">
                 <tbody>
                     <tr>
-                        <th class="text-right">Natureza da Ação</th>
-                        <td>{{ typeitembynatureofaction.nature_of_action }}</td>
+                        <th class="text-right">CID</th>
+                        <td>{{ discussionconclusion.cid_number }}</td>
                     </tr>
                     <tr>
-                        <th class="text-right">Quesito/Autoridade</th>
-                        <td>{{ typeitembynatureofaction.type_item }}</td>
+                        <th class="text-right">Incapacidade Profissional</th>
+                        <td>{{ discussionconclusion.inability_professional }}</td>
                     </tr>
                     <tr>
-                        <th class="text-right">Cid</th>
-                        <td>{{ typeitembynatureofaction.cid_number }}</td>
+                        <th class="text-right">Duração da Incapacidade</th>
+                        <td>{{ discussionconclusion.inability_temporal }}</td>
+                    </tr>                    
+                    <tr>
+                        <th class="text-right">Discussão</th>
+                        <td>{{ discussionconclusion.discussion|safe }}</td>
                     </tr>
+                    <tr>
+                        <th class="text-right">Conclusão</th>
+                        <td>{{ discussionconclusion.conclusion|safe }}</td>
+                    </tr>      
                     <tr>
                         <th class="text-right">Versão</th>
-                        <td>{{ typeitembynatureofaction.version }}</td>
-                    </tr> 
-                    <tr>
-                        <th class="text-right">Quesito</th>
-                        <td>{{ typeitembynatureofaction.question|safe }}</td>
-                    </tr>                    
+                        <td>{{ discussionconclusion.version }}</td>
+                    </tr>             
                     <tr>                    
                         <th class="text-right">Criado por:</th>
-                        <td>{{ typeitembynatureofaction.user_created }} - {{ typeitembynatureofaction.created_at }}</td>
+                        <td>{{ discussionconclusion.user_created }} - {{ discussionconclusion.created_at }}</td>
                     </tr>                    
                     <tr>
                         <th class="text-right">Última Atualização</th>
-                        <td>{{ typeitembynatureofaction.user_updated }} - {{ typeitembynatureofaction.updated_at }}</td>
+                        <td>{{ discussionconclusion.user_updated }} - {{ discussionconclusion.updated_at }}</td>
                     </tr>   
                                                         
                 </tbody>

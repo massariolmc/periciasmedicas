@@ -562,13 +562,16 @@ def cid10_autocomplete(request):
 
 def cid10_ajax(request):
     cid = request.GET.get('ff','')
+    results = {}
     if Cid10.objects.filter(category=cid).exists():
         cid = Cid10.objects.get(category=cid)
         category = cid.category
-        description = cid.description   
+        description = cid.description          
     else:
         category = ""
         description = "CID inválido."
+        # results['error'] = "Informações incompletas. Todos os campos devem ser preenchidos."  
+        # return JsonResponse(results, safe=False)      
     
     context = {'category': category, 'description': description }
     #context = {'category': cid.category, 'description': cid.description }

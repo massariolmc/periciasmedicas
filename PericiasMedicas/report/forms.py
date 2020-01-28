@@ -1,7 +1,7 @@
 from django.forms import ModelForm, TextInput, Textarea, DateInput, RadioSelect,Select, SelectDateWidget, HiddenInput, DateTimeInput, EmailInput
 from django import forms
-from PericiasMedicas.person.models import MedicalSpecialty, PersonType, Person, ProfilePersonType, Doctor, MedicalSpecialty
-from .models import AuthorityRequesting, ForensicScan, ReportStatus, Report, MedicalDocument, NatureOfAction, TypeItem, TypeItemByNatureOfAction, Item2
+from PericiasMedicas.person.models import MedicalSpecialty, PersonType, Person, ProfilePersonType, Doctor, MedicalSpecialty, Cid10
+from .models import AuthorityRequesting, LocationObjective, ForensicScan, CidNumber, ReportStatus, DiscussionConclusion, Report, MedicalDocument, NatureOfAction, TypeItem, TypeItemByNatureOfAction, Item2
 from PericiasMedicas.company.models import Department, Company
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Row, Column, Button, ButtonHolder, HTML, Hidden, Field
@@ -56,17 +56,62 @@ class AuthorityRequestingForm(ModelForm):
             ),         
         )
 
+class LocationObjectiveForm(ModelForm): 
+    
+    class Meta:
+        model = LocationObjective
+        fields = '__all__'
+        widgets = {
+            'profile_person_type': Select(attrs={'class': 'form-control'}),                        
+            'forensic_scan': Textarea(attrs={'class': 'form-control'}),
+            'goal': Textarea(attrs={'class': 'form-control'}),
+            'version': TextInput(attrs={'class': 'form-control'}),          
+            'user_created': HiddenInput(attrs={'class': 'form-control'}),
+            'user_updated': HiddenInput(attrs={'class': 'form-control'}),            
+        }  
+    
+    def __init__(self, *args, **kwargs):     
+        #Serve para pegar qual Empresa pertence os peritos                   
+        self.department_id = kwargs.get('department_id',None)                    
+        del(kwargs['department_id'])                 
+        super().__init__(*args, **kwargs)           
+        #A linha abaixo serve para sobreescrever os valores que vão aparecer no Select do profile person type    
+        self.fields['profile_person_type'].empty_label= "ESCOLHA"
+        #Neste caso, preciso no seletec que apareça apenas os peritos da Empresa do usuário que está logado        
+        self.fields['profile_person_type'].queryset = ProfilePersonType.objects.filter(department_id__in=self.department_id, person_type=3)
+        self.helper = FormHelper()       
+        self.helper.layout = Layout(
+            Hidden('user_created', '{{ user.id }}'),
+            Hidden('user_updated', '{{ user.id }}'),                      
+            'profile_person_type',  
+            'version',
+            'forensic_scan', 
+            'goal',                                                                                        
+            HTML('''               
+                 <div class="row">    
+                    <div class="col-sm-6">
+                        <span class="float-left">
+                            <button type="submit" class="btn btn-primary">Salvar</button>  	                              
+                        </span>
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="float-right">
+                            <a href="{% url 'url_locationobjectives_list' %}" class="btn btn-warning">Voltar</a>
+                        </span>  
+                    </div>
+                </div>'''
+            ),         
+        )                
+              
 class ForensicScanForm(ModelForm): 
     
     class Meta:
         model = ForensicScan
         fields = '__all__'
         widgets = {
-            'profile_person_type': Select(attrs={'class': 'form-control'}),
+            'location_objective': Select(attrs={'class': 'form-control'}),
             'nature_of_action': Select(attrs={'class': 'form-control'}),
-            'version': TextInput(attrs={'class': 'form-control'}),
-            'forensicscan': Textarea(attrs={'class': 'form-control'}),
-            'goal': Textarea(attrs={'class': 'form-control'}),
+            'version': TextInput(attrs={'class': 'form-control'}),            
             'anamnesis_history': Textarea(attrs={'class': 'form-control'}),
             'anamnesis_personal_background': Textarea(attrs={'class': 'form-control'}),
             'anamnesis_family_background': Textarea(attrs={'class': 'form-control'}),
@@ -86,12 +131,12 @@ class ForensicScanForm(ModelForm):
         del(kwargs['department_id'])                 
         super().__init__(*args, **kwargs)           
         #A linha abaixo serve para sobreescrever os valores que vão aparecer no Select do profile person type    
-        self.fields['profile_person_type'].empty_label= "ESCOLHA"
+        self.fields['location_objective'].empty_label= "ESCOLHA"
         #Neste caso, preciso no seletec que apareça apenas os peritos da Empresa do usuário que está logado
-        #self.fields['profile_person_type'].queryset = ProfilePersonType.objects.filter(department__company_id=self.company_id, person_type=3)        
-        self.fields['profile_person_type'].queryset = ProfilePersonType.objects.filter(department_id__in=self.department_id, person_type=3)                
+        self.fields['location_objective'].queryset = LocationObjective.objects.filter(profile_person_type__department__id__in=self.department_id, profile_person_type__person_type=3)        
+        #self.fields['profile_person_type'].queryset = ProfilePersonType.objects.filter(department_id__in=self.department_id, person_type=3)                
         self.fields['nature_of_action'].empty_label= "ESCOLHA"      
-        
+
 class ReportStatusForm(ModelForm):    
     
     class Meta:
@@ -128,13 +173,80 @@ class ReportStatusForm(ModelForm):
             ),         
         )
 
+class DiscussionConclusionForm(ModelForm):    
+    cid_textarea = forms.CharField(label="CID-Descrição", max_length=200, required=False, widget=forms.Textarea(attrs={'class': 'form-control', 'readonly':'readonly'}))
+    class Meta:
+        model = DiscussionConclusion
+        fields = '__all__'
+        widgets = {
+            'cid_number': TextInput(attrs={'class': 'form-control'}),                                           
+            'discussion': Textarea(attrs={'class': 'form-control'}),                                           
+            'conclusion': Textarea(attrs={'class': 'form-control'}),                                           
+            'inability_professional': Select(attrs={'class': 'form-control'}),                                           
+            'inability_temporal': Select(attrs={'class': 'form-control'}),                                           
+            'version': TextInput(attrs={'class': 'form-control'}),                                                       
+            'user_created': HiddenInput(attrs={'class': 'form-control'}),
+            'user_updated': HiddenInput(attrs={'class': 'form-control'}),            
+        }  
+
+    def clean_cid_number(self):
+        cid_number =  self.cleaned_data['cid_number']
+        print("Cid",cid_number)
+        n = Cid10.objects.filter(category__iexact=cid_number.strip()).exists()
+        print("SQL: ",n)
+        if not n:            
+            raise ValidationError("Cid incorreto. Informe um CID válido.")
+        return cid_number# sempre retornar um dado, de preferencia o valor que estava no campo.
+
+    def __init__(self, *args, **kwargs):                        
+        super().__init__(*args, **kwargs)
+        if self.instance.pk:            
+            cid_textarea = Cid10.objects.get(category__iexact=self.instance.cid_number)              
+            self.fields['cid_textarea'].initial = cid_textarea.description
+
+        self.helper = FormHelper()       
+        self.helper.layout = Layout(
+            Hidden('user_created', '{{ user.id }}'),
+            Hidden('user_updated', '{{ user.id }}'),                                  
+            Row(
+                Column('cid_number', css_class='form-group col-md-6'),
+                Column('cid_textarea', css_class='form-group col-md-6'),                         
+                css_class='form-row'
+            ), 
+            Row(
+                Column('inability_professional', css_class='form-group col-md-4'),
+                Column('inability_temporal', css_class='form-group col-md-4'),
+                Column('version', css_class='form-group col-md-4'),                
+                css_class='form-row'
+            ),  
+            'discussion',                                                                                         
+            'conclusion',            
+            HTML('''               
+                 <div class="row">    
+                    <div class="col-sm-6">
+                        <span class="float-left">
+                            <button type="submit" class="btn btn-primary">Salvar</button>  	                              
+                        </span>
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="float-right">
+                            <a href="{% url 'url_discussionconclusions_list' %}" class="btn btn-warning">Voltar</a>
+                        </span>  
+                    </div>
+                </div>'''
+            ),         
+        )
+
+
+
 class ReportForm(ModelForm):
     #A linha abaixo serve para sobreescrever os valores que vão aparecer no Select do profile person type    
-    value_tab = forms.CharField(max_length=100, required=False)
+    value_tab = forms.CharField(max_length=100, required=False)    
         
     #O queryset do campo abaixo está sobreescrito no init. Só aparece opção para as pessoas daquele departamento que criaram um tipo de quesito por natureza de ação
     type_item_by_nature_of_action = forms.ModelChoiceField(label='Tipo de Quesito',queryset=TypeItemByNatureOfAction.objects.all(),empty_label="Escolha", required=False, widget=forms.Select(attrs={'class': 'form-control'}))    
     question = forms.CharField(label="Pergunta",widget=CKEditorWidget(),required=False)
+    cid_number = forms.CharField(label="Código CID",max_length=100, required=False, widget=forms.TextInput(attrs={'class': 'form-control cid_number'}))
     
     class Meta:
         model = Report
@@ -154,8 +266,7 @@ class ReportForm(ModelForm):
             'anamnesis_general_exam': Textarea(attrs={'class': 'form-control'}),
             'anamnesis_mental_exam': Textarea(attrs={'class': 'form-control'}),
             'anamnesis_medical_documents': Textarea(attrs={'class': 'form-control'}),
-            'anamnesis_diagnosis': Textarea(attrs={'class': 'form-control'}),             
-            'cid_number': TextInput(attrs={'class': 'form-control cid_number'}), 
+            'anamnesis_diagnosis': Textarea(attrs={'class': 'form-control'}),                         
             'discussion': Textarea(attrs={'class': 'form-control'}),
             'conclusion': Textarea(attrs={'class': 'form-control'}),                                           
             'report_status': Select(attrs={'class': 'form-control'}), 
@@ -178,10 +289,47 @@ class ReportForm(ModelForm):
         self.fields['profile_person_type'].queryset = ProfilePersonType.objects.filter(department_id__in=self.department_id, person_type=3)        
         #Neste caso, preciso dsa circunstância deste perito. Cada perito tem sua circunstância.        
         if self.instance.pk:            
-            self.fields['forensic_scan'].queryset = ForensicScan.objects.filter(profile_person_type__id=self.instance.profile_person_type.id, nature_of_action=self.instance.nature_of_action)                   
+            self.fields['forensic_scan'].queryset = ForensicScan.objects.filter(location_objective__profile_person_type__id=self.instance.profile_person_type.id, nature_of_action=self.instance.nature_of_action)                   
             #Aqui vai listar apenas quesitos que o usuário cadastrou e o tipo de natureza de ação que o Laudo possui
             self.fields['type_item_by_nature_of_action'].queryset = TypeItemByNatureOfAction.objects.filter(nature_of_action=self.instance.nature_of_action,type_item__user_created=self.user_id)
-            
+
+class CidNumberForm(ModelForm):    
+    
+    class Meta:
+        model = CidNumber
+        fields = '__all__'
+        widgets = {
+            'category': TextInput(attrs={'class': 'form-control'}),                                           
+            'description': Textarea(attrs={'class': 'form-control'}),                                           
+            'report': HiddenInput(attrs={'class': 'form-control'}),
+            'type_cid': RadioSelect(attrs={'class': 'form-control'}),
+            'user_created': HiddenInput(attrs={'class': 'form-control'}),
+            'user_updated': HiddenInput(attrs={'class': 'form-control'}),            
+        }  
+
+    def __init__(self, *args, **kwargs):                        
+        super().__init__(*args, **kwargs)        
+        self.helper = FormHelper()       
+        self.helper.layout = Layout(
+            Hidden('user_created', '{{ user.id }}'),
+            Hidden('user_updated', '{{ user.id }}'),                      
+            'category',  
+            'description',                                                                                         
+            HTML('''               
+                 <div class="row">    
+                    <div class="col-sm-6">
+                        <span class="float-left">
+                            <button type="submit" class="btn btn-primary">Salvar</button>  	                              
+                        </span>
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="float-right">
+                            <a href="{% url 'url_reportstatus_list' %}" class="btn btn-warning">Voltar</a>
+                        </span>  
+                    </div>
+                </div>'''
+            ),         
+        )
 
 class MedicalDocumentForm(ModelForm):    
     
@@ -271,6 +419,7 @@ class TypeItemForm(ModelForm):
 
 class TypeItemByNatureOfActionForm(ModelForm):    
     
+    cid_textarea = forms.CharField(label="CID-Descrição", max_length=200, required=False, widget=forms.Textarea(attrs={'class': 'form-control', 'readonly':'readonly'}))
     class Meta:
         model = TypeItemByNatureOfAction
         fields = '__all__'
@@ -278,24 +427,43 @@ class TypeItemByNatureOfActionForm(ModelForm):
             'type_item': Select(attrs={'class': 'form-control'}),                                           
             'version': TextInput(attrs={'class': 'form-control'}),
             'nature_of_action': Select(attrs={'class': 'form-control'}),
-            'question': Textarea(attrs={'class': 'form-control'}),            
+            'cid_number': TextInput(attrs={'class': 'form-control'}),
+            'question': Textarea(attrs={'class': 'form-control'}),
+            'answer': Textarea(attrs={'class': 'form-control'}),            
             'user_created': HiddenInput(attrs={'class': 'form-control'}),
             'user_updated': HiddenInput(attrs={'class': 'form-control'}),            
         }  
 
+    def clean_cid_number(self):
+        cid_number =  self.cleaned_data['cid_number']
+        print("Cid",cid_number)
+        n = Cid10.objects.filter(category__iexact=cid_number.strip()).exists()
+        print("SQL: ",n)
+        if not n:            
+            raise ValidationError("Cid incorreto. Informe um CID válido.")
+        return cid_number# sempre retornar um dado, de preferencia o valor que estava no campo.
+
     def __init__(self, *args, **kwargs):                       
         self.company = kwargs.get("company","")        
         del(kwargs["company"])         
-        super().__init__(*args, **kwargs)        
+        super().__init__(*args, **kwargs)
+        if self.instance.pk:            
+            cid_textarea = Cid10.objects.get(category__iexact=self.instance.cid_number)              
+            self.fields['cid_textarea'].initial = cid_textarea.description
+
         self.helper = FormHelper()       
         self.helper.layout = Layout(
             Hidden('user_created', '{{ user.id }}'),
             Hidden('user_updated', '{{ user.id }}'),
             Hidden('company', self.company),                         
             'type_item',
-            'nature_of_action',  
+            'nature_of_action',
+            #'cid',
+            'cid_number',
+            'cid_textarea',            
             'version',              
-            'question',                                                                                         
+            'question', 
+            'answer',                                                                                        
             HTML('''               
                  <div class="row">    
                     <div class="col-sm-6">
