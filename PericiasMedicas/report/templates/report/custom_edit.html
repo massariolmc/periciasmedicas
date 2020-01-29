@@ -115,9 +115,14 @@
                     {{ form.forensic_scan.errors }}                    
                     <label for="form.forensic_scan.label">{{ form.forensic_scan.label_tag }}</label>
                     {{ form.forensic_scan }}                                    
-                </div>                
+                </div> 
+                <div class="form-group">                  
+                    {{ form.location_objective.errors }}                    
+                    <label for="form.location_objective.label">{{ form.location_objective.label_tag }}</label>
+                    {{ form.location_objective }}                                    
+                </div>               
             </div>       
-            <div id="forensic">
+            <div id="location_objective">
             </div>
     </div>
     <!--   ANAMENESE   -->
@@ -146,8 +151,8 @@
                 <div class="col-sm-2">
                     <div class="alert alert-warning" role="alert">
                         <span class="h5"><strong>Modelo Disponível:</strong></span>
-                        <button type="button" class="btn btn-link" data-toggle="modal" data-target="#modal_discussao">
-                            {{ report.forensic_scan.version }}
+                        <button id="id_button_copy_discussion" value="{{ discon.cid_number }}" type="button" class="btn btn-link" data-toggle="modal" data-target="#modal_discussao">
+                            {{ discon }}
                         </button>
                     </div>
                     <!-- Modal -->
@@ -155,7 +160,7 @@
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">      
                             <div class="modal-body">
-                                <strong>Deseja realmento copiar as informações do modelo {{ report.forensic_scan.version }}?</strong>
+                                <strong>Deseja realmente copiar o modelo de Discussão do CID {{ discon.cid_number }}?</strong>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
@@ -188,8 +193,8 @@
                 <div class="col-sm-2">
                     <div class="alert alert-warning" role="alert">
                         <span class="h5"><strong>Modelo Disponível:</strong></span>
-                        <button type="button" class="btn btn-link" data-toggle="modal" data-target="#modal_conclusao">
-                            {{ report.forensic_scan.version }}
+                        <button id="id_button_copy_conclusion" value="{{ discon.cid_number }}" type="button" class="btn btn-link" data-toggle="modal" data-target="#modal_conclusao">
+                            {{ discon }}
                         </button>
                     </div>
                     
@@ -227,6 +232,15 @@
 
     <div class="tab-pane fade {% ifequal tabs "quesito-tab" %}show active {% endifequal %}" id="quesito" role="tabpanel" aria-labelledby="quesito-tab">
      </br>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}  
+                <li  {% if message.tags %} class="alert alert-{{message.tags}}" {% endif %}> {{ message }} 
+                {% if message.extra_tags %} {{ message.extra_tags }} {% endif %}    
+                </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
         {% include 'report/custom_edit_item2.html' %}
     </div><!-- FIM TAB PANE -->
 
@@ -236,6 +250,17 @@
                 <a class="btn btn-primary imp-tab-link" href="{% url 'url_print_pdf' report.id %}"> PDF(Navegador) </a>
                 <a class="btn btn-secondary imp-tab-link" href="{% url 'url_print_pdf' report.id %}?download=True"> PDF(Download) </a>
                 <a class="btn btn-warning imp-tab-link" href="{% url 'url_print_docx' report.id %}"> DOCX </a>            
+        </div>
+        <div class="row justify-content-center imp-tab">  
+            <div class="form-group col-md-12">
+                {{ form.impress.errors }}
+                <div class="row justify-content-center">
+                    <label for="form.impress.label"><strong>{{ form.impress.label_tag }}</strong></label>
+                </div>
+                <div class="row justify-content-center">
+                    {{ form.impress }}
+                </div>
+            </div>   
         </div>
     </div><!-- FIM TAB PANE -->
 

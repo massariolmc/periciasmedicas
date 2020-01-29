@@ -27,6 +27,16 @@
                     {{ form.nature_of_action }}
                   </div> 
                 </div>
+
+                <div class="form-row">
+                  <div class="form-group col-md-12">
+                    {{ form.profile_person_type.errors }}
+                    <div class="row justify-content-center">
+                    <label for="form.profile_person_type.label"> <strong>{{ form.profile_person_type.label_tag }}</strong></label>
+                    </div>
+                    {{ form.profile_person_type }}
+                  </div> 
+                </div>
                
 
                 <div class="form-row">
@@ -37,17 +47,6 @@
                     </div>
                     {{ form.version }}
                     </div> 
-                </div>
-                
-                
-                <div class="form-row">
-                  <div class="form-group col-md-12">
-                    {{ form.location_objective.errors }}
-                    <div class="row justify-content-center">
-                      <label for="form.location_objective.label"><strong>{{ form.location_objective.label_tag }}</strong></label>
-                    </div>
-                    {{ form.location_objective }}
-                  </div> 
                 </div>             
                 
                 <hr class="divider" />

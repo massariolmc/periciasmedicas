@@ -25,7 +25,8 @@
 
 {% block js %}
 
-<!-- Submete o formulário no EDIT para atualizar o forensic,na parte do perito no report-->
+<!-- Submete o formulário no EDIT para atualizar os dados de natureza de ação e perito, na parte do preambulo do report-->
+<!-- Com a mudança também muda a parte da tab perito, pois terá que escolher o forensic(Qual modelo de anamnese?) novamente-->
 <script>
 $(document).ready( function(){
    $("#id_nature_of_action").change(function() {                         
@@ -36,7 +37,6 @@ $(document).ready( function(){
     });
 });
 </script>
-
 
 <!-- SCRIPT QUE AO SETAR UMA TAB ELE PEGA O VALOR DAQUELA TAB PELO ID E PASSA PARA UMA VARIÁVEL. ESSA VARIAVEL É PASSADA PARA OUTRO CAMPO. -->
 <script>
@@ -49,18 +49,18 @@ $(document).ready( function(){
 });
 </script>
 
-<!-- SCRIPT QUE AO MUDAR UM SELECTBOX DA TAB PERITO, CAMPO QUAL MODELO?, ELE FAZ UMA REQUISIÇÃO AJAX DE INSERE VALORES EM DETERMINADO CAMPO -->
+<!-- SCRIPT QUE AO MUDAR UM SELECTBOX DA TAB PERITO, CAMPO Local e Objetivo:, ELE FAZ UMA REQUISIÇÃO AJAX DE INSERE VALORES EM DETERMINADO CAMPO -->
 <script>
 $(document).ready( function(){
 
-    $('#id_forensic_scan').change(function(){
+    $('#id_location_objective').change(function(){
         var query = $(this).val(); 
         $.ajax({
         type: "GET",
-        url: "{% url 'url_report_forensic' %}",
+        url: "{% url 'url_report_location_objective' %}",
         data: {'ff': query},
         success: function(data){
-            $("#forensic").html(data);
+            $("#location_objective").html(data);
             $("#id_form_edit").submit();                
         },
         failure: function(data){               
@@ -69,20 +69,21 @@ $(document).ready( function(){
     });
 });
 </script>
-1. Quais as doenças sofridas pelo periciado?
+
 <!-- SCRIPT QUE TESTA SE UM DETERMINADO ELEMENTO ESTÁ COM UM VALOR E CASO ESTEJA FAZ UMA REQUISIÇÃO AJAX-->
+<!-- O SCRIPT ABAIXO COMPLEMENTE O SCRIPT ACIMA, POIS SE NÃO TIVER ELE, AO ENTRAR NA PÁGINA NOVAMENTE, NÃO SERÁ CARREGADO CURRICULO, CIRCUNSTANCIA E OBJETIVOS NA PARTE DA TAB PERITO-->
 <script>
 $(document).ready( function(){
     
-        var query = document.getElementById("id_forensic_scan").value;       
+        var query = document.getElementById("id_location_objective").value;       
         if (query != "" && query != null && query != undefined) {
             
             $.ajax({
                 type: "GET",
-                url: "{% url 'url_report_forensic' %}",
+                url: "{% url 'url_report_location_objective' %}",
                 data: {'ff': query},
                 success: function(data){
-                    $("#forensic").html(data);                
+                    $("#location_objective").html(data);                
                 },
                 failure: function(data){               
                 },
@@ -93,6 +94,8 @@ $(document).ready( function(){
 </script>
 
 <!-- SCRIPT AJAX PARA PEGAR O VALOR NO BANCO E SETAR NO CKEDITOR-->
+<!-- RECEBE OS VALORES PARA COLOCAR NA TAB ANAMNESE PARA APERTAR UM BOTÃO E COPIAR PARA O CKEDITOR.-->
+<!-- DEPENDE DO VALOR DO VALOR QUE ESTÁ NO FORENSIC(Qual modelo de anamnese?) DA TAB PERITO, VAI MUDAR O VALOR QUE APARECERÁ NO BOTÃO DA TAB ANAMNESE-->
 <script>
 $(document).ready( function(){
 
@@ -127,15 +130,18 @@ $("#copy_anamnesis_mental_exam").on("click", { id:"id_anamnesis_mental_exam" }, 
 
 });//FIM DO DOCUMENT READY
 </script>
-
+<!-- COPIAR VALORES PARA O CKEDITOR, DEPENDE DO VALOR QUE ESTÁ NO DIAGNÓSTICO(CID_NUMBER) DA TAB DIAGNOSTICO-->
+<!-- A DISCUSSÃO DEPENDE DO DIANOSTICO. SE MUDAR O DIAGNOSTICO, MUDA A DISCUSSÃO-->
 <script>
 $(document).ready( function(){
-   $("#copy_discussao").click(function() {                      
-    var query = $("#id_forensic_scan").val();            
+   $("#copy_discussao").click(function() {               
+    var query = $("#id_button_copy_discussion").val();
+    var perito = $("#id_profile_person_type").val();     
+    console.log("Valor da query"+query);          
         $.ajax({
             type: "GET",
             url: "{% url 'url_forensic_copy_report' %}",
-            data: {'ff': query, 'tab': 'discussao-tab'},
+            data: {'ff': query, 'tab': 'discussao-tab', 'perito': perito},
             success: function(data){
                 //console.log(data);
                 var editor = CKEDITOR.instances['id_discussion'];
@@ -152,14 +158,17 @@ $(document).ready( function(){
 });
 </script>
 
+<!-- COPIAR VALORES PARA O CKEDITOR, DEPENDE DO VALOR QUE ESTÁ NO DIAGNÓSTICO(CID_NUMBER) DA TAB DIAGNOSTICO-->
+<!-- A CONCLUSÃO DEPENDE DO DIANOSTICO. SE MUDAR O DIAGNOSTICO, MUDA A CONCLUSÃO-->
 <script>
 $(document).ready( function(){
    $("#copy_conclusao").click(function() {                      
-    var query = $("#id_forensic_scan").val();            
+    var query = $("#id_button_copy_conclusion").val();
+    var perito = $("#id_profile_person_type").val();            
         $.ajax({
             type: "GET",
             url: "{% url 'url_forensic_copy_report' %}",
-            data: {'ff': query, 'tab': 'conclusao-tab'},
+            data: {'ff': query, 'tab': 'conclusao-tab', 'perito': perito},
             success: function(data){
                 //console.log(data);
                 var editor = CKEDITOR.instances['id_conclusion'];
@@ -199,6 +208,8 @@ $(document).ready( function(){
 });
 </script>
 
+<!-- SCRIPT USADO PARA PROCURAR NA TABELA CID10 3 DOCTORLIST VALORES PARA PESQUISA-->
+<!-- LEMBRAR QUE ESTAS TABELAS SÃO APENAS PARA PESQUISA, NÃO FAZEM RELACIONAMENTO COM NINGUÉM-->
 <script>
 $(document).ready(function(){ 
             //Procurar o cid. Isso é usado no Diagnóstico e no Documentos médicos.
@@ -214,6 +225,8 @@ $(document).ready(function(){
 });
 </script>
 
+<!-- FAZ INSERÇÃO DE VALORES NO TEXTAREA DO TAB DIAGNÓSTICO -->
+
 <script>
 $(document).ready( function(){
     //Isso é usado para inserir o CID no text aread da aba Diagnótico
@@ -226,11 +239,11 @@ $(document).ready( function(){
             success: function(data){
                 console.log(data);
                 if (data == "CID inválido. - CID 10 ()"){
-                    $("#id_anamnesis_diagnosis").val(data);
+                    $("#id_cid_description").val(data);
                     $("#id_cid_number").val("");             
                 }
                 else{
-                    $("#id_anamnesis_diagnosis").val(data);    
+                    $("#id_cid_description").val(data);    
                 }
                 
             },
@@ -357,7 +370,7 @@ $(document).ready( function(){
 $(document).ready( function(){
    $("#id_add_cid").click(function() {                          
     var id_cid_number = $("#id_cid_number").val();
-    var id_anamnesis_diagnosis = $("#id_anamnesis_diagnosis").val().trim();                
+    var id_anamnesis_diagnosis = $("#id_cid_description").val().trim();                
     var id_cid_report = $("#id_cid_report").val();
     var id_user_created = $("#id_user_created").val();
     var id_user_updated = $("#id_user_updated").val();  
@@ -375,7 +388,7 @@ $(document).ready( function(){
                     alert(data.success);
                     alert("Dados inseridos com suscesso");
                     $("#id_cid_number").val("");
-                    $("#id_anamnesis_diagnosis").val("");                                       
+                    $("#id_cid_description").val("");                                       
                     $("#id_form_edit").submit(); //Faço isso para refresh na página
                 }                             
                 else{

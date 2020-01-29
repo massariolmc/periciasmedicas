@@ -70,8 +70,10 @@ $(document).ready( function(){
 
 <script>
 $(document).ready( function(){
-   $("#id_button_form_item2").click(function() {                      
-    var query = $("#id_question").val();            
+   $("#id_button_form_item2").click(function() {  
+        var editor = CKEDITOR.instances['id_question'];   
+        var query = editor.getData();                     
+        //var query = $("#id_question").val();            
         if (query != "" && query != null && query != undefined){
             $('#id_form_item2').submit();
         }                
@@ -80,8 +82,10 @@ $(document).ready( function(){
         }
     });
 
-    $("#id_button_form_item2_answer").click(function() {                      
-    var query = $("#id_answer").val();            
+    $("#id_button_form_item2_answer").click(function() {
+        var editor = CKEDITOR.instances['id_answer'];   
+        var query = editor.getData();                     
+        //var query = $("#id_answer").val();            
         if (query != "" && query != null && query != undefined){
             $('#id_form_item2_answer').submit();
         }                

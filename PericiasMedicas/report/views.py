@@ -1,4 +1,5 @@
 from django.shortcuts import render,get_object_or_404, get_list_or_404, redirect
+from django.template.loader import render_to_string, get_template
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -189,9 +190,9 @@ def forensicscan_create(request):
 @login_required
 def forensicscans_list(request):
     template_name = "forensicscan/list.html"
-    title = "Lista das Circunstâncias Periciais"    
+    title = "Lista dos Modelos de Anamnese"    
     #forensicscans = ForensicScan.objects.all()                    
-    forensicscans = ForensicScan.objects.filter(location_objective__profile_person_type__department_id__in=get_department(request.user.username))            
+    forensicscans = ForensicScan.objects.filter(profile_person_type__department_id__in=get_department(request.user.username))            
     context = {
         'forensicscans': forensicscans,
         'title': title,                      
@@ -211,7 +212,7 @@ def forensicscan_detail(request, pk=None, *args, **kwargs):
 def forensicscan_edit(request, pk):    
     template_name='forensicscan/form.html'
     data = {} 
-    data['title'] = "Cadastro Circunstâncias"         
+    data['title'] = "Cadastro dos Modelos de Anamnese"         
     forensicscan = get_object_or_404(ForensicScan, pk=pk)        
     user_created = forensicscan.user_created # Esta linha faz com que o user_created não seja modificado, para mostrar quem criou esta pessoa
     form = ForensicScanForm(request.POST or None, instance=forensicscan, department_id=get_department(request.user.username))
@@ -378,18 +379,24 @@ def cidnumber_edit(request, pk):
 
 @login_required
 def cidnumber_delete(request,pk):
+    request.session['tabs'] = 'diagnostico-tab'
     cidnumber = get_object_or_404(CidNumber, pk=pk)  
-    report_id = cidnumber.report_id  
-    if request.method == 'GET':        
-        cidnumber.delete()
-        request.session['tabs'] = 'diagnostico-tab'
-        messages.success(request, 'Ação concluída com sucesso.')
-        return redirect('url_report_edit', report_id)
-    else:        
-        request.session['tabs'] = 'diagnostico-tab'
+    report_id = cidnumber.report_id
+    if request.method == 'GET':
+        if not cidnumber.type_cid:                 
+            cidnumber.delete()            
+            messages.success(request, 'Ação concluída com sucesso.')            
+        else:
+            count = CidNumber.objects.filter(type_cid=False).count()
+            if count > 0:
+                messages.warning(request, 'Para excluir o CID Priḿario deverá deletar os secundários.')
+            else:
+                cidnumber.delete()            
+                messages.success(request, 'Ação concluída com sucesso.')                        
+    else:                
         messages.warning(request, 'Ação não concluída.')
-        return redirect('url_report_edit', report_id)
-
+    
+    return redirect('url_report_edit', report_id)
 ######## FIM CID NUMBER ######################
 
 
@@ -470,23 +477,24 @@ def discussionconclusion_create(request):
     data = {}
     data['title'] = "Cadastro dos Modelos de Discussão e Conclusão"        
     if request.method == 'POST':        
-        form = DiscussionConclusionForm(request.POST)
+        form = DiscussionConclusionForm(request.POST,department_id=get_department(request.user.username))
         if form.is_valid():
             form.save()                        
             return redirect('url_discussionconclusions_list')
         else:
             print("algo não está valido.")
     else:
-        form = DiscussionConclusionForm()             
+        form = DiscussionConclusionForm(department_id=get_department(request.user.username))             
     
     data['form'] = form
     return render(request,template_name,data)
 
 @login_required
-def discussionconclusions_list(request):
+def discussionconclusions_list(request): 
     template_name = "discussionconclusion/list.html"
     title = "Modelos de Discussão e Conclusão"
-    discussionconclusions = DiscussionConclusion.objects.all()    
+    #discussionconclusions = DiscussionConclusion.objects.all() 
+    discussionconclusions = DiscussionConclusion.objects.filter(profile_person_type__department_id__in=get_department(request.user.username))               
     context = {
         'discussionconclusions': discussionconclusions,
         'title': title      
@@ -508,7 +516,7 @@ def discussionconclusion_edit(request, pk):
     data = {} 
     discussionconclusion = get_object_or_404(DiscussionConclusion, pk=pk)        
     user_created = discussionconclusion.user_created # Esta linha faz com que o user_created não seja modificado, para mostrar quem criou esta pessoa
-    form = DiscussionConclusionForm(request.POST or None, instance=discussionconclusion)
+    form = DiscussionConclusionForm(request.POST or None, instance=discussionconclusion, department_id=get_department(request.user.username))
     if form.is_valid():        
         discussionconclusion = form.save(commit=False)
         discussionconclusion.user_created = user_created               
@@ -524,11 +532,30 @@ def discussionconclusion_delete(request,pk):
     if request.method == 'GET':        
         discussionconclusion.delete()
         messages.success(request, 'Ação concluída com sucesso.')
-        return redirect('url_discussionconclusion_list')
+        return redirect('url_discussionconclusions_list')
     else:
         messages.warning(request, 'Ação não concluída.')
-        return redirect('url_discussionconclusion_list')
+        return redirect('url_discussionconclusions_list')
 
+@login_required
+def discussionconclusion_delete_all(request):
+    context = []
+    context = request.GET.get("ff","")
+    context = context.replace("[","").replace("]","").replace('\"','')
+    context = context.split(",")
+    context = [int(x) for x in context]      
+    if context:                
+        b = DiscussionConclusion.objects.filter(id__in=context)
+        b.delete()
+        results = []         
+        json = {}
+        json['message'] = "Deletado"        
+        results.append(json)
+        return JsonResponse(results, safe=False)        
+    else:
+        json['message'] = "Não deletado"        
+        results.append(json)
+        return JsonResponse(results, safe=False)
 
 ###### FIM DISCUSSION CONCLUSION ##########
 
@@ -545,14 +572,15 @@ def report_create(request):
     type_items = TypeItem.objects.all()
     data['type_items'] = type_items          
     if request.method == 'POST':        
-        form = ReportForm(request.POST,department_id=get_department(request.user.username),user_id=request.user.id)
+        form = ReportForm(request.POST,department_id=get_department(request.user.username),user_id=request.user.id, impress="")
         if form.is_valid():
             form.save()                        
             return redirect('url_reports_list')
         else:
+            print("Form errors",form.errors)
             print("algo não está valido.")
     else:
-        form = ReportForm(department_id=get_department(request.user.username),user_id=request.user.id)             
+        form = ReportForm(department_id=get_department(request.user.username),user_id=request.user.id,impress="")             
     
     data['form'] = form
     return render(request,template_name,data)
@@ -610,7 +638,19 @@ def report_edit(request, pk):
     report = get_object_or_404(Report, pk=pk)
     type_items = TypeItem.objects.all()# Isso é para o Mostrar os quesitos possíveis    
     medicaldocuments = MedicalDocument.objects.filter(report_id=report.id)# Isso é para o Mostrar os documentos possíveis    
-    cidnumbers = CidNumber.objects.filter(report_id=report.id)# Isso é para o Mostrar os cid deste laudo
+    cidnumbers = CidNumber.objects.filter(report_id=report.id).exists()# Isso é para o Mostrar os cid deste laudo    
+    if cidnumbers:# Se entrar é pq existe diagnostico para este laudo
+        cidnumbers = CidNumber.objects.filter(report_id=report.id)
+        cid_primario = CidNumber.objects.get(report_id=report.id, type_cid=True)
+        #Verifica se existem modelo para este diagnóstico para este Perito
+        discon = DiscussionConclusion.objects.filter(cid_number=cid_primario.category, profile_person_type=report.profile_person_type).exists()
+        if discon:
+            discon = DiscussionConclusion.objects.get(cid_number=cid_primario.category, profile_person_type=report.profile_person_type)
+        else:
+            discon = "Não existe modelo para este diagnóstico."    
+    else:
+        cidnumbers = {}
+        discon = "Não existe diagnóstico para este laudo."
     data = {
         'title': title,
         'edit': 'edit',# Marcador para saber que estou editando
@@ -619,9 +659,14 @@ def report_edit(request, pk):
         'type_items': type_items,
         'medicaldocuments': medicaldocuments,
         'cidnumbers': cidnumbers,
+        'discon': discon,
     } 
+    # As duas linhas abaixo servem para gerar o relatório que será inserido no ckeditor na tab Visualização
+    context_imp = print_ckeditor(report.id)
+    valores = render_to_string('report/print_report_ckeditor.html',context_imp)        
+    
     user_created = report.user_created # Esta linha faz com que o user_created não seja modificado, para mostrar quem criou esta pessoa
-    form = ReportForm(request.POST or None, instance=report, department_id=get_department(request.user.username), user_id=request.user.id)
+    form = ReportForm(request.POST or None, instance=report, department_id=get_department(request.user.username), user_id=request.user.id, impress=valores)
     if form.is_valid():        
         report = form.save(commit=False)
         report.user_created = user_created               
@@ -645,32 +690,33 @@ def report_delete(request,pk):
 
 # Esta função serve para pegar a Circuntância e o Objetivo e colocar dentro dos cards do template, isso VIA AJAX
 @login_required
-def get_report_forensic(request):
+def get_report_location_objective(request):
     print("Valor da request get", request.GET)
     ff = request.GET.get('ff','')
     context = {}       
     marc = 0    
     if ff:         
-        forensicscan = ForensicScan.objects.get(pk=int(ff)) 
-        print("Valor do forensic",forensicscan)
+        location_objective = LocationObjective.objects.get(pk=int(ff)) 
+        print("Valor do location_objective",location_objective)
         marc = 1
-        context['forensicscan'] = forensicscan 
-        context['doctor'] = Doctor.objects.get(profile_person_type_id=forensicscan.location_objective.profile_person_type)
+        context['location_objective'] = location_objective 
+        context['doctor'] = Doctor.objects.get(profile_person_type_id=location_objective.profile_person_type)
     
     context['marc'] = marc
-    return render(request, 'report/_forensic.html',context)
+    return render(request, 'report/_location_objective.html',context)
     
 # AJAX para copiar ANAMNESE, DISCUSSÃO E CONCLUSÃO
 @login_required
 def forensic_copy_report(request):    
     ff = request.GET.get('ff','')
-    id_tab = request.GET.get('tab','')   
+    id_tab = request.GET.get('tab','')
+    profile_person_type = request.GET.get('perito','')   
     id_anamnese = request.GET.get('anamnese','')   
     context = {}       
     marc = 0    
-    if ff:         
-        forensicscan = ForensicScan.objects.get(pk=int(ff))         
-        if id_tab == "anamnese-tab":
+    if ff:                          
+        if id_tab == "anamnese-tab":            
+            forensicscan = ForensicScan.objects.get(pk=int(ff))
             if id_anamnese == "id_anamnesis_history":
                 context['forensicscan'] = forensicscan.anamnesis_history
             elif id_anamnese == "id_anamnesis_personal_background":
@@ -681,10 +727,25 @@ def forensic_copy_report(request):
                 context['forensicscan'] = forensicscan.anamnesis_general_exam
             elif id_anamnese == "id_anamnesis_mental_exam":
                 context['forensicscan'] = forensicscan.anamnesis_mental_exam
-        elif id_tab == "discussao-tab":
-            context['forensicscan'] = forensicscan.discussion
+
+        elif id_tab == "discussao-tab":            
+            copy = DiscussionConclusion.objects.filter(cid_number=ff, profile_person_type=profile_person_type).exists()
+            if copy:
+                copy = DiscussionConclusion.objects.get(cid_number=ff, profile_person_type=profile_person_type)
+                context['forensicscan'] = copy.discussion                
+            else:
+                print("caiu aqui no else do copy")
+                context['forensicscan'] = "Não existe modelo para este diagnóstico." 
+            
         elif id_tab == "conclusao-tab":
-            context['forensicscan'] = forensicscan.conclusion
+            copy = DiscussionConclusion.objects.filter(cid_number=ff, profile_person_type=profile_person_type).exists()
+            if copy:
+                copy = DiscussionConclusion.objects.get(cid_number=ff, profile_person_type=profile_person_type)
+                context['forensicscan'] = copy.conclusion          
+            else:
+                context['forensicscan'] = 'Não existe modelo para este diagnóstico.' 
+            
+
         else:
             context['forensicscan'] = "Erro....."                    
     
@@ -832,8 +893,8 @@ def print_docx(request,pk):
     soup = BeautifulSoup(context['item_periciando'],'lxml')
     context['item_periciando'] = soup.get_text().strip()
 
-    context['report'].forensic_scan.forensicscan = context['report'].forensic_scan.forensicscan.strip() 
-    context['report'].forensic_scan.goal = context['report'].forensic_scan.goal.strip()
+    context['report'].location_objective.forensic_scan = context['report'].location_objective.forensic_scan.strip() 
+    context['report'].location_objective.goal = context['report'].location_objective.goal.strip()
     context['doctor'].course = context['doctor'].course.strip()
   
     # documento = doc.new_subdoc()
@@ -879,6 +940,12 @@ def print_pdf(request,pk):
     idade = (idade.days)/365
     context['idade'] = int(idade)
 
+    soup = BeautifulSoup(context['report'].location_objective.forensic_scan,'lxml')
+    context['report'].location_objective.forensic_scan = soup.get_text().strip()
+
+    soup = BeautifulSoup(context['report'].location_objective.goal,'lxml')
+    context['report'].location_objective.goal = soup.get_text().strip()
+
     documento = ""
     if context['medicaldocuments']:
         for medicaldocument in context['medicaldocuments']:
@@ -886,6 +953,15 @@ def print_pdf(request,pk):
         context['documents'] = documento
     else:
         context['documents'] = "Não há."
+
+    cid = ""
+    if context['cid_numbers']:
+        for cid_number in context['cid_numbers']:
+            cid += "-{} <br/>".format(cid_number.description)           
+        context['cid_numbers'] = cid
+    else:
+        context['cid_numbers'] = "Não há."
+
 
     #Essa função fica em um arquivo chamado utils.py nesta App Report
     pdf = render_to_pdf('report/print_report_pdf.html',context)
@@ -901,12 +977,52 @@ def print_pdf(request,pk):
     return HttpResponse("Não encontrado")
     #response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'   
 
+def print_ckeditor(pk):
+    context = print_report(pk)
+
+    #Calculo da Idade
+    agora = datetime.now()
+    niver = context['report'].proficient.dt_birthday.strftime('%d-%m-%Y')
+    niver = niver.split("-")   
+    aniversario = datetime(int(niver[2]),int(niver[1]),int(niver[0]))
+    idade=(agora - aniversario)
+    idade = (idade.days)/365
+    context['idade'] = int(idade)
+
+    soup = BeautifulSoup(context['report'].discussion,'lxml')
+    context['report'].discussion = soup.get_text().strip()
+    soup = BeautifulSoup(context['report'].conclusion,'lxml')
+    context['report'].conclusion = soup.get_text().strip()
+    soup = BeautifulSoup(context['report'].location_objective.forensic_scan,'lxml')
+    context['report'].location_objective.forensic_scan = soup.get_text().strip()
+    soup = BeautifulSoup(context['report'].location_objective.goal,'lxml')
+    context['report'].location_objective.goal = soup.get_text().strip()
+    
+    documento = ""
+    if context['medicaldocuments']:
+        for medicaldocument in context['medicaldocuments']:
+            documento += "{} <br/>".format(medicaldocument.document)           
+        context['documents'] = documento
+    else:
+        context['documents'] = "Não há."
+
+    cid = ""
+    if context['cid_numbers']:
+        for cid_number in context['cid_numbers']:
+            cid += "-{} <br/>".format(cid_number.description)           
+        context['cid_numbers'] = cid
+    else:
+        context['cid_numbers'] = "Não há."
+
+    return context
+
 #Função que pega os valores para inserir no template para impressão
 def print_report(pk):
     report = Report.objects.get(pk=pk)
     doctor = Doctor.objects.get(profile_person_type_id=report.profile_person_type.id)    
     medicaldocuments = MedicalDocument.objects.filter(report_id=report.id)
     marc = Item2.objects.filter(report_id=report.id).exists()
+    cid_numbers = CidNumber.objects.filter(report_id=report.id)
      
     item_juiz = ""
     item_procuradoria  = ""
@@ -918,19 +1034,19 @@ def print_report(pk):
         for item in items:
             #Na tabela type_item tem que ser assim: id: 1 - Quesitos do juiz, 2 - Procuradoria, 3 - ADvogado e 4 - Periciando. Senão for assim, a lógica abaixo vai dar erro.
             if item.type_item_id == 1:               
-                item_juiz += "<p>{} \n</p>".format(item.question)
+                item_juiz += "{} \n".format(item.question)
                 item_juiz += "{} \n".format(item.answer)            
                 item_juiz += "\n"
             elif item.type_item_id == 2:
-                item_procuradoria += "<p>{} \n</p>".format(item.question)
+                item_procuradoria += "{} \n".format(item.question)
                 item_procuradoria += "{} \n".format(item.answer)
                 item_procuradoria += "\n"
             elif item.type_item_id == 3:
-                item_advogado += "<p>{} \n</p>".format(item.question)
+                item_advogado += "{} \n".format(item.question)
                 item_advogado += "{} \n".format(item.answer) 
                 item_advogado += "\n"                 
             elif item.type_item_id == 4:
-                item_periciando += "<p>{} \n</p>".format(item.question)
+                item_periciando += "{} \n".format(item.question)
                 item_periciando += "{} \n".format(item.answer) 
                 item_periciando += "\n"                  
         
@@ -941,7 +1057,8 @@ def print_report(pk):
         'item_advogado': item_advogado,
         'item_periciando': item_periciando,
         'doctor': doctor,
-        'medicaldocuments': medicaldocuments,     
+        'medicaldocuments': medicaldocuments,
+        'cid_numbers': cid_numbers,    
     }
     return context
 
@@ -1174,6 +1291,29 @@ def typeitembynatureofaction_delete(request,pk):
         messages.warning(request, 'Ação não concluída.')
         return redirect('url_typeitembynatureofactions_list')
 
+#Função que deleta varios quesito de uma vez,através do checkbox e ajax
+@login_required
+def typeitembynatureofaction_delete_all(request):
+    context = []
+    context = request.GET.get("ff","")
+    context = context.replace("[","").replace("]","").replace('\"','')
+    context = context.split(",")
+    context = [int(x) for x in context]
+    print("Context transformado", context)
+    if context:
+        print("Valor do context",context)
+        b = TypeItemByNatureOfAction.objects.filter(id__in=context)
+        b.delete()
+        results = []         
+        json = {}
+        json['message'] = "Deletado"        
+        results.append(json)
+        return JsonResponse(results, safe=False)        
+    else:
+        json['message'] = "Não deletado"        
+        results.append(json)
+        return JsonResponse(results, safe=False)
+
 ##### FIM TTypeItemByNatureOfAction #######################
 
 ###### ITEM 2 ################################
@@ -1243,30 +1383,47 @@ def item2_create(request, *args, **kwargs):
 
 def copy_item_report(request, report, type_item):
     template_name = 'item2/copy_item_report.html'
+    context = {}
     report = Report.objects.get(pk=report)
     type_item = TypeItem.objects.get(pk=type_item)
-    copy = TypeItemByNatureOfAction.objects.filter(nature_of_action=report.nature_of_action, type_item_id=type_item.id).order_by('id')
-    context = {
-        'type_item_by_nature_of_action': copy,
-        'report': report,
-        'type_item': type_item,
-        'title': "Modelos de Perguntas"
-    }   
-    user = User.objects.get(username=request.user.username)
-    if request.method == 'POST':
-        marc = request.POST.get("quesitos","")
-        print("MARC",marc)
-        quesitos_ordenados = request.POST.getlist('quesitos')
-        print("QUesitos ORdenados",quesitos_ordenados)
-        if marc:                         
-            for item in quesitos_ordenados:
-                print("Item",item)
-                for cc in copy:                    
-                    if int(item) == int(cc.id):                        
-                        qq = Item2(report=report, type_item=type_item, question=cc.question, answer_status=False, user_created=user, user_updated=user)
-                        qq.save()
+    #Verifica se foi dado um diagnóstico para este o laudo 
+    cid_number = CidNumber.objects.filter(report_id=report.id, type_cid=True).exists()
+    if cid_number:
+        cid_number = CidNumber.objects.get(report_id=report.id, type_cid=True)
+        #Verifica se tem modelo para este diagnóstico
+        copy = TypeItemByNatureOfAction.objects.filter(nature_of_action=report.nature_of_action, cid_number=cid_number.category, type_item_id=type_item.id).exists()
+        if copy:
+            copy = TypeItemByNatureOfAction.objects.filter(nature_of_action=report.nature_of_action, cid_number=cid_number.category, type_item_id=type_item.id).order_by('id')
+            context = {
+                'type_item_by_nature_of_action': copy,
+                'report': report,
+                'type_item': type_item,
+                'title': "Modelos de Perguntas",
+            }   
+            user = User.objects.get(username=request.user.username)
+            if request.method == 'POST':
+                marc = request.POST.get("quesitos","")
+                print("MARC",marc)
+                quesitos_ordenados = request.POST.getlist('quesitos')
+                print("QUesitos ORdenados",quesitos_ordenados)
+                if marc:                         
+                    for item in quesitos_ordenados:
+                        print("Item",item)
+                        for cc in copy:                    
+                            if int(item) == int(cc.id):  
+                                if cc.answer:                      
+                                    qq = Item2(report=report, type_item=type_item, question=cc.question, answer=cc.answer, answer_status=True, user_created=user, user_updated=user)
+                                else:
+                                    qq = Item2(report=report, type_item=type_item, question=cc.question, answer=cc.answer, answer_status=False, user_created=user, user_updated=user)
+                                qq.save()
+                return redirect('url_report_edit',report.id)
+        else:            
+            messages.warning(request, 'Não tem modelo para este diagnóstico.')
+            return redirect('url_report_edit',report.id)
+    else:
+        messages.warning(request, 'Não existe diagnóstico para este Laudo.')
         return redirect('url_report_edit',report.id)
-
+    
     return render(request,template_name,context)
 
 
@@ -1284,7 +1441,7 @@ def items2_list(request, *args, **kwargs):
         'items': items2,
         'title': title,  
         'report': report,
-        'type_item': type_item,                    
+        'type_item': type_item,                            
     }
     return render(request,template_name,context)
 
@@ -1358,7 +1515,26 @@ def item2_delete(request,pk):
         messages.warning(request, 'Ação não concluída.')
         return redirect('url_items2_list',item2.report_id, item2.type_item_id)
 
-
+@login_required
+def item2_delete_all(request):
+    context = []
+    context = request.GET.get("ff","")
+    context = context.replace("[","").replace("]","").replace('\"','')
+    context = context.split(",")
+    context = [int(x) for x in context] 
+    print("context",context)     
+    if context:                
+        b = Item2.objects.filter(id__in=context)
+        b.delete()
+        results = []         
+        json = {}
+        json['message'] = "Deletado"        
+        results.append(json)
+        return JsonResponse(results, safe=False)        
+    else:
+        json['message'] = "Não deletado"        
+        results.append(json)
+        return JsonResponse(results, safe=False)
 
 ##### FIM ITEM 2 #############################
 
@@ -1430,7 +1606,5 @@ def itemsanswer_delete(request,pk):
     else:
         messages.warning(request, 'Ação não concluída.')
         return redirect('url_itemsanswers_list')
-
-
 
 ######### FIM ITEM ANSWER #############################

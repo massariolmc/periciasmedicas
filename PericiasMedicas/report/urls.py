@@ -43,6 +43,7 @@ urlpatterns = [
     path('discussionconclusion/<int:pk>', views.discussionconclusion_detail, name='url_discussionconclusion_detail'),
     path('discussionconclusion/<int:pk>/edit', views.discussionconclusion_edit, name='url_discussionconclusion_edit'),
     path('discussionconclusion/<int:pk>/delete', views.discussionconclusion_delete, name='url_discussionconclusion_delete'),
+    path('discussionconclusion/deleteall', views.discussionconclusion_delete_all, name='url_discussionconclusion_delete_all'),
 
     #CidNumber
     path('cidnumbers/<int:report_id>', views.cidnumbers_list, name='url_cidnumbers_list'),
@@ -62,7 +63,7 @@ urlpatterns = [
     path('report/<int:pk>/search_reports/', views.search_reports, name='url_search_reports'),    
     path('report/<int:pk>/print_docx/', views.print_docx, name='url_print_docx'),    
     path('report/<int:pk>/print_pdf/', views.print_pdf, name='url_print_pdf'),    
-    path('report/report_forensic', views.get_report_forensic, name='url_report_forensic'),# ESTE É UM AJAX
+    path('report/report_location_objective', views.get_report_location_objective, name='url_report_location_objective'),# ESTE É UM AJAX
     path('report/forensic_copy_report', views.forensic_copy_report, name='url_forensic_copy_report'),# ESTE É UM AJAX
 
     #MedicalDocument
@@ -83,6 +84,7 @@ urlpatterns = [
     path('typeitembynatureofaction/<int:pk>', views.typeitembynatureofaction_detail, name='url_typeitembynatureofaction_detail'),
     path('typeitembynatureofaction/<int:pk>/edit', views.typeitembynatureofaction_edit, name='url_typeitembynatureofaction_edit'),
     path('typeitembynatureofaction/<int:pk>/delete', views.typeitembynatureofaction_delete, name='url_typeitembynatureofaction_delete'),
+    path('typeitembynatureofaction/deleteall', views.typeitembynatureofaction_delete_all, name='url_typeitembynatureofaction_delete_all'),
 
     #Item2
     path('items2/<int:report>/<int:type_item>', views.items2_list, name='url_items2_list'),    
@@ -95,6 +97,7 @@ urlpatterns = [
     path('item2/<int:pk>/delete', views.item2_delete, name='url_item2_delete'),
     path('item_check_report/<int:report>/<int:type_item>', views.item_check_report, name='url_item_check_report'),
     path('report/itembynatureaction_copy_item', views.itembynatureaction_copy_item, name='url_itembynatureaction_copy_item'),# ESTE É UM AJAX
+    path('item2/delete_all', views.item2_delete_all, name='url_item2_delete_all'),
     
     
     #ItemsAnswer

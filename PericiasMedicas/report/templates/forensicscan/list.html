@@ -35,9 +35,7 @@
                     <tr>
                       <th class="text-sm-center">Perito</th>
                       <th class="text-sm-center">Natureza da Ação</th>
-                      <th class="text-sm-center">Versão</th>
-                      <th class="text-sm-center">Circunstância</th>
-                      <th class="text-sm-center">Objetivo</th>                        
+                      <th class="text-sm-center">Versão</th>                      
                       <th class="text-sm-center">Opções</th>                                                            
                     </tr>
                   </thead>
@@ -45,20 +43,16 @@
                     <tr>    
                       <th class="text-sm-center">Perito</th>
                       <th class="text-sm-center">Natureza da Ação</th>
-                      <th class="text-sm-center">Versão</th>
-                      <th class="text-sm-center">Circunstância</th>
-                      <th class="text-sm-center">Objetivo</th>                   
+                      <th class="text-sm-center">Versão</th>                      
                       <th class="text-sm-center">Opções</th>                    
                     </tr>
                   </tfoot>
                   <tbody>
                     {% for fs in forensicscans %}
                     <tr>
-                      <td>{{ fs.location_objective.profile_person_type|safe }}</td>
+                      <td>{{ fs.profile_person_type|safe }}</td>
                       <td class="text-sm-center">{{ fs.nature_of_action|safe }}</td>
-                      <td class="text-sm-center">{{ fs.version|safe }}</td>
-                      <td>{{ fs.location_objective.forensic_scan|safe }}</td>                                   
-                      <td>{{ fs.location_objective.goal|safe }}</td> 
+                      <td class="text-sm-center">{{ fs.version|safe }}</td>                      
                       <td class="text-center">
                         <a href="{% url 'url_forensicscan_detail' fs.id %}">  <i class="fa fa-list" aria-hidden="true"></i> </a>
                         <a href="{% url 'url_forensicscan_edit' fs.id %}">    <i class="fa fa-edit" aria-hidden="true"></i> </a>

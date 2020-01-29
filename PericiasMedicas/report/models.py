@@ -72,20 +72,16 @@ class LocationObjective(models.Model):
     def __str__(self):
         return "Modelo - Local e Objetivos - Versão: {} - Perito: {}".format(self.version,self.profile_person_type)
 
-class ForensicScan(models.Model):
-    
-    location_objective = models.ForeignKey(LocationObjective, verbose_name=("Circunstacia da Perícia"), on_delete=models.PROTECT, default=1)
+class ForensicScan(models.Model):    
     nature_of_action = models.ForeignKey(NatureOfAction, verbose_name=("Natureza da Ação"), on_delete=models.PROTECT)
     version = models.CharField(("Versão"), max_length=100, blank=False, null=False)
+    profile_person_type = models.ForeignKey(ProfilePersonType, verbose_name=("Perito"), on_delete=models.PROTECT)
     anamnesis_history = RichTextField("Anamnese: História Pregressa da Doença Atual",blank=True)
     anamnesis_personal_background = RichTextField("Anamnese: Antecedentes Patológicos Pessoais",blank=True)
     anamnesis_family_background = RichTextField("Anamnese: Antecedentes Patológicos Familiares",blank=True)
     anamnesis_general_exam = RichTextField("Anamnese: Exame Físico Geral",blank=True)
-    anamnesis_mental_exam = RichTextField("Anamnese: Exame do Estado Mental",blank=True)    
-    anamnesis_diagnosis = models.TextField("Anamnese: Diagnóstico",blank=True)
+    anamnesis_mental_exam = RichTextField("Anamnese: Exame do Estado Mental",blank=True)        
     cid_number = models.CharField(("Informe o CID"), max_length=100, blank=True)    
-    discussion = RichTextField("Discussão",blank=True)
-    conclusion = RichTextField("Conclusão",blank=True)
     created_at = models.DateTimeField('Criado em',auto_now_add=True)
     updated_at = models.DateTimeField('Atualizado em', auto_now=True) 
     user_created = models.ForeignKey(User, related_name="forensicscans_user_created_id", verbose_name="Criado por", on_delete=models.PROTECT)
@@ -95,14 +91,15 @@ class ForensicScan(models.Model):
         verbose_name_plural = "ForensicScans" 
 
     def __str__(self):
-        return "Modelo: Circunstância da Perícia - Versão: {}".format(self.version)
+        return "Modelo: Circunstância da Perícia: Perito{} - Versão: {}".format(self.profile_person_type,self.version)
 
 class DiscussionConclusion(models.Model):
 
     INABILITY_PROFESSIONAL_CHOICES = [("uniprofissional","uniprofissional"),("multiprofissional", "multiprofissional"), ("omniprofissional", "omniprofissional")]    
     INABILITY_TEMPORAL_CHOICES = [("temporária","temporária"),("permanente", "permanente")]    
 
-    cid_number = models.CharField(("Informe o CID"), max_length=7, blank=False, null=False)    
+    cid_number = models.CharField(("Informe o CID"), max_length=7, blank=False, null=False)
+    profile_person_type = models.ForeignKey(ProfilePersonType, verbose_name=("Perito"), default=13, on_delete=models.PROTECT)    
     discussion = RichTextField("Discussão",blank=True)
     conclusion = RichTextField("Conclusão",blank=True)
     inability_professional = models.CharField("Incapacidade Profissional", choices=INABILITY_PROFESSIONAL_CHOICES, max_length=100, blank=False, null=False)
@@ -117,8 +114,7 @@ class DiscussionConclusion(models.Model):
         verbose_name_plural = "DiscussionConclusions" 
 
     def __str__(self):
-        return "Modelo - Conclusão e Discussão - Cid: {} - Incapacidade Profissional: {} - Incapacidade Temporária: {}".format(self.cid_number,self.inability_professional,self.inability_temporal)
-
+        return "Modelo - Conclusão e Discussão: Perito: {} - Cid: {}".format(self.profile_person_type,self.cid_number)
 
 # A partir daqui tem que criar o report primeiro
 class Report(models.Model):
@@ -129,13 +125,13 @@ class Report(models.Model):
     proficient = models.ForeignKey(Patients, related_name = "proficient_patient_id", verbose_name=("Periciando"), blank=False, null=False, on_delete=models.PROTECT)
     date_report = models.DateField(("Data da Perícia"), auto_now=False, auto_now_add=False, blank=False)
     profile_person_type = models.ForeignKey(ProfilePersonType, verbose_name=("Perito"), on_delete=models.PROTECT)
-    forensic_scan = models.ForeignKey(ForensicScan, blank=True, null=True, verbose_name=("Qual modelo?"), on_delete=models.PROTECT)    
+    location_objective = models.ForeignKey(LocationObjective, blank=True, null=True, verbose_name=("Local e Objetivo"), on_delete=models.PROTECT)
+    forensic_scan = models.ForeignKey(ForensicScan, blank=True, null=True, verbose_name=("Qual modelo de anamnese?"), on_delete=models.PROTECT)    
     anamnesis_history = RichTextField("Anamnese: História Pregressa da Doença Atual",blank=True)
     anamnesis_personal_background = RichTextField("Anamnese: Antecedentes Patológicos Pessoais",blank=True)
     anamnesis_family_background = RichTextField("Anamnese: Antecedentes Patológicos Familiares",blank=True)
     anamnesis_general_exam = RichTextField("Anamnese: Exame Físico Geral",blank=True)
-    anamnesis_mental_exam = RichTextField("Anamnese: Exame do Estado Mental",blank=True)    
-    anamnesis_diagnosis =  models.TextField("Anamnese: Diagnóstico",blank=True)            
+    anamnesis_mental_exam = RichTextField("Anamnese: Exame do Estado Mental",blank=True)        
     discussion = RichTextField("Discussão",blank=True)    
     conclusion = RichTextField("Conclusão",blank=True)
     report_status = models.ForeignKey(ReportStatus, verbose_name=("Status"), on_delete=models.PROTECT)
@@ -153,7 +149,6 @@ class Report(models.Model):
         patient = Patients.objects.get(pk=self.autor.id)        
         var = "Periciando(a): {} - Processo: {}".format(patient.name,self.process_number)
         return var
-
 
 class CidNumber(models.Model):
     category = models.CharField("Categoria", max_length=7,blank=False, null=False)    
@@ -180,7 +175,6 @@ class MedicalDocument(models.Model):
     user_created = models.ForeignKey(User, related_name="medicaldocument_user_created_id", verbose_name="Criado por", on_delete=models.PROTECT)
     user_updated = models.ForeignKey(User, related_name="medicaldocument_user_updated_id", verbose_name="Atualizado por", on_delete=models.PROTECT)
 
-
 class TypeItem(models.Model):
     name = models.CharField(("Tipo do Quesito"), max_length=100, blank=False, null=False)
     obs = models.TextField(("Obs"), blank=True) 
@@ -197,13 +191,14 @@ class TypeItem(models.Model):
     def __str__(self):
         return self.name
 
+#Modelos de Quesitos por natureza de ação
 class TypeItemByNatureOfAction(models.Model):    
     type_item = models.ForeignKey(TypeItem, verbose_name=("Tipo do Quesito"), on_delete=models.PROTECT)
     version = models.TextField(("Versão"), blank=True)
     nature_of_action = models.ForeignKey(NatureOfAction, verbose_name=("Natureza da Ação"), on_delete=models.PROTECT)
     question = RichTextField("Pergunta?", blank=True)
     answer = RichTextField("Resposta", blank=True)   
-    company = models.ForeignKey(Company, verbose_name=("Empresa"), default=13,on_delete=models.PROTECT)
+    company = models.ForeignKey(Company, verbose_name=("Empresa"),on_delete=models.PROTECT)
     cid_number = models.CharField("CID-10", max_length=100, blank=False, null=False)
     created_at = models.DateTimeField('Criado em',auto_now_add=True)
     updated_at = models.DateTimeField('Atualizado em', auto_now=True) 
@@ -216,9 +211,8 @@ class TypeItemByNatureOfAction(models.Model):
 
     def __str__(self):
         return self.version
-
-class Item2(models.Model):
-    #type_item_by_nature_of_action = models.ForeignKey(TypeItemByNatureOfAction, verbose_name=("Tipo do Quesito"), on_delete=models.PROTECT)
+#Quesitos do Laudos
+class Item2(models.Model):    
     type_item = models.ForeignKey(TypeItem ,verbose_name=("Tipo do Quesito"), on_delete=models.CASCADE)
     report = models.ForeignKey(Report, verbose_name=("Laudo"), on_delete=models.CASCADE)
     question = RichTextField("Pergunta?", blank=True) 
@@ -231,7 +225,7 @@ class Item2(models.Model):
     class Meta:
         verbose_name = "Item2"
         verbose_name_plural = "Items2"
-        ordering = ["report"]
+        #ordering = ["report"]
 
     def __str__(self):
         return self.report.process_number

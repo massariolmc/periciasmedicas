@@ -33,7 +33,7 @@
                     {% for item in type_item_by_nature_of_action %}
                     <tr>
                         <td class="text-sm-center" ><input type="checkbox" name="quesitos", value="{{ item.id }}"></td>
-                        <td>{{ item.question }}</td>                                                 
+                        <td>{{ item.question|safe }}</td>                                                 
                     </tr>                 
                     {% endfor %}   
                   </tbody>
@@ -67,4 +67,5 @@
     $('input:checkbox').not(this).prop('checked', this.checked);
 });
 </script>
+
 {% endblock js %}

@@ -1,17 +1,3 @@
-<!doctype html>
-<html lang="pt-br">
-
-<head>
-  <title>PDF
-  </title>
-
-    <meta charset="UTF-8">
-
-
-</head>
-
-<body >
-
 <p style="text-align:justify"><strong>LAUDO PERICIAL PSIQUI&Aacute;TRICO</strong></p>
 
 <p style="text-align:justify"><u><strong>1. PRE&Acirc;MBULO:</strong></u></p>
@@ -83,7 +69,7 @@
 <strong>Exame do Estado Mental Atual:</strong><br />
 {{ report.anamnesis_mental_exam|safe }}<br />
 <strong>Documentos M&eacute;dicos (Exames, Atestados, Laudos Etc):</strong><br />
-{{ documents|safe }}
+{{ documents|safe }}<br />
 <strong>Diagn&oacute;stico:</strong><br />
 {{ cid_numbers|safe }}</p>
 
@@ -118,10 +104,3 @@
 <p style="text-align:justify">{{ item_periciando|safe }}</p>
 
 <p style="text-align:justify">{% endif %}</p>
-
-
-</body >
-</html>
-
-
-

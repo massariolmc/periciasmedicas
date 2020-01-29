@@ -45,10 +45,10 @@
             </div>
             <div class="form-row justify-content-sm-center">
                 <div class="form-group col-sm-10">                    
-                    <div class="row justify-content-justify">
+                    <div class="row justify-content-center">
                         <label><strong>Quesito</strong></label>
                     </div>
-                    <div class="row justify-content-justify">
+                    <div class="row justify-content-center">
                         {{ type_item }}
                     </div>
                 </div>   
@@ -60,7 +60,7 @@
                         <label><strong>Pergunta</strong></label>
                     </div>
                     <div class="row justify-content-center">
-                        <h3><strong>{{ item2.question }}</strong></h3>
+                        <h3><strong>{{ item2.question|safe }}</strong></h3>
                     </div>
                 </div>   
             </div>

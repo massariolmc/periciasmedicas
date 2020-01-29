@@ -29,7 +29,7 @@
                 <tbody>
                     <tr>
                         <th class="text-right">Perito</th>
-                        <td>{{ forensicscan.location_objective }}</td>
+                        <td>{{ forensicscan.profile_person_type }}</td>
                     </tr> 
                     <tr>
                         <th class="text-right">Natureza da Ação</th>
@@ -62,15 +62,7 @@
                      <tr>
                         <th class="text-right">Anamnese: Exame do Estado Mental Atual</th>
                         <td class="text-justify">{{ forensicscan.anamnesis_mental_exam|safe }}</td>
-                    </tr>                  
-                    <tr>
-                        <th class="text-right">Discussão</th>
-                        <td class="text-justify">{{ forensicscan.discussion|safe }}</td>
-                    </tr>
-                    <tr>
-                        <th class="text-right">Conclusão</th>
-                        <td class="text-justify">{{ forensicscan.conclusion|safe }}</td>
-                    </tr>
+                    </tr>                                     
                     <tr>                    
                         <th class="text-right">Criado por:</th>
                         <td>{{ forensicscan.user_created }} - {{ forensicscan.created_at }}</td>
