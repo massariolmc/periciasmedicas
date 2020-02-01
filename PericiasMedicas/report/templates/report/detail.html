@@ -1,0 +1,120 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Informações Detalhadas</h6>
+    </div>
+    <div class="card-body">
+    <div class="row">
+        <div class="col-sm-4">
+            <a href="{% url 'url_reports_list'%}" class="btn btn-info float-left">Listar todos</a>
+        </div>
+        <div class="col-sm-4">
+            <h3><strong>  </strong></h3>
+        </div>
+        <div class="col-sm-4">
+            <span class="float-right">
+                <a href="{% url 'url_report_edit' report.id %}">
+                    <button type="button" class="btn btn-success">Editar
+                    </button>
+                </a>
+            </span>
+        </div>
+    </div>
+    </br>
+        <div class="col-sm-12">
+            <table class="table table-user-information">
+                <tbody>
+                    <tr>
+                        <th class="text-right">Autoridade Requisitante</th>
+                        <td>{{ report.authority_requesting }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Natureza da Ação</th>
+                        <td>{{ report.nature_of_action }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Número do Processo</th>
+                        <td>{{ report.process_number }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Autor(a)</th>
+                        <td>{{ report.autor }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Periciando(a)</th>
+                        <td>{{ report.proficient }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Data da Perícia</th>
+                        <td>{{ report.date_report }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Perito</th>
+                        <td>{{ report.profile_person_type }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Circunstância da Perícia</th>
+                        <td><strong>Circunstâncias</strong> </br>{{ report.forensic_scan.forensicscan }} </br> <strong>Objetivo</strong> </br> {{ report.forensic_scan.goal }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Anamnese: História Pregressa da Doença Atual</th>
+                        <td>{{ report.anamnesis_history|safe }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Anamnese: Antecedentes Patológicos Pessoais</th>
+                        <td>{{ report.anamnesis_personal_background|safe }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">namnese: Antecedentes Patológicos Familiares</th>
+                        <td>{{ report.anamnesis_family_background|safe }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Anamnese: Exame Físico Geral</th>
+                        <td>{{ report.anamnesis_general_exam|safe }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Anamnese: Exame do Estado Mental</th>
+                        <td>{{ report.anamnesis_mental_exam|safe }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Anamnese: Diagnóstico</th>
+                        <td>{{ report.anamnesis_diagnosis|safe }}</td>
+                    </tr>                                       
+                    <tr>
+                        <th class="text-right">Discussão</th>
+                        <td>{{ report.discussion|safe }}</td>
+                    </tr>
+
+                    <tr>
+                        <th class="text-right">Conclusão</th>
+                        <td>{{ report.conclusion|safe }}</td>
+                    </tr>  
+                    <tr>
+                        <th class="text-right">Status</th>
+                        <td>{{ report.report_status }}</td>
+                    </tr> 
+                    <tr>
+                        <th class="text-right">Obs</th>
+                        <td>{{ report.obs }}</td>
+                    </tr>                   
+                    <tr>                    
+                        <th class="text-right">Criado por:</th>
+                        <td>{{ report.user_created }} - {{ report.created_at }}</td>
+                    </tr>                    
+                    <tr>
+                        <th class="text-right">Última Atualização</th>
+                        <td>{{ report.user_updated }} - {{ report.updated_at }}</td>
+                    </tr>   
+                                                        
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}
+

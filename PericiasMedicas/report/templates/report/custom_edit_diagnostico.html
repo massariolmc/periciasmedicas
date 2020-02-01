@@ -1,0 +1,85 @@
+<hr class="divider">
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li  {% if message.tags %} class="alert alert-{{ message.tags }} " {% endif %}> {{ message }} </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<input type="hidden" name="id_cid_report" class="form-control" value="{{ report.id }}" id="id_cid_report">
+<div class="row">
+    <div class="col-sm-10">
+        <div class="form-row justify-content-center">
+            <div class="form-group">
+                {{ form.cid_number.errors }}
+                <div class="row justify-content-center">
+                <label for="form.cid_number.label"><strong>{{ form.cid_number.label_tag }}</strong></label>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-sm">
+                        {{ form.cid_number }}
+                    </div>
+                    <div class="col-sm">
+                        <button type="button" class="btn btn-link" id="id_button_cid" > 
+                            Clique
+                        </button>
+                    </div>
+                </div>
+            </div>                 
+        </div>
+        <div class="form-row justify-content-center">
+            <div class="form-group">
+                {{ form.cid_description.errors }}
+                <div class="row justify-content-center">
+                <label for="form.cid_description.label"><strong>{{ form.cid_description.label_tag }}</strong></label>
+                </div>
+                <div class="row justify-content-center">{{form.cid_description}}</div>
+            </div>                 
+        </div>
+        <div class="form-row justify-content-center">                         
+            <button type="button" id="id_add_cid" class="btn btn-success">Inserir</button>                              
+        </div> 
+    </div><!--fecha coluna-->
+    
+</div><!--fecha linha--> 
+
+<hr class="divider">
+<div id= "refresh" class="table-responsive">
+    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+        <tr>                      
+            <th class="text-sm-center">Ordem CID</th>
+            <th class="text-sm-center">Categoria</th>
+            <th class="text-sm-center">Descrição</th>                                                                                  
+            <th class="text-sm-center">Opção</th>                     
+        </tr>
+        </thead>
+        <tfoot>
+        <tr>   
+            <th class="text-sm-center">Ordem CID</th>
+            <th class="text-sm-center">Categoria</th>
+            <th class="text-sm-center">Descrição</th> 
+            <th class="text-sm-center">Opção</th>                      
+        </tr>
+        </tfoot>
+        <tbody>
+        {% for cidnumber in cidnumbers %}
+        <tr>
+            {% if cidnumber.type_cid %}
+                <td class="text-sm-center">Primário</td>
+            {% else %}
+                <td class="text-sm-center">Secundário</td>
+            {% endif %}                                        
+            <td class="text-sm-center">{{ cidnumber.category}}</td>
+            <td>{{ cidnumber.description}}</td>                                                                                 
+            <td class="text-center">                        
+            <a href="{% url 'url_cidnumber_delete' cidnumber.id %}" onclick="return confirm('Salve o Laudo antes de deletar este cid.')"><i class="fa fa-times" aria-hidden="true"></i></a>                        
+            <!-- INserir um aviso aqui, pois a página é submetida e pode perder informações -->
+            </td>
+        </tr>                 
+        {% endfor %}   
+        </tbody>
+    </table>
+</div>

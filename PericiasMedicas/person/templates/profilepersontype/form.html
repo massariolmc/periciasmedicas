@@ -1,0 +1,50 @@
+{% extends 'core/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %} {{ title3 }}
+{% endblock title %}
+
+{% block content %}
+
+ <div class="row justify-content-sm-center" >
+  <div class="card w-50 " align="center">
+    <div class="card-header">
+        <div class="row">
+          <h6 class="m-0 font-weight-bold text-primary">{{ title1 }} {{ company_name }}</h6>
+        </div>
+        <div class="row">
+          <h6 class="m-0 font-weight-bold text-primary">{{ title2 }} {{ department_name }}</h6>
+        </div>  
+        <div class="row">
+          <h6 class="m-0 font-weight-bold text-danger text-center">{{ title3 }}</h6>
+        </div>
+    </div>
+    <div class="card-body">
+      {% crispy form %}      
+    </div>
+  </div>
+ </div>
+{% endblock content %}
+
+{% block js %}
+<script>
+ $(document).ready(function(){ 
+    function log( value,pk ) {
+      //alert(value + pk);
+      //$("#id_department").html("<input type='text' name='pk' />");
+      $('input[type=hidden][name=person]').val(pk)
+      
+    }
+    $( "#id_search_person" ).autocomplete({
+      source: "/people/search_peoples",
+      minLength: 2,
+      select: function( event, ui ) {
+        log( ui.item.value, ui.item.id );
+      }
+    });
+});
+ 
+</script>
+
+{% endblock js %}

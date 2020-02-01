@@ -1,0 +1,200 @@
+{% extends 'core/base.html' %}
+{% load crispy_forms_tags %}
+{% block title %} {{ title }}
+{% endblock title %}
+
+{% block content %}
+
+ <div class="row justify-content-sm-center" >
+  <div class="card w-75">
+    <div class="card-header">
+        <h6 class="m-0 font-weight-bold text-primary">{{ title }}</h6>                 
+    </div>    
+    <div class="card-body">        
+       <form method="post" novalidate>
+        {% csrf_token %}
+        <!-- CAMPOS OCULTOS -->
+        <input type="hidden" name="user_created" class="form-control" value="{{ user.id }}" id="id_user_created">
+        <input type="hidden" name="user_updated" class="form-control" value="{{ user.id }}" id="id_user_updated">
+        <!-- FIM DOS CAMPOS OCULTOS-->
+        
+                <div class="form-row">
+                  <div class="form-group col-md-12">
+                    {{ form.nature_of_action.errors }}
+                    <div class="row justify-content-center">
+                    <label for="form.nature_of_action.label"> <strong>{{ form.nature_of_action.label_tag }}</strong></label>
+                    </div>
+                    {{ form.nature_of_action }}
+                  </div> 
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group col-md-12">
+                    {{ form.profile_person_type.errors }}
+                    <div class="row justify-content-center">
+                    <label for="form.profile_person_type.label"> <strong>{{ form.profile_person_type.label_tag }}</strong></label>
+                    </div>
+                    {{ form.profile_person_type }}
+                  </div> 
+                </div>
+               
+
+                <div class="form-row">
+                  <div class="form-group col-md-12">
+                    {{ form.version.errors }}
+                    <div class="row justify-content-center">
+                      <label for="form.version.label"> <strong>{{ form.version.label_tag }} </strong></label>
+                    </div>
+                    {{ form.version }}
+                    </div> 
+                </div>             
+                
+                <hr class="divider" />
+                
+                <div class="form-row">
+                  <div class="form-group col-md">
+                    {{ form.anamnesis_history.errors }}
+                    <div class="row justify-content-center">
+                      <label for="form.anamnesis_history.label"><strong>{{ form.anamnesis_history.label_tag }}</strong></label>
+                    </div>
+                    <div class="row justify-content-center">
+                      {{ form.anamnesis_history  }}
+                    </div>
+                  </div> 
+                </div>
+                <hr class="divider" />
+
+                <div class="form-row">
+                  <div class="form-group col-md">
+                    {{ form.anamnesis_personal_background.errors }}
+                    <div class="row justify-content-center">
+                      <label for="form.anamnesis_personal_background.label"><strong>{{ form.anamnesis_personal_background.label_tag }}</strong></label>
+                    </div>
+                    <div class="row justify-content-center">
+                      {{ form.anamnesis_personal_background  }}
+                    </div>
+                  </div> 
+                </div>
+                <hr class="divider" />
+
+                <div class="form-row">
+                  <div class="form-group col-md">
+                    {{ form.anamnesis_family_background.errors }}
+                    <div class="row justify-content-center">
+                      <label for="form.anamnesis_family_background.label"><strong>{{ form.anamnesis_family_background.label_tag }}</strong></label>
+                    </div>
+                    <div class="row justify-content-center">
+                      {{ form.anamnesis_family_background  }}
+                    </div>
+                  </div> 
+                </div>
+                <hr class="divider" />
+
+                <div class="form-row">
+                  <div class="form-group col-md">
+                    {{ form.anamnesis_general_exam.errors }}
+                    <div class="row justify-content-center">
+                      <label for="form.anamnesis_general_exam.label"><strong>{{ form.anamnesis_general_exam.label_tag }}</strong></label>
+                    </div>
+                    <div class="row justify-content-center">
+                      {{ form.anamnesis_general_exam  }}
+                    </div>
+                  </div> 
+                </div>
+                <hr class="divider" />
+
+                <div class="form-row">
+                  <div class="form-group col-md">
+                    {{ form.anamnesis_mental_exam.errors }}
+                    <div class="row justify-content-center">
+                      <label for="form.anamnesis_mental_exam.label"><strong>{{ form.anamnesis_mental_exam.label_tag }}</strong></label>
+                    </div>
+                    <div class="row justify-content-center">
+                      {{ form.anamnesis_mental_exam  }}
+                    </div>
+                  </div> 
+                </div>            
+                
+                <hr class="divider" />
+                <div class="form-row justify-content-center">
+                  <div class="form-group">
+                      {{ form.cid_number.errors }}
+                      <div class="row justify-content-center">
+                      <label for="form.cid_number.label"><strong>{{ form.cid_number.label_tag }}</strong></label>
+                      </div>
+                      <div class="row justify-content-center">
+                          <div class="col-sm">
+                              {{ form.cid_number }}
+                          </div>
+                          <div class="col-sm">
+                              <button type="button" class="btn btn-link" id="id_button_cid" > 
+                                  Clique
+                              </button>
+                          </div>
+                      </div>
+                  </div>                 
+                </div>
+                <div class="form-row justify-content-center">
+                    <div class="form-group">
+                        {{ form.cid_textarea.errors }}
+                        <div class="row justify-content-center">
+                        <label for="form.cid_textarea.label"><strong>{{ form.cid_textarea.label_tag }}</strong></label>
+                        </div>
+                        <div class="row justify-content-center">
+                        {{ form.cid_textarea }}
+                        </div>
+                    </div>                 
+                </div>
+                <hr class="divider" />                
+                 <div class="row">    
+                    <div class="col-sm-6">
+                        <span class="float-left">
+                            <button type="submit" class="btn btn-primary">Salvar</button>  	                              
+                        </span>
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="float-right">
+                            <a href="{% url 'url_forensicscans_list' %}" class="btn btn-warning">Voltar</a>
+                        </span>  
+                    </div>
+                </div>
+        </form>            
+    </div>
+  </div>
+ </div>
+{% endblock content %}
+
+
+{% block js %}
+
+<script>
+$(document).ready(function(){ 
+            $("#id_cid_number").autocomplete({                
+                source: "{% url 'url_cid10_autocomplete' %}",                
+                minLength: 2,             
+              });       
+});
+</script>
+
+<script>
+$(document).ready( function(){
+   $("#id_button_cid").click(function() {                      
+    var query = $("#id_cid_number").val();            
+        $.ajax({
+            type: "GET",
+            url: "{% url 'url_cid10_ajax' %}",
+            data: {'ff': query},
+            success: function(data){
+                console.log(data);                 
+                $("#id_cid_textarea").val(data);
+                //$("#id_cid_number").val("");                                    
+            },
+            failure: function(data){  
+                console.log("erro"+data);             
+            },
+        });                    
+    });     
+});
+</script>
+
+{% endblock js %}

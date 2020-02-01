@@ -1,0 +1,71 @@
+{% extends 'core/base.html' %}
+{% load crispy_forms_tags %}
+{% block title %} {{ title }}
+{% endblock title %}
+
+{% block content %}
+
+ <div class="row justify-content-sm-center" >
+  <div class="card w-75">
+    <div class="card-header">
+        <h6 class="m-0 font-weight-bold text-primary">{{ report }}</h6>
+        <h6 class="m-0 font-weight-bold text-primary">{{ type_item }}</h6>
+        <h6 class="m-0 font-weight-bold text-primary">{{ title }}</h6>
+    </div>   
+    <div class="card-body" align="center">                 
+        <form method="POST" novalidate>
+         {% csrf_token %}
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead>
+                    <tr>                                            
+                      <th class="text-sm-center"><input type="checkbox" id="checkTodos" >
+                      <th class="text-sm-center">Pergunta</th>                      
+                    </tr>
+                  </thead>
+                  <tfoot>
+                    <tr>    
+                      <th class="text-sm-center">Perguntas</th>       
+                      <th class="text-sm-center">Status da Resposta</th>                      
+                    </tr>
+                  </tfoot>
+                  <tbody>
+                    {% for item in type_item_by_nature_of_action %}
+                    <tr>
+                        <td class="text-sm-center" ><input type="checkbox" name="quesitos", value="{{ item.id }}"></td>
+                        <td>{{ item.question|safe }}</td>                                                 
+                    </tr>                 
+                    {% endfor %}   
+                  </tbody>
+                </table>
+              </div>
+            <!-- BOTÃO DE ENVIAR O FORMULÁRIO-->
+            <div class="row">    
+                <div class="col-sm-6">
+                    <span class="float-left">
+                    <button  type="submit" class="btn btn-primary">Salvar</button>  	                      
+                    </span>
+                </div>
+                <div class="col-sm-6">
+                    <span class="float-right">
+                        <a href="{% url 'url_report_edit' report.id %}" class="btn btn-warning">Voltar</a>
+                    </span>  
+                </div>
+            </div> 
+        </form>
+          
+    </div>  <!-- FIM DO CARD BODY-->
+  </div>  <!-- FIM DO CARD PRINCIPAL-->
+ </div> <!-- FIM DA ROW PRINCIPAL-->
+{% endblock content %}
+
+
+{% block js %}
+
+<script>
+    $("#checkTodos").click(function(){
+    $('input:checkbox').not(this).prop('checked', this.checked);
+});
+</script>
+
+{% endblock js %}

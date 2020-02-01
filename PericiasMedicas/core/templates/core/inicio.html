@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="pt-br">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>LogIn</title>
+
+ 
+  <!-- Custom fonts for this template-->
+  <!-- <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css"> -->
+  <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">  
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet"> 
+
+
+  <!-- Custom styles for this template-->
+  <!-- <link href="css/sb-admin-2.min.css" rel="stylesheet"> -->
+  <link href="{% static 'css/sb-admin-2.min.css'%}" rel="stylesheet">
+  <link href="{% static 'css/style.css'%}" rel="stylesheet">
+
+  <style>
+    .container-fluid {
+        margin-top: 250px;        
+    }
+  </style>
+
+</head>
+
+<body id="page-top">
+
+ <div class="container-fluid">
+  <!-- Page Wrapper -->
+ 
+
+
+ </div>
+</div>
+  <!-- Bootstrap core JavaScript-->
+  <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+  <script src=" {% static 'vendor/bootstrap/js/bootstrap.bundle.min.js'%}"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js'%}"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="{% static 'js/sb-admin-2.min.js' %}"></script>
+
+</body>
+
+</html>
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Colors">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <!-- Title -->
+    <title> Appwork - Bootstrap 4 Admin Template &amp; UI Kit</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'themeforest/img/core-img/favicon.ico' %}">
+
+    <!-- Core Stylesheet -->
+    <link rel="stylesheet" href="{% static 'themeforest/style.css'%}">
+
+    <!-- Responsive Stylesheet -->
+    <link rel="stylesheet" href="{% static 'themeforest/css/responsive.css'%}">
+
+</head>
+
+<body>
+            <!-- Wrapper -->
+        <div class="wrapper wrapper-content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <!-- Middle Box -->
+                        <div class="middle-box bg-boxshadow text-center">                            
+                             <img src="{% static 'themeforest/img/core-img/img-pericia.jpg' %}" alt="Smiley face" height="250" width="250"> 
+                            <h4>Bem vindo</h4>
+                            <h4>Sistema de Laudos Periciais</h4>
+                            <p>Faça Login para vê-lo em ação.</p>
+
+                                {% block content %}
+                                {% endblock content %}
+
+                                <a class="forgot_pass" href="{% url 'password_reset' %}"><small>Forgot password?</small></a>                                
+                            </form>                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <!-- Copywrite Text -->
+                    <div class="copywrite-text mt-100">
+                        <p>App-REPORT &copy; 2020 created by <a href="#">MLX Developement</a></p>
+                        <!-- Nav Style -->
+                        <div class="footer--nav--style">
+                            <ul>
+                                {% comment %} <li><a href="#">About</a></li>
+                                <li><a href="#">Privacy</a></li>
+                                <li><a href="#">Purchase</a></li> {% endcomment %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery 2.2.4 -->
+    <script src="{% static 'themeforest/assets/js/jquery/jquery.2.2.4.min.js' %}"></script>
+    <!-- Bootsrap js -->
+    <script src="{% static 'themeforest/assets/js/bootstrap/popper.min.js' %}"></script>
+    <script src="{% static 'themeforest/assets/js/bootstrap/bootstrap.min.js' %}"></script>
+    <script src="{% static 'themeforest/js/plugins-js/classy-nav.js' %}"></script>
+
+    <!-- Active js -->
+    <script src="{% static 'themeforest/js/active.js' %}"></script>
+
+</body>
+
+</html>

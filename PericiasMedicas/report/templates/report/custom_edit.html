@@ -1,0 +1,312 @@
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  
+  
+  <li class="nav-item">
+    <a class="nav-link {% ifequal tabs "preambulo-tab" %} active{% endifequal %}" id="preambulo-tab" data-toggle="tab" href="#preambulo" role="tab" aria-controls="preambulo" aria-selected="{% ifequal tabs "preambulo-tab" %}true {% else %} false {% endifequal %}">Preâmbulo</a>
+  </li>
+  <li class="nav-item">    
+    <a class="nav-link {% ifequal tabs "perito-tab" %} active{% endifequal %}" id="perito-tab" data-toggle="tab" href="#perito" role="tab" aria-controls="perito" aria-selected="{% ifequal tabs "perito-tab" %}true {% else %} false {% endifequal %}">Perito</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% ifequal tabs "anamnese-tab" %} active{% endifequal %}" id="anamnese-tab" data-toggle="tab" href="#anamnese" role="tab" aria-controls="anamnese" aria-selected="{% ifequal tabs "anamnese-tab" %}true {% else %} false {% endifequal %}">Anamnese</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% ifequal tabs "documentos-tab" %} active{% endifequal %}" id="documentos-tab" data-toggle="tab" href="#documentos" role="tab" aria-controls="documentos" aria-selected="{% ifequal tabs "documentos-tab" %}true {% else %} false {% endifequal %}">Documentos Médicos</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% ifequal tabs "diagnostico-tab" %} active{% endifequal %}" id="diagnostico-tab" data-toggle="tab" href="#diagnostico" role="tab" aria-controls="diagnostico" aria-selected="{% ifequal tabs "diagnostico-tab" %}true {% else %} false {% endifequal %}">Diagnóstico</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% ifequal tabs "discussao-tab" %} active{% endifequal %}" id="discussao-tab" data-toggle="tab" href="#discussao" role="tab" aria-controls="discussao" aria-selected="{% ifequal tabs "discussao-tab" %}true {% else %} false {% endifequal %}">Discussão</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% ifequal tabs "conclusao-tab" %} active{% endifequal %}" id="conclusao-tab" data-toggle="tab" href="#conclusao" role="tab" aria-controls="conclusao" aria-selected="{% ifequal tabs "conclusao-tab" %}true {% else %} false {% endifequal %}">Conclusão</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% ifequal tabs "quesito-tab" %} active{% endifequal %}" id="quesito-tab" data-toggle="tab" href="#quesito" role="tab" aria-controls="quesito" aria-selected="{% ifequal tabs "quesito-tab" %}true {% else %} false {% endifequal %}">Quesitos</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% ifequal tabs "imp-tab" %} active{% endifequal %}" id="imp-tab" data-toggle="tab" href="#imp" role="tab" aria-controls="imp" aria-selected="{% ifequal tabs "imp-tab" %}true {% else %} false {% endifequal %}">Visualização</a>
+  </li> 
+</ul>
+<form id="id_form_edit" method="post" novalidate>
+    <div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade {% ifequal tabs "preambulo-tab" %}show active {% endifequal %}" id="preambulo" role="tabpanel" aria-labelledby="preambulo-tab"><p class="text-center">PREAMBULO</p>
+        
+            {% csrf_token %}
+            <!-- CAMPOS OCULTOS -->
+            <input type="hidden" name="user_created" class="form-control" value="{{ user.id }}" id="id_user_created">
+            <input type="hidden" name="user_updated" class="form-control" value="{{ user.id }}" id="id_user_updated">
+            <input type="hidden" name="report_status" class="form-control" value="1" id="id_report_status">
+            <input type="hidden" name="value_tab" id="id_value_tab" class="form-control">
+            <!-- FIM DOS CAMPOS OCULTOS-->
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                    {{ form.authority_requesting.errors }}
+                    <label for="form.authority_requesting.label">{{ form.authority_requesting.label_tag }}</label>
+                    {{ form.authority_requesting }}
+                    </div>
+                </div>    
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                    {{ form.nature_of_action.errors }}
+                    <label for="form.nature_of_action.label">{{form.nature_of_action.label_tag}}</label>
+                    {{ form.nature_of_action }}
+                    </div>    
+                    <div class="form-group col-md-4">
+                    {{ form.process_number.errors }}
+                    <label for="form.process_number.label">{{ form.process_number.label_tag }}</label>
+                    {{ form.process_number }}
+                    </div>   
+                    <div class="form-group col-md-4">
+                    {{ form.autor.errors }}
+                    <label for="form.autor.label">{{ form.autor.label_tag }}</label>
+                    {{ form.autor }}
+                    </div>             
+                </div>
+
+                <div class="form-row">                   
+                    <div class="form-group col-md-4">
+                    {{ form.proficient.errors }}
+                    <label for="form.proficient.label">{{ form.proficient.label_tag }}</label>
+                    {{ form.proficient }}                
+                    </div>
+                    <div class="form-group col-md-4">
+                    {{ form.date_report.errors }}
+                    <label for="form.date_report.label">{{form.date_report.label_tag}}</label>
+                    {{ form.date_report }}
+                    </div>
+                    <div class="form-group col-md-4">
+                    {{ form.profile_person_type.errors }}
+                    <label for="form.profile_person_type.label">{{ form.profile_person_type.label_tag }}</label>
+                    {{ form.profile_person_type }}                
+                    </div> 
+                </div>                            
+        </div>
+ 
+
+    <div class="teste tab-pane fade {% ifequal tabs "perito-tab" %}show active {% endifequal %} " id="perito" role="tabpanel" aria-labelledby="perito-tab"><p class="text-center">Perito</p>
+   
+            <div class="row">
+                <div class="col">
+                <p class="text-center alert alert-success" role="alert">
+                 <span class="alert-link"> 
+                    {{ report.profile_person_type.person.name }}
+                </span>
+                </div>
+            </div>
+            <hr class="divider">            
+            <div class="row">            
+                <div class="col-md-12">
+                    <p class="text-center"> 
+                        {{ form.nature_of_action.label_tag }} 
+                    </p>                    
+                    <p class="text-center alert alert-success" role="alert">
+                        <span class="alert-link">                     
+                            {{ report.nature_of_action }}
+                        </span>
+                    </p>
+                </div>
+            </div>
+            <hr class="divider">
+            <div class="form-row justify-content-center">          
+                <div class="form-group">                  
+                    {{ form.forensic_scan.errors }}                    
+                    <label for="form.forensic_scan.label">{{ form.forensic_scan.label_tag }}</label>
+                    {{ form.forensic_scan }}                                    
+                </div> 
+                <div class="form-group">                  
+                    {{ form.location_objective.errors }}                    
+                    <label for="form.location_objective.label">{{ form.location_objective.label_tag }}</label>
+                    {{ form.location_objective }}                                    
+                </div>               
+            </div>       
+            <div id="location_objective">
+            </div>
+    </div>
+    <!--   ANAMENESE   -->
+    <div class="teste tab-pane fade {% ifequal tabs "anamnese-tab" %}show active {% endifequal %} " id="anamnese" role="tabpanel" aria-labelledby="anamnese-tab">
+            </br>
+            {% include 'report/custom_edit_anamnese.html' %}
+    </div><!--fecha tab-pane-->
+
+    <!--   DOCUMENTOS  MÉDICOS  -->
+    <div class="tab-pane fade {% ifequal tabs "documentos-tab" %}show active {% endifequal %}" id="documentos" role="tabpanel" aria-labelledby="documentos-tab">
+                                  
+        {% include 'report/custom_edit_documentos_medicos.html' %}
+        
+    </div><!-- FIM TAB PANE -->
+
+    <!--   DIAGNÓSTICO  -->
+    <div class="tab-pane fade {% ifequal tabs "diagnostico-tab" %}show active {% endifequal %}" id="diagnostico" role="tabpanel" aria-labelledby="diagnostico-tab">
+                                   
+            {% include 'report/custom_edit_diagnostico.html' %}
+        
+    </div><!-- FIM TAB PANE -->
+
+    <div class="tab-pane fade {% ifequal tabs "discussao-tab" %}show active {% endifequal %}" id="discussao" role="tabpanel" aria-labelledby="discussao-tab">
+            </br>
+            <div class="row">
+                <div class="col-sm-2">
+                    <div class="alert alert-warning" role="alert">
+                        <span class="h6"><strong>Modelo Disponível (Discussão):</strong></span>
+                        <button id="id_button_copy_discussion" value="{{ discon.cid_number }}" type="button" class="btn btn-link" data-toggle="modal" data-target="#modal_discussao">
+                            {{ discon }}
+                        </button>
+                    </div>
+                    <!-- Modal -->
+                    <div class="modal fade" id="modal_discussao" tabindex="-1" role="dialog" aria-labelledby="TituloModalCentralizado" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">      
+                            <div class="modal-body">
+                                <strong>Deseja realmente copiar o modelo de Discussão do CID {{ discon.cid_number }}?</strong>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                                <button type="button" id="copy_discussao" class="btn btn-primary">Copiar</button>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- FECHA COLUNA-->
+
+                <div class="col-sm-10">
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                        {{ form.discussion.errors }}
+                        <div class="row justify-content-center">
+                        <label for="form.discussion.label"><strong>{{ form.discussion.label_tag }}</strong></label>
+                        </div>
+                        <div class="row justify-content-center">
+                        {{ form.discussion }}
+                        </div>
+                        </div>    
+                    </div>
+                </div> <!-- FECHA COLUNA-->
+            </div> <!-- FECHA LINHA-->               
+    </div><!--fecha tab-pane-->
+
+  <div class="tab-pane fade {% ifequal tabs "conclusao-tab" %}show active {% endifequal %}" id="conclusao" role="tabpanel" aria-labelledby="conclusao-tab">
+            </br>
+            <div class="row">
+                <div class="col-sm-2">
+                    <div class="alert alert-warning" role="alert">
+                        <span class="h6"><strong>Modelo Disponível (Conclusão):</strong></span>
+                        <button id="id_button_copy_conclusion" value="{{ discon.cid_number }}" type="button" class="btn btn-link" data-toggle="modal" data-target="#modal_conclusao">
+                            {{ discon }}
+                        </button>
+                    </div>
+                    
+                    <!-- Modal -->
+                    <div class="modal fade" id="modal_conclusao" tabindex="-1" role="dialog" aria-labelledby="TituloModalCentralizado" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">      
+                            <div class="modal-body">
+                                <strong>Deseja realmento copiar as informações do modelo {{ report.forensic_scan.version }}?</strong>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                                <button type="button" id="copy_conclusao" class="btn btn-primary">Copiar</button>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- FECHA COLUNA-->  
+
+                <div class="col-sm-2"> <!-- Abri coluna -->
+                    <div class="form-row justify-content-center">
+                        <div class="form-group">
+                            {{ form.inability_professional.errors }}
+                            <div class="row justify-content-center">
+                                <label for="form.inability_professional.label"><strong>{{ form.inability_professional.label_tag }}</strong></label>
+                            </div>
+                            <div class="row justify-content-center">
+                                {{ form.inability_professional }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row justify-content-center">
+                        <div class="form-group">
+                            {{ form.inability_temporal.errors }}
+                            <div class="row justify-content-center">
+                                <label for="form.inability_temporal.label"><strong>{{ form.inability_temporal.label_tag }}</strong></label>
+                            </div>
+                            <div class="row justify-content-center">
+                                {{ form.inability_temporal }}
+                            </div>
+                        </div>   
+                    </div>
+                </div><!-- FECHA COLUNA--> 
+
+                <div class="col-sm-8"> <!-- Abri coluna -->
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            {{ form.conclusion.errors }}
+                            <div class="row justify-content-center">
+                                <label for="form.conclusion.label"><strong>{{ form.conclusion.label_tag }}</strong></label>
+                            </div>
+                            <div class="row justify-content-center">
+                                {{ form.conclusion }}
+                            </div>
+                        </div>   
+                    </div>
+                </div> <!-- FECHA COLUNA-->
+            </div> <!-- FECHA LINHA-->
+                                
+    </div><!-- FIM TAB PANE -->
+
+    <div class="tab-pane fade {% ifequal tabs "quesito-tab" %}show active {% endifequal %}" id="quesito" role="tabpanel" aria-labelledby="quesito-tab">
+     </br>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}  
+                <li  {% if message.tags %} class="alert alert-{{message.tags}}" {% endif %}> {{ message }} 
+                {% if message.extra_tags %} {{ message.extra_tags }} {% endif %}    
+                </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% include 'report/custom_edit_item2.html' %}
+    </div><!-- FIM TAB PANE -->
+
+    <div class="tab-pane fade {% ifequal tabs "imp-tab" %}show active {% endifequal %}" id="imp" role="tabpanel" aria-labelledby="imp-tab">
+        <div class="row justify-content-center imp-tab">  
+                         
+                <a class="btn btn-primary imp-tab-link" href="{% url 'url_print_pdf' report.id %}"> PDF(Navegador) </a>
+                <a class="btn btn-secondary imp-tab-link" href="{% url 'url_print_pdf' report.id %}?download=True"> PDF(Download) </a>
+                <a class="btn btn-warning imp-tab-link" href="{% url 'url_print_docx' report.id %}"> DOCX </a>            
+        </div>
+        <div class="row justify-content-center imp-tab">  
+            <div class="form-group col-md-12">
+                {{ form.impress.errors }}
+                <div class="row justify-content-center">
+                    <label for="form.impress.label"><strong>{{ form.impress.label_tag }}</strong></label>
+                </div>
+                <div class="row justify-content-center">
+                    {{ form.impress }}
+                </div>
+            </div>   
+        </div>
+    </div><!-- FIM TAB PANE -->
+
+
+    </div><!-- FIM TAB CONTENT -->
+    
+    <!-- BOTÃO DE ENVIAR O FORMULÁRIO-->
+        <div class="row">    
+            <div class="col-sm-6">
+                <span class="float-left">
+                <button id="id_enviar" type="submit" class="btn btn-primary">Salvar</button>  	                      
+                </span>
+            </div>
+            <div class="col-sm-6">
+                <span class="float-right">
+                    <a href="{% url 'url_reports_list'%}" class="btn btn-warning">Voltar</a>
+                </span>  
+            </div>
+        </div> 
+    <!-- FIM BOTÃO DE ENVIAR O FORMULÁRIO-->    
+ </form>
+
+<hr class="sidebar-divider">

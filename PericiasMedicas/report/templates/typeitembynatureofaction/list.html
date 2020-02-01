@@ -1,0 +1,132 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block content %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li  {% if message.tags %} class="alert alert-{{ message.tags }} " {% endif %}> {{ message }} </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+          <!-- DataTales Example -->
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <div class="row">
+                <div class="col-sm-6">
+                  <h6 class="m-0 font-weight-bold text-primary">{{ title }}</h6>
+                </div>
+                <div class="col-sm-6">
+                  <span class="float-right">
+                    <a href="{% url 'url_typeitembynatureofaction_create' %}">
+                      <button type="button" class="btn btn-success">Adicionar
+                      </button>
+                    </a>
+                    
+                      <button id="id_button_del_all" type="button" class="btn btn-danger">Deletar
+                      </button>
+                    
+                  </span>
+              </div>
+            </div>
+          </div>
+
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead>
+                    <tr>
+                      <th class="text-sm-center"><input type="checkbox" id="checkTodos" ></th>
+                      <th class="text-sm-center">Natureza da Ação</th>
+                      <th class="text-sm-center">Quesito/Autoridade</th>                                                                     
+                      <th class="text-sm-center">CID</th>
+                      <th class="text-sm-center">Versão</th>
+                      <th class="text-sm-center">Opções</th>                                                                                  
+                    </tr>
+                  </thead>
+                  <tfoot>
+                    <tr>    
+                      <th class="text-sm-center"><input type="checkbox" id="checkTodos" ></th>
+                      <th class="text-sm-center">Natureza da Ação</th>
+                      <th class="text-sm-center">Quesito/Autoridade</th>                                                                     
+                      <th class="text-sm-center">CID</th>
+                      <th class="text-sm-center">Versão</th>
+                      <th class="text-sm-center">Opções</th>                     
+                    </tr>
+                  </tfoot>
+                  <tbody>
+                    {% for typeitembynatureofaction in typeitembynatureofactions %}
+                    <tr data-id={{typeitembynatureofaction.id}}>
+                      <td class="text-sm-center" ><input type="checkbox" name="quesitos", value="{{ typeitembynatureofaction.id }}"></td>
+                      <td class="text-sm-center">{{ typeitembynatureofaction.nature_of_action }}</td>
+                      <td class="text-sm-center">{{ typeitembynatureofaction.type_item }}</td>
+                      <td class="text-sm-center">{{ typeitembynatureofaction.cid_number }}</td> 
+                      <td class="text-sm-center">{{ typeitembynatureofaction.version }}</td>                                                                                 
+                      <td class="text-center">
+                        <a href="{% url 'url_typeitembynatureofaction_detail' typeitembynatureofaction.id %}">  <i class="fa fa-list" aria-hidden="true"></i> </a>
+                        <a href="{% url 'url_typeitembynatureofaction_edit' typeitembynatureofaction.id %}">    <i class="fa fa-edit" aria-hidden="true"></i> </a>
+                        <a href="{% url 'url_typeitembynatureofaction_delete' typeitembynatureofaction.id %}" onclick="return confirm('Excluir?')"><i class="fa fa-times" aria-hidden="true"></i></a>
+                      </td>
+                    </tr>                 
+                    {% endfor %}   
+                  </tbody>
+                </table>
+              </div>
+            </div>
+             
+
+{% endblock content %}
+
+{% block js %}
+<script src="{% static 'js/datatables_user.js'%}"> 
+</script>
+
+<script>
+    $("#checkTodos").click(function(){
+    $('input:checkbox').not(this).prop('checked', this.checked);
+});
+</script>
+
+<script>
+//Script que deleta varios quesito de uma vez,através do checkbox e ajax
+$("#id_button_del_all").click(function(){
+  var marc = 0;
+  var selected_rows=[];
+  $('.table').find('tr').each(function(){
+    var row=$(this);
+    //console.log(row.find('input[type="checkbox"]').is(':checked'));
+    if (row.find('input[type="checkbox"]').is(':checked')) {
+        //console.log(row.attr('data-id'));
+        if (row.attr('data-id') != null && row.attr('data-id') != undefined) {
+          selected_rows.push(row.attr('data-id'));
+        }
+        marc = 1;
+        };    
+    });
+    var selected_rows = JSON.stringify(selected_rows);
+    if (marc==0){
+      alert("Selecione os quesitos para deletar.");
+    }
+    else{
+      $.ajax({
+              type: "GET",
+              url: "{% url 'url_typeitembynatureofaction_delete_all' %}",
+              data: {'ff': selected_rows},
+              success: function(data){                
+                //console.log(data);
+                alert("Quesitos deletados com sucesso.");
+                 document.location.reload(true);//Recarrega a página atual                              
+              },
+              failure: function(data){
+                  console.log("FAIL");
+                  console.log(data);
+              },
+          });
+    }
+    
+});
+</script>
+
+{% endblock js %}
+    

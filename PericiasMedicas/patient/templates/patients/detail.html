@@ -1,0 +1,151 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Informações do Paciente</h6>
+    </div>
+    <div class="card-body">
+    <div class="row">
+        <div class="col-sm-4">
+            <a href="{% url 'url_patients_list'%}" class="btn btn-info float-left">Listar todos</a>
+        </div>
+        <div class="col-sm-4">
+            <h1>{{ patient }}</h1>
+        </div>
+        <div class="col-sm-4">
+            <span class="float-right">
+                <a href="{% url 'url_patient_edit' patient.id %}">
+                    <button type="button" class="btn btn-success">Editar
+                    </button>
+                </a>
+            </span>
+        </div>
+    </div>
+        <div class="col-sm-12">
+            <table class="table table-user-information">
+                <tbody>
+                    <tr>
+                        <th class="text-right">Foto</th>
+                        {% if patient.avatar %}
+                            <td><img class="img-profile rounded-circle" src="{{ patient.avatar.url }}" style="width:100px"></td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <th class="text-right">Nome</th>
+                        <td>{{ patient.name }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Nascimento</th>
+                        <td>{{ patient.dt_birthday|date:'d-m-Y' }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">RG</th>
+                        <td>{{ patient.rg }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Expedição-RG</th>
+                        <td>{{ patient.rg_exped }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">RG-UF</th>
+                        <td>{{ patient.rg_uf }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">CPF</th>
+                        <td class="cpf">{{ patient.cpf }}</td>
+                    </tr>                 
+                    <tr>
+                        <th class="text-right">Nome da Mãe</th>
+                        <td>{{ patient.name_mother }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Nome do Pai</th>
+                        <td>{{ patient.name_father }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Sexo</th>
+                        <td>{{ patient.get_sex_display }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Natural</th>
+                        <td>{{ patient.uf_natural }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">RG</th>
+                        <td>{{ patient.origin }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Escolaridade</th>
+                        <td>{{ patient.get_schooling_display }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Estado Civil</th>
+                        <td>{{ patient.maritalstatus.name }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Religião</th>
+                        <td>{{ patient.religion.name }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Situação INSS</th>
+                        <td>{{ patient.situation_inss }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Acompanhante</th>
+                        <td>{{ patient.scort }} - {{ patient.get_scort_type_display }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Email</th>
+                        <td>{{ patient.email }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Telefone</th>
+                        <td>{{ patient.phone}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Tipo Sanguíneo</th>
+                        <td>{{ patient.blood_type}}{{ patient.blood_rh}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Endereço</th>
+                        <td>{{ patient.address}} - {{ patient.address_num}}, {{patient.address_city_uf}} - <span class="cep">{{patient.cep}}</span></td>
+                    </tr>                                        
+                    <tr>
+                        <th class="text-right">Última Atualização</th>
+                        <td>{{ patient.user }} - {{ patient.updated_at }}</td>
+                    </tr>                                       
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}
+
+{% block js %}
+
+<script src="{% static 'vendor/jquery/jquery-mask/jquery.mask.min.js'%}"></script>
+
+<script>
+  $(document).ready(function(){
+    //$('.date').mask('11/11/1111');
+    //$('.time').mask('00:00:00');
+    //$('.date_time').mask('00/00/0000 00:00:00');
+    $('.cep').mask('00000-000');
+    //$('.phone').mask('0000-0000');
+    //$('.phone_with_ddd').mask('(00) 0000-0000');
+    //$('.phone_with_ddd_cel').mask('(00) 00000-0000');
+    //$('.phone_us').mask('(000) 000-0000');
+    //$('.mixed').mask('AAA 000-S0S');
+    $('.cpf').mask('000.000.000-00', {reverse: true});
+    //$('.cnpj').mask('00.000.000/0000-00', {reverse: true});
+    //$('.money').mask('000.000.000.000.000,00', {reverse: true});
+
+});
+</script>
+
+{% endblock js %}
