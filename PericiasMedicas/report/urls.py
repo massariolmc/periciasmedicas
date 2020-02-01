@@ -62,7 +62,8 @@ urlpatterns = [
     path('report/<int:pk>/cancel', views.cancelar_report, name='url_cancelar_report'),
     path('report/<int:pk>/search_reports/', views.search_reports, name='url_search_reports'),    
     path('report/<int:pk>/print_docx/', views.print_docx, name='url_print_docx'),    
-    path('report/<int:pk>/print_pdf/', views.print_pdf, name='url_print_pdf'),    
+    path('report/<int:pk>/print_pdf/', views.print_pdf, name='url_print_pdf'),
+    path('report/<int:pk>/report_view_after_save/', views.report_view_after_save, name='url_report_view_after_save'),# Isso é apenas para mostrar os laudo após aprovado    
     path('report/report_location_objective', views.get_report_location_objective, name='url_report_location_objective'),# ESTE É UM AJAX
     path('report/forensic_copy_report', views.forensic_copy_report, name='url_forensic_copy_report'),# ESTE É UM AJAX
 

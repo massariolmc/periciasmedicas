@@ -82,7 +82,7 @@ class PersonTypeForm(ModelForm):
 
 class ProfilePersonTypeForm(ModelForm):      
 
-    search_person = forms.CharField(label="Pessoa Find", max_length=100, required=True, 
+    search_person = forms.CharField(label="Digite o nome do funcionário", max_length=100, required=True, 
                     widget=forms.TextInput(attrs={'placeholder': 'Digite um nome...'}))  
     class Meta:
         model = ProfilePersonType
@@ -91,27 +91,44 @@ class ProfilePersonTypeForm(ModelForm):
         widgets = {
             'person': HiddenInput(attrs={'class': 'form-control'}),
             'person_type': Select(attrs={'class': 'form-control'}),
-            'department': Select(attrs={'class': 'form-control'}),
+            'department': HiddenInput(attrs={'class': 'form-control'}),
             'user_created': HiddenInput(attrs={'class': 'form-control'}),
             'user_updated': HiddenInput(attrs={'class': 'form-control'}),            
         }
+    #VALIDAÇÃO
+    def clean(self):       
+        cleaned_data = super(ProfilePersonTypeForm,self).clean()
+        id_person = cleaned_data.get('person')
+        id_department = cleaned_data.get('department')
+        print("Entrei na validação")         
+        if self.instance.id:            
+            n = ProfilePersonType.objects.filter(person_id=id_person,department_id=id_department).exclude(id=self.instance.id).exists()#Verifica se o nome já existe            
+        else:                     
+            n = ProfilePersonType.objects.filter(person_id=id_person,department_id=id_department).exists()#Verifica se o nome já existe                
+        
+        if n:            
+            self.add_error('search_person',"Funcionário já cadastrado neste Departamento.")            
+        
+        return cleaned_data
     
     def __init__(self, *args, **kwargs):         
         self.person_name = kwargs.get('person_name','')# faz parte do edit do profile person type
-        self.person_id = kwargs.get('person_id','')# faz parte do edit do profile person type   
+        self.person_id = kwargs.get('person_id','')# faz parte do edit do profile person type 
+        self.department_id = kwargs.get('department_id','')# faz parte do create do profile person type   
         if self.person_name and self.person_id:
             del(kwargs['person_name'])# faz parte do edit do profile person type
-            del(kwargs['person_id'])# faz parte do edit do profile person type               
+            del(kwargs['person_id'])# faz parte do edit do profile person type  
+        if self.department_id:
+            del(kwargs['department_id'])             
         super().__init__(*args, **kwargs)    
-        self.helper = FormHelper()
-        print("person name do init", self.person_name)
+        self.helper = FormHelper()          
         self.helper.layout = Layout(
             Hidden('user_created', '{{ user.id }}'),
             Hidden('user_updated', '{{ user.id }}'),            
-            Hidden('person',self.person_id),           
-            Hidden('department','{{ department_id }}'),
+            Hidden('person',self.person_id),#Isso funciona somente no EDIT        
+            Hidden('department', self.department_id),
             #'search_person',
-            Field('search_person', value=self.person_name),
+            Field('search_person', value=self.person_name),#Isso funciona somente no EDIT
             'person_type',                                                                       
             HTML('''               
                  <div class="row">    
@@ -122,7 +139,7 @@ class ProfilePersonTypeForm(ModelForm):
                     </div>
                     <div class="col-sm-6">
                         <span class="float-right">
-                            <a href="{% url 'url_profilepersontypes_list' department_id%}" class="btn btn-warning">Voltar</a>
+                            <a href="{% url 'url_profilepersontypes_list' department.id %}" class="btn btn-warning">Voltar</a>
                         </span>  
                     </div>
                 </div>'''
@@ -203,7 +220,10 @@ class DoctorForm(ModelForm):
         return name
 
     def __init__(self, *args, **kwargs):                        
-        super().__init__(*args, **kwargs)        
+        self.person = kwargs.get("person","")
+        del (kwargs['person'])
+        super().__init__(*args, **kwargs) 
+        self.fields['profile_person_type'].queryset= ProfilePersonType.objects.filter(person_id=self.person, person_type_id=3)
         self.helper = FormHelper()       
         self.helper.layout = Layout(
             Hidden('user_created', '{{ user.id }}'),

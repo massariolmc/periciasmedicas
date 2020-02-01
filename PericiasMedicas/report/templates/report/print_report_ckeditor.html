@@ -8,13 +8,13 @@
 
 <p style="text-align:justify"><strong>PROCESSO N&deg;: </strong>{{ report.process_number }}</p>
 
-<p style="text-align:justify"><strong>AUTOR: </strong>{{ report.autor }}</p>
+<p style="text-align:justify"><strong>AUTOR(A): </strong>{{ report.autor }}</p>
 
-<p style="text-align:justify"><strong>PERICIANDA:</strong> {{ report.proficient }}</p>
+<p style="text-align:justify"><strong>PERICIANDO(A):</strong> {{ report.proficient }}</p>
 
 <p style="text-align:justify"><strong>DATA DA PER&Iacute;CIA: </strong>{{ report.date_report }}</p>
 
-<p style="text-align:justify"><strong>T&Iacute;TULOS E CURR&Iacute;CULO DO PERITO: </strong></p>
+<p style="text-align:justify"><strong>T&Iacute;TULOS E CURR&Iacute;CULO DO PERITO(A): </strong></p>
 
 <p style="text-align:justify">{{ doctor.course }}</p>
 
@@ -26,7 +26,7 @@
 
 <p style="text-align:justify">{{ report.location_objective.goal }}</p>
 
-<p style="text-align:justify"><u><strong>2. IDENTIFICA&Ccedil;&Atilde;O DO PERICIANDO:</strong></u></p>
+<p style="text-align:justify"><u><strong>2. IDENTIFICA&Ccedil;&Atilde;O DO PERICIANDO(A):</strong></u></p>
 
 <p style="text-align:justify"><strong>NOME: </strong>{{ report.proficient.name }}</p>
 
@@ -54,7 +54,7 @@
 
 <p style="text-align:justify"><strong>SITUA&Ccedil;&Atilde;O ATUAL JUNTO AO INSS: </strong>{{ report.proficient.situation_inss }}</p>
 
-<p style="text-align:justify"><strong>ACOMPANHANTE: </strong>{{ report.proficient.scort }} {{ report.proficient.get_scort_type_display }}</p>
+<p style="text-align:justify"><strong>ACOMPANHANTE: </strong>{{ report.proficient.scort }} - {{ report.proficient.get_scort_type_display }}</p>
 
 <p style="text-align:justify"><u><strong>3. ANAMNESE:</strong></u></p>
 
@@ -63,13 +63,13 @@
 <strong>Antecedentes Patol&oacute;gicos Pessoais:</strong><br />
 {{ report.anamnesis_personal_background|safe }}<br />
 <strong>Antecedentes Patol&oacute;gicos Familiares:</strong><br />
-{{ report.anamnesis_history|safe }}<br />
+{{ report.anamnesis_family_background|safe }}<br />
 <strong>Exame F&iacute;sico Geral:</strong><br />
 {{ report.anamnesis_general_exam|safe }}<br />
 <strong>Exame do Estado Mental Atual:</strong><br />
 {{ report.anamnesis_mental_exam|safe }}<br />
 <strong>Documentos M&eacute;dicos (Exames, Atestados, Laudos Etc):</strong><br />
-{{ documents|safe }}<br />
+{{ documents|safe }}
 <strong>Diagn&oacute;stico:</strong><br />
 {{ cid_numbers|safe }}</p>
 
@@ -79,28 +79,28 @@
 
 <p style="text-align:justify"><u><strong>5. CONCLUS&Atilde;O:</strong></u></p>
 
-<p style="text-align:justify">{{ report.conclusion|safe }}</p>
+{{ report.conclusion|safe }}
 
 <p style="text-align:justify"><u><strong>6. QUESITOS DO JU&Iacute;ZO E DO INSS:</strong></u></p>
 
-<p style="text-align:justify">{{ item_juiz|safe }}</p>
+{{ item_juiz|safe }}
 
 <p style="text-align:justify"><u><strong>7. QUESITOS DA PROCURADORIA DA REP&Uacute;BLICA EM MATO GROSSO DO SUL:</strong></u></p>
 
-<p style="text-align:justify">{{ item_procuradoria|safe }}</p>
+{{ item_procuradoria|safe }}
 
-<p style="text-align:justify">{% if item_advogado %}</p>
+{% if item_advogado %}
 
 <p style="text-align:justify"><u><strong>8. QUESITOS PARA PER&Iacute;CIA M&Eacute;DICA JUDICIAL DO ADVOGADO:</strong></u></p>
 
-<p style="text-align:justify">{{ item_advogado|safe }}</p>
+{{ item_advogado|safe }}
 
-<p style="text-align:justify">{% endif %}</p>
+{% endif %}
 
-<p style="text-align:justify">{% if item_periciando %}</p>
+{% if item_periciando %}
 
 <p style="text-align:justify"><u><strong>9. QUESITOS DO R&Eacute;U PARA PER&Iacute;CIA M&Eacute;DICA:</strong></u></p>
 
-<p style="text-align:justify">{{ item_periciando|safe }}</p>
+{{ item_periciando|safe }}
 
-<p style="text-align:justify">{% endif %}</p>
+{% endif %}

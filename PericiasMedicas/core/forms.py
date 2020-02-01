@@ -1,7 +1,7 @@
 from django import forms
-from django.forms import ModelForm, TextInput, DateInput, Select, SelectDateWidget, HiddenInput, PasswordInput, EmailInput
+from django.forms import ModelForm, TextInput, DateInput, Select, RadioSelect, SelectDateWidget, HiddenInput, PasswordInput, EmailInput
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
 
 
 
@@ -52,6 +52,7 @@ class UserCreate(UserCreationForm):
         return user
 
 class UpdateUserForm(UserChangeForm):
+    
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name', 'email','password']
@@ -59,5 +60,16 @@ class UpdateUserForm(UserChangeForm):
             'first_name': TextInput(attrs={'class': 'form-control'}),
             'last_name': TextInput(attrs={'class': 'form-control'}),
             'email': EmailInput(attrs={'class': 'form-control','required': True}),
-            'username': TextInput(attrs={'class': 'form-control'}),            
+            'username': TextInput(attrs={'class': 'form-control'}),                       
         }
+    
+class PasswordChangeUserForm(PasswordChangeForm):
+    class Meta:
+        model = User
+        fields = '__all__'
+        # widgets = {
+        #     'first_name': TextInput(attrs={'class': 'form-control'}),
+        #     'last_name': TextInput(attrs={'class': 'form-control'}),
+        #     'email': EmailInput(attrs={'class': 'form-control','required': True}),
+        #     'username': TextInput(attrs={'class': 'form-control'}),                       
+        # }

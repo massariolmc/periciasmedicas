@@ -92,8 +92,7 @@
         <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Configurações:</h6>
-            <a class="collapse-item" href="{% url 'url_medicalspecialties_list' %}">Especialidade Médicas</a>
-            <a class="collapse-item" href="{% url 'url_doctors_list'  %}">Peritos</a>
+            <a class="collapse-item" href="{% url 'url_medicalspecialties_list' %}">Especialidade Médicas</a>            
             <a class="collapse-item" href="">Perfil - Perito</a>
             <a class="collapse-item" href="{% url 'url_natureofactions_list' %}">Naturaza da Ação</a>
             <a class="collapse-item" href="{% url 'url_reportstatus_list' %}">Status</a>
@@ -139,7 +138,19 @@
             <a class="collapse-item" href="{% url 'url_discussionconclusions_list' %}">Discussão e Conclusão</a>
             <a class="collapse-item" href="{% url 'url_typeitembynatureofactions_list' %}">Quesitos dos Interessados</a>                                   
         </div>
-      </li>  
+      </li> 
+
+      <li class="nav-item active">
+        <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapsePagesDoctor" aria-expanded="true" aria-controls="collapsePagesDoctor">
+          <i class="fas fa-fw fa-folder"></i>
+          <span>Perito</span>
+        </a>
+        <div id="collapsePagesDoctor" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Informações</h6>
+            <a class="collapse-item" href="{% url 'url_doctors_list' %}">Cadastro de Peritos</a>            
+        </div>
+      </li> 
 
       <li class="nav-item active">
         <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapsePagesPatient" aria-expanded="true" aria-controls="collapsePagesPatient">

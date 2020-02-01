@@ -23,6 +23,8 @@ urlpatterns = [
     path('profilepersontype/<int:pk>', views.profilepersontype_detail, name='url_profilepersontype_detail'),
     path('profilepersontype/<int:pk>/edit', views.profilepersontype_edit, name='url_profilepersontype_edit'),
     path('profilepersontype/<int:pk>/delete', views.profilepersontype_delete, name='url_profilepersontype_delete'),
+    path('profilepersontypes/show_profile_person_deparment', views.show_profile_person_deparment, name='url_show_profile_person_deparment'),
+    
 
     #MEDICALSPECIALTY
     path('medicalspecialties/', views.medicalspecialties_list, name='url_medicalspecialties_list'),

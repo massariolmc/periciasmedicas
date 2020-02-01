@@ -39,7 +39,7 @@
             <input type="hidden" name="user_created" class="form-control" value="{{ user.id }}" id="id_user_created">
             <input type="hidden" name="user_updated" class="form-control" value="{{ user.id }}" id="id_user_updated">
             <input type="hidden" name="report_status" class="form-control" value="1" id="id_report_status">
-            <input type="hidden" name="value_tab" id="id_value_tab" class="form-control" id="id_report_status">
+            <input type="hidden" name="value_tab" id="id_value_tab" class="form-control">
             <!-- FIM DOS CAMPOS OCULTOS-->
                 <div class="form-row">
                     <div class="form-group col-md-12">
@@ -150,7 +150,7 @@
             <div class="row">
                 <div class="col-sm-2">
                     <div class="alert alert-warning" role="alert">
-                        <span class="h5"><strong>Modelo Disponível:</strong></span>
+                        <span class="h6"><strong>Modelo Disponível (Discussão):</strong></span>
                         <button id="id_button_copy_discussion" value="{{ discon.cid_number }}" type="button" class="btn btn-link" data-toggle="modal" data-target="#modal_discussao">
                             {{ discon }}
                         </button>
@@ -192,7 +192,7 @@
             <div class="row">
                 <div class="col-sm-2">
                     <div class="alert alert-warning" role="alert">
-                        <span class="h5"><strong>Modelo Disponível:</strong></span>
+                        <span class="h6"><strong>Modelo Disponível (Conclusão):</strong></span>
                         <button id="id_button_copy_conclusion" value="{{ discon.cid_number }}" type="button" class="btn btn-link" data-toggle="modal" data-target="#modal_conclusao">
                             {{ discon }}
                         </button>
@@ -212,8 +212,34 @@
                             </div>
                         </div>
                     </div>
-                </div> <!-- FECHA COLUNA-->    
-                <div class="col-sm-10">
+                </div> <!-- FECHA COLUNA-->  
+
+                <div class="col-sm-2"> <!-- Abri coluna -->
+                    <div class="form-row justify-content-center">
+                        <div class="form-group">
+                            {{ form.inability_professional.errors }}
+                            <div class="row justify-content-center">
+                                <label for="form.inability_professional.label"><strong>{{ form.inability_professional.label_tag }}</strong></label>
+                            </div>
+                            <div class="row justify-content-center">
+                                {{ form.inability_professional }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row justify-content-center">
+                        <div class="form-group">
+                            {{ form.inability_temporal.errors }}
+                            <div class="row justify-content-center">
+                                <label for="form.inability_temporal.label"><strong>{{ form.inability_temporal.label_tag }}</strong></label>
+                            </div>
+                            <div class="row justify-content-center">
+                                {{ form.inability_temporal }}
+                            </div>
+                        </div>   
+                    </div>
+                </div><!-- FECHA COLUNA--> 
+
+                <div class="col-sm-8"> <!-- Abri coluna -->
                     <div class="form-row">
                         <div class="form-group col-md-12">
                             {{ form.conclusion.errors }}

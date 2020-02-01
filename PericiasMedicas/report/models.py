@@ -95,15 +95,15 @@ class ForensicScan(models.Model):
 
 class DiscussionConclusion(models.Model):
 
-    INABILITY_PROFESSIONAL_CHOICES = [("uniprofissional","uniprofissional"),("multiprofissional", "multiprofissional"), ("omniprofissional", "omniprofissional")]    
-    INABILITY_TEMPORAL_CHOICES = [("temporária","temporária"),("permanente", "permanente")]    
+    #INABILITY_PROFESSIONAL_CHOICES = [("","ESCOLHA"),("uniprofissional","uniprofissional"),("multiprofissional", "multiprofissional"), ("omniprofissional", "omniprofissional")]    
+    #INABILITY_TEMPORAL_CHOICES = [("","ESCOLHA"),("temporária","temporária"),("permanente", "permanente")]    
 
     cid_number = models.CharField(("Informe o CID"), max_length=7, blank=False, null=False)
     profile_person_type = models.ForeignKey(ProfilePersonType, verbose_name=("Perito"), default=13, on_delete=models.PROTECT)    
     discussion = RichTextField("Discussão",blank=True)
     conclusion = RichTextField("Conclusão",blank=True)
-    inability_professional = models.CharField("Incapacidade Profissional", choices=INABILITY_PROFESSIONAL_CHOICES, max_length=100, blank=False, null=False)
-    inability_temporal = models.CharField("Duração da Incapacidade", max_length=100, choices=INABILITY_TEMPORAL_CHOICES, blank=False, null=False)
+    #inability_professional = models.CharField("Incapacidade Profissional", choices=INABILITY_PROFESSIONAL_CHOICES, max_length=100, blank=False, null=False)
+    #inability_temporal = models.CharField("Duração da Incapacidade", max_length=100, choices=INABILITY_TEMPORAL_CHOICES, blank=False, null=False)
     version = models.CharField("Versão", max_length=100, blank=False, null=False)
     created_at = models.DateTimeField('Criado em',auto_now_add=True)
     updated_at = models.DateTimeField('Atualizado em', auto_now=True) 
@@ -118,6 +118,9 @@ class DiscussionConclusion(models.Model):
 
 # A partir daqui tem que criar o report primeiro
 class Report(models.Model):
+    INABILITY_PROFESSIONAL_CHOICES = [("","ESCOLHA"),("uniprofissional","UNIPROFSSIONAL"),("multiprofissional", "MULTIPROFISSIONAL"), ("omniprofissional", "OMNIPROFISSIONAL")]    
+    INABILITY_TEMPORAL_CHOICES = [("","ESCOLHA"),("temporária","TEMPORÁRIA"),("permanente", "PERMANENTE")]    
+
     authority_requesting = models.ForeignKey(AuthorityRequesting, verbose_name=("Autoridade Requisitante"), on_delete=models.PROTECT)    
     nature_of_action = models.ForeignKey(NatureOfAction, verbose_name=("Natureza da Ação"), blank=False, null=False, on_delete=models.PROTECT)
     process_number = models.CharField(("Número do Processo"), max_length=50,  unique=True, blank=False, null=False)
@@ -134,8 +137,11 @@ class Report(models.Model):
     anamnesis_mental_exam = RichTextField("Anamnese: Exame do Estado Mental",blank=True)        
     discussion = RichTextField("Discussão",blank=True)    
     conclusion = RichTextField("Conclusão",blank=True)
+    inability_professional = models.CharField("Incapacidade Profissional", choices=INABILITY_PROFESSIONAL_CHOICES, max_length=100, blank=True, null=True)
+    inability_temporal = models.CharField("Duração da Incapacidade", max_length=100, choices=INABILITY_TEMPORAL_CHOICES, blank=True, null=True)
     report_status = models.ForeignKey(ReportStatus, verbose_name=("Status"), on_delete=models.PROTECT)
     obs = models.TextField(("Observação"), blank=True)
+    impress = RichTextField("Impressão",blank=True)
     created_at = models.DateTimeField('Criado em',auto_now_add=True)
     updated_at = models.DateTimeField('Atualizado em', auto_now=True) 
     user_created = models.ForeignKey(User, related_name="report_user_created_id", verbose_name="Criado por", on_delete=models.PROTECT)

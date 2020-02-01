@@ -6,6 +6,7 @@ from .models import Patients
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from PericiasMedicas.statescity.models import States2, Cities
+from PericiasMedicas.report.models import Report
 
 @login_required
 def patient_create(request):
@@ -63,14 +64,19 @@ def patient_edit(request, pk):
 
 @login_required
 def patient_delete(request,pk):
-    patient = get_object_or_404(Patients, pk=pk)
-    print("request", request.method)
-    if request.method == 'GET':        
-        patient.delete()
-        messages.success(request, 'Ação concluída com sucesso.')
-        return redirect('url_patients_list')
+    verifica = Report.objects.filter(autor=pk).exists()
+    if not verifica:
+        patient = get_object_or_404(Patients, pk=pk)
+        print("request", request.method)
+        if request.method == 'GET':        
+            patient.delete()
+            messages.success(request, 'Ação concluída com sucesso.')
+            return redirect('url_patients_list')
+        else:
+            messages.warning(request, 'Ação não concluída.')
+            return redirect('url_patients_list')
     else:
-        messages.warning(request, 'Ação não concluída.')
+        messages.warning(request, 'Não é possível excluir. Este paciente possui Laudo Pericial.')
         return redirect('url_patients_list')
 
 @login_required

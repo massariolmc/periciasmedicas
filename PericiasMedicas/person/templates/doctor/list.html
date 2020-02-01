@@ -50,13 +50,13 @@
                   <tbody>
                     {% for doctor in doctors %}
                     <tr>
-                      <td>{{ doctor.profile_person_type }}</td>
-                      <td>{{ doctor.medical_specialty }}</td>
-                      <td>{{ doctor.crm_num }} / {{ doctor.crm_uf }}</td>                      
+                      <td class="text-sm-center">{{ doctor.profile_person_type }}</td>
+                      <td class="text-sm-center">{{ doctor.medical_specialty }}</td>
+                      <td class="text-sm-center">{{ doctor.crm_num }} / {{ doctor.crm_uf }}</td>                      
                       <td class="text-center">
                         <a href="{% url 'url_doctor_detail' doctor.id %}">  <i class="fa fa-list" aria-hidden="true"></i> </a>
                         <a href="{% url 'url_doctor_edit' doctor.id %}">    <i class="fa fa-edit" aria-hidden="true"></i> </a>
-                        <a href="{% url 'url_doctor_delete' doctor.id %}" onclick="return confirm('Excluir esta espcialidade?')"><i class="fa fa-times" aria-hidden="true"></i></a>
+                        <a href="{% url 'url_doctor_delete' doctor.id %}" onclick="return confirm('Excluir este Perito?')"><i class="fa fa-times" aria-hidden="true"></i></a>
                       </td>
                     </tr>                 
                     {% endfor %}   

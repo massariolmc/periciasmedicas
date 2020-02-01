@@ -26,6 +26,10 @@
                       <button type="button" class="btn btn-success">Adicionar
                       </button>
                     </a>
+                    <a href="{% url 'url_companies_list' %}">
+                      <button type="button" class="btn btn-warning">voltar
+                      </button>
+                    </a>
                   </span>
               </div>
             </div>
@@ -61,7 +65,7 @@
                       <td class="text-center">
                         <a href="{% url 'url_department_detail' department.id %}">  <i class="fa fa-list" aria-hidden="true"></i> </a>
                         <a href="{% url 'url_department_edit' department.id %}">    <i class="fa fa-edit" aria-hidden="true"></i> </a>
-                        <a href="{% url 'url_department_delete' department.id %}" onclick="return confirm('Excluir esta empresa?')"><i class="fa fa-times" aria-hidden="true"></i></a>
+                        <a href="{% url 'url_department_delete' department.id %}" onclick="return confirm('Excluir este departamento?')"><i class="fa fa-times" aria-hidden="true"></i></a>
                       </td>
                       <td class="text-sm-center"><a href="{% url 'url_profilepersontypes_list' department.id %}">Pessoas</a></td>                      
                     </tr>                 

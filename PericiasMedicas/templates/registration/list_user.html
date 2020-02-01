@@ -12,8 +12,8 @@
 {% endif %}
 
           <!-- DataTales Example -->
-          <div class="card shadow mb-4">
-            <div class="card-header py-3">
+          <div class="card">
+            <div class="card-header">
               <div class="row">
                 <div class="col-sm-6">
                   <h6 class="m-0 font-weight-bold text-primary">{{ title }}</h6>
@@ -38,6 +38,7 @@
                       <th class="text-sm-center">Email</th>
                       <th class="text-sm-center">SuperUser?</th>
                       <th class="text-sm-center">Ativo?</th> 
+                      <th class="text-sm-center">Acesso ao site Admin?</th>
                       <th class="text-sm-center">Opções</th>                             
                     </tr>
                   </thead>
@@ -47,7 +48,8 @@
                       <th class="text-sm-center">Nome</th>
                       <th class="text-sm-center">Email</th>
                       <th class="text-sm-center">SuperUser?</th>
-                      <th class="text-sm-center">Ativo?</th> 
+                      <th class="text-sm-center">Ativo?</th>
+                      <th class="text-sm-center">Acesso ao site Admin?</th>                      
                       <th class="text-sm-center">Opções</th>     
                     </tr>
                   </tfoot>
@@ -58,14 +60,19 @@
                       <td>{{ user.first_name }} {{ user.last_name }}</td>
                       <td>{{ user.email }}</td>
                       {% if user.is_superuser %}
-                        <td class="text-sm-center">Sim</td>     
+                        <td class="text-sm-center"><a href="{% url 'url_super_user' user.id %}" > <i class="fa fa-check-square" aria-hidden="true"></i> </a></td>                        
                       {% else %}
-                        <td class="text-sm-center">Não</td>
+                        <td class="text-sm-center"> <a href="{% url 'url_super_user' user.id %}" >  <i class="fa fa-minus-square" aria-hidden="true"></i> </a> </td>                        
                       {% endif %}
                       {% if user.is_active %}
-                        <td class="text-sm-center">Sim</td>                      
+                        <td class="text-sm-center"><a href="{% url 'url_disable_user' user.id %}" > <i class="fa fa-check-square" aria-hidden="true"></i> </a></td>                        
                       {% else %}
-                        <td class="text-sm-center">Não</td>
+                        <td class="text-sm-center"> <a href="{% url 'url_disable_user' user.id %}" >  <i class="fa fa-minus-square" aria-hidden="true"></i> </a> </td>                        
+                      {% endif %}
+                      {% if user.is_staff %}
+                        <td class="text-sm-center"><a href="{% url 'url_staff_user' user.id %}" > <i class="fa fa-check-square" aria-hidden="true"></i> </a></td>                        
+                      {% else %}
+                        <td class="text-sm-center"> <a href="{% url 'url_staff_user' user.id %}" >  <i class="fa fa-minus-square" aria-hidden="true"></i> </a> </td>                        
                       {% endif %}
                       <td class="text-center">
                         <a href="{% url 'url_detail_user' user.id %}">  <i class="fa fa-list" aria-hidden="true"></i> </a>

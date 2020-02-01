@@ -35,6 +35,11 @@ $(document).ready( function(){
     $("#id_profile_person_type").change(function() {                         
         $("#id_form_edit").submit();                    
     });
+    //Toda vez que clicar na tab imp-tab deve ser enviado um post para atualizar o ckeditor com os valores atuais
+    $("ul.nav-tabs li a#imp-tab").click(function() {
+        $("#id_value_tab").val("imp-tab");//INformo que estou na tab imp-tab                       
+        $("#id_form_edit").submit();                    
+    });
 });
 </script>
 
@@ -194,14 +199,14 @@ $(document).ready( function(){
             url: "{% url 'url_itembynatureaction_copy_item' %}",
             data: {'ff': query},
             success: function(data){
-                console.log(data);                
+                //console.log(data);                
                 var editor = CKEDITOR.instances['id_question'];                                 
                 editor.setData(data);
                 //editor.insertHtml(data);                              
                 $('.modal').modal('hide');              
             },
             failure: function(data){  
-                console.log("erro"+data);             
+                //console.log("erro"+data);             
             },
         });                    
     });     
@@ -408,6 +413,89 @@ $(document).ready( function(){
     
     });     
 });
+</script>
+
+<!--Script que altera o valor da incapacidade profissional e duração da incapacidade no CKEDITOR da tab Conclusão -->
+<script>
+$(document).ready( function(){
+    $('#id_inability_professional').change(function(){
+        var inability_professional = $(this).val();
+        console.log(inability_professional); 
+        var editor = CKEDITOR.instances['id_conclusion'];
+        conclusion = editor.getData()
+        var ff = null;
+        console.log(conclusion);
+        //var conclusion = $('#id_conclusion').val();
+        if (inability_professional != "" && inability_professional != null && inability_professional != undefined) {
+            console.log("entrei");
+            if (conclusion.includes('uniprofissional')){
+                console.log("uni");
+                ff = conclusion.replace("uniprofissional",inability_professional)
+            }
+            else if (conclusion.includes('multiprofissional')){
+                console.log("Mul");
+                ff = conclusion.replace("multiprofissional",inability_professional)
+            }
+            else if (conclusion.includes('omniprofissional')){
+                console.log("omn");
+                ff = conclusion.replace("omniprofissional",inability_professional)
+            }                                        
+        }
+        
+        if (ff == null){
+            editor.setData(conclusion);        
+        }
+        else{
+            editor.setData(ff);        
+        }        
+             
+    });
+});  
+</script>
+<script>
+//PEGA O VALOR DA DURAÇÃO DA INCAPACIDADE
+$(document).ready( function(){
+    $('#id_inability_temporal').change(function(){
+        tl = document.createElement('textarea');
+        var inability_temporal = $(this).val();
+        console.log(inability_temporal); 
+        var editor = CKEDITOR.instances['id_conclusion'];
+        tl.innerHTML = editor.getData()
+        conclusion = tl.textContent
+        console.log(conclusion);
+        var ff = null;
+        //var conclusion = $('#id_conclusion').val();
+        if (inability_temporal != "" && inability_temporal != null && inability_temporal != undefined) {
+            if (conclusion.includes('temporária')){//Fiz dessa maneira pois ele não pesquisa palavras com acentos
+                console.log("temporária");
+                ff = conclusion.replace(/\btemporária\b/gi, inability_temporal)
+            }
+            else if (conclusion.includes('temporariamente')) {
+                console.log("temporariamente");
+                ff = conclusion.replace(/\btemporariamente\b/gi, inability_temporal)
+            }
+            else if (conclusion.includes('permanente')) {
+                console.log("permanente");
+                ff = conclusion.replace(/\bpermanente\b/gi, inability_temporal)
+            }
+            else if (conclusion.includes('permanentemente')) {
+                console.log("permanentemente");
+                ff = conclusion.replace(/\bpermanentemente\b/gi, inability_temporal)
+            }
+            else{
+                alert("Não encontrado");
+            }   
+        }
+
+        if (ff == null){
+            editor.setData(conclusion);        
+        }
+        else{
+            editor.setData(ff);        
+        }
+             
+    });
+});  
 </script>
 
 {% endblock js %}

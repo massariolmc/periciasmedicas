@@ -96,23 +96,25 @@
                       <td class="text-center">
                       <!-- REPORT EM PRODUÇÃO-->                        
                       {% ifequal report.report_status.id 1 %}
-                        <a href="" data-toggle="modal" data-target="#id_aprovar">  <i class="fas fa-save" aria-hidden="true"></i> </a>
+                        <a href="" data-toggle="modal" data-target="#id_aprovar_{{report.id}}">  <i class="fas fa-save" aria-hidden="true"></i> </a>
                         {% include "report/list_modal_aprovar.html" %} 
                         <a href="{% url 'url_report_detail' report.id %}">  <i class="fa fa-list" aria-hidden="true"></i> </a>
                         <a href="{% url 'url_report_edit' report.id %}">    <i class="fa fa-edit" aria-hidden="true"></i> </a>
-                        <a href="" data-toggle="modal" data-target="#id_deletar"><i class="fa fa-times" aria-hidden="true"></i></a>
+                        <a href="" data-toggle="modal" data-target="#id_deletar_{{report.id}}"><i class="fa fa-times" aria-hidden="true"></i></a>
                         {% include "report/list_modal_deletar.html" %} 
                       {% endifequal %}
                       <!-- REPORT APROVADA-->                        
                       {% ifequal report.report_status.id 2 %}
-                      <a href="" data-toggle="modal" data-target="#id_print">  <i class="fa fa-print" aria-hidden="true"></i> </a>
+                      <a href="" data-toggle="modal" data-target="#id_print_{{report.id}}">  <i class="fa fa-print" aria-hidden="true"></i> </a>
                       {% include "report/list_modal_print.html" %} 
                       <a href="{% url 'url_report_detail' report.id %}">  <i class="fa fa-list" aria-hidden="true"></i> </a>                        
-                      <a href="" data-toggle="modal" data-target="#id_cancelar">  <i class="fa fa-minus-circle" aria-hidden="true"></i> </a>                        
+                      <a href="" data-toggle="modal" data-target="#id_cancelar_{{report.id}}">  <i class="fa fa-minus-circle" aria-hidden="true"></i> </a>                        
                       {% include "report/list_modal_cancelar.html" %} 
                       {% endifequal %}
                       <!-- REPORT CANCELADA-->                        
                       {% ifequal report.report_status.id 3 %}
+                      <a href="" data-toggle="modal" data-target="#id_print_{{report.id}}">  <i class="fa fa-print" aria-hidden="true"></i> </a>
+                      {% include "report/list_modal_print.html" %}
                       <a href="{% url 'url_report_detail' report.id %}">  <i class="fa fa-list" aria-hidden="true"></i> </a>                        
                       {% endifequal %}
                       </td>

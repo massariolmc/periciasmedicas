@@ -15,6 +15,7 @@ from .utils import render_to_pdf #Modulo de exportar PDF
 from django.utils.html import strip_tags
 from datetime import datetime
 from bs4 import BeautifulSoup
+from django.db import IntegrityError
 
 
 ############ GET DEPARTMENT #############
@@ -86,10 +87,14 @@ def authorityrequesting_edit(request, pk):
 @login_required
 def authorityrequesting_delete(request,pk):
     authorityrequesting = get_object_or_404(AuthorityRequesting, pk=pk)    
-    if request.method == 'GET':        
-        authorityrequesting.delete()
-        messages.success(request, 'Ação concluída com sucesso.')
-        return redirect('url_authorityrequesting_list')
+    if request.method == 'GET':     
+        try:   
+            authorityrequesting.delete()
+            messages.success(request, 'Ação concluída com sucesso.')
+            return redirect('url_authorityrequesting_list')
+        except IntegrityError:
+            messages.warning(request, 'Não foi possível excluir. Possui dependência.')
+            return redirect('url_authorityrequesting_list')    
     else:
         messages.warning(request, 'Ação não concluída.')
         return redirect('url_authorityrequesting_list')
@@ -157,10 +162,15 @@ def locationobjective_edit(request, pk):
 @login_required
 def locationobjective_delete(request,pk):
     locationobjective = get_object_or_404(LocationObjective, pk=pk)    
-    if request.method == 'GET':        
-        locationobjective.delete()
-        messages.success(request, 'Ação concluída com sucesso.')
-        return redirect('url_locationobjectives_list')
+    if request.method == 'GET':  
+        try:       
+            locationobjective.delete()
+            messages.success(request, 'Ação concluída com sucesso.')
+            return redirect('url_locationobjectives_list')
+        except IntegrityError:
+            messages.warning(request, 'Não foi possível excluir. Possui dependência.')
+            return redirect('url_locationobjectives_list')
+
     else:
         messages.warning(request, 'Ação não concluída.')
         return redirect('url_locationobjectives_list')
@@ -228,10 +238,14 @@ def forensicscan_edit(request, pk):
 @login_required
 def forensicscan_delete(request,pk):
     forensicscan = get_object_or_404(ForensicScan, pk=pk)    
-    if request.method == 'GET':        
-        forensicscan.delete()
-        messages.success(request, 'Ação concluída com sucesso.')
-        return redirect('url_forensicscans_list')
+    if request.method == 'GET':      
+        try:  
+            forensicscan.delete()
+            messages.success(request, 'Ação concluída com sucesso.')
+            return redirect('url_forensicscans_list')
+        except IntegrityError:
+            messages.warning(request, 'Não foi possível excluir. Possui dependência.')
+            return redirect('url_forensicscans_list')    
     else:
         messages.warning(request, 'Ação não concluída.')
         return redirect('url_forensicscans_list')
@@ -296,10 +310,15 @@ def natureofaction_edit(request, pk):
 @login_required
 def natureofaction_delete(request,pk):
     natureofaction = get_object_or_404(NatureOfAction, pk=pk)    
-    if request.method == 'GET':        
-        natureofaction.delete()
-        messages.success(request, 'Ação concluída com sucesso.')
-        return redirect('url_natureofactions_list')
+    if request.method == 'GET': 
+        try:               
+            natureofaction.delete()
+            messages.success(request, 'Ação concluída com sucesso.')
+            return redirect('url_natureofactions_list')
+        except IntegrityError:
+            messages.warning(request, 'Não foi possível excluir. Possui dependência.')
+            return redirect('url_natureofactions_list')
+
     else:
         messages.warning(request, 'Ação não concluída.')
         return redirect('url_natureofactions_list')
@@ -387,9 +406,9 @@ def cidnumber_delete(request,pk):
             cidnumber.delete()            
             messages.success(request, 'Ação concluída com sucesso.')            
         else:
-            count = CidNumber.objects.filter(type_cid=False).count()
+            count = CidNumber.objects.filter(report_id=report_id,type_cid=False).count()
             if count > 0:
-                messages.warning(request, 'Para excluir o CID Priḿario deverá deletar os secundários.')
+                messages.warning(request, 'Para excluir o CID Primário deverá deletar os secundários.')
             else:
                 cidnumber.delete()            
                 messages.success(request, 'Ação concluída com sucesso.')                        
@@ -513,7 +532,9 @@ def discussionconclusion_detail(request, pk=None, *args, **kwargs):
 @login_required
 def discussionconclusion_edit(request, pk):    
     template_name='discussionconclusion/form.html'
+    title = "Editando campos do Modelo - Discussão e Conclusão"
     data = {} 
+    data['title'] = title
     discussionconclusion = get_object_or_404(DiscussionConclusion, pk=pk)        
     user_created = discussionconclusion.user_created # Esta linha faz com que o user_created não seja modificado, para mostrar quem criou esta pessoa
     form = DiscussionConclusionForm(request.POST or None, instance=discussionconclusion, department_id=get_department(request.user.username))
@@ -572,7 +593,7 @@ def report_create(request):
     type_items = TypeItem.objects.all()
     data['type_items'] = type_items          
     if request.method == 'POST':        
-        form = ReportForm(request.POST,department_id=get_department(request.user.username),user_id=request.user.id, impress="")
+        form = ReportForm(request.POST,department_id=get_department(request.user.username),user_id=request.user.id)
         if form.is_valid():
             form.save()                        
             return redirect('url_reports_list')
@@ -580,7 +601,7 @@ def report_create(request):
             print("Form errors",form.errors)
             print("algo não está valido.")
     else:
-        form = ReportForm(department_id=get_department(request.user.username),user_id=request.user.id,impress="")             
+        form = ReportForm(department_id=get_department(request.user.username),user_id=request.user.id)             
     
     data['form'] = form
     return render(request,template_name,data)
@@ -662,14 +683,17 @@ def report_edit(request, pk):
         'discon': discon,
     } 
     # As duas linhas abaixo servem para gerar o relatório que será inserido no ckeditor na tab Visualização
+    #LEMBRAR: Ele vai mostrar o conteudo sempre atrasado, pois está carregando os valores antes de atualizar, com isso fica com os valores antigos
+    #por isso que fiz um submit toda vez que clicar na tab Visualização
     context_imp = print_ckeditor(report.id)
     valores = render_to_string('report/print_report_ckeditor.html',context_imp)        
     
     user_created = report.user_created # Esta linha faz com que o user_created não seja modificado, para mostrar quem criou esta pessoa
-    form = ReportForm(request.POST or None, instance=report, department_id=get_department(request.user.username), user_id=request.user.id, impress=valores)
+    form = ReportForm(request.POST or None, instance=report, department_id=get_department(request.user.username), user_id=request.user.id)
     if form.is_valid():        
         report = form.save(commit=False)
-        report.user_created = user_created               
+        report.user_created = user_created# O usuario que criação não deve ser atualizado
+        report.impress = valores# Essa campo é somente leitura no form, então ele é inserido aqui com os valores do Laudo               
         report.save()
         return redirect('url_report_edit',pk=pk)   
     
@@ -769,7 +793,9 @@ def valid_report_item(request,pk):
         valid.append("Periciando")
     if report.date_report == "":
         valid.append("Data da Perícia")
-    if report.forensic_scan == "":
+    if report.location_objective == None:
+        valid.append("Circunstacias e Objetivos")
+    if report.forensic_scan == None:
         valid.append("Circunstância do Exame")
     if report.anamnesis_history == "":
         valid.append("Anamnese: História Pregressa da Doença Atual")
@@ -780,30 +806,33 @@ def valid_report_item(request,pk):
     if report.anamnesis_general_exam == "":
         valid.append("Anamnese: Exame Físico Geral")
     if report.anamnesis_mental_exam == "":
-        valid.append("Anamnese: Exame do Estado Mental")    
-    if report.anamnesis_diagnosis == "":
-        valid.append("Anamnese: Diagnóstico")
+        valid.append("Anamnese: Exame do Estado Mental")        
     if report.discussion == "":
         valid.append("Discussão")
     if report.conclusion == "":
         valid.append("Conclusão")
 
-    aux2 = "Os seguintes Quesitos não estão preenchidos: "
+    #Verifica se tem Diagnóstico e tem que ser primario
+    cid_number = CidNumber.objects.filter(report_id=report.id, type_cid=True)
+    
+    aux2 = "Os seguintes quesitos não estão preenchidos: "
     marc = Item2.objects.filter(report_id=report.id).exists()
     marc2 = -1    
     lista_type_item = []
     #Marcados para saber se existem quesitos para este laduo
-    if marc:
-        print("Entrei no MARC")
+    if marc:        
         items = Item2.objects.filter(report_id=report.id)# Pega todos os quesitos de laudo
         for item in items:
             lista_type_item.append(item.type_item_id)
 
         type_items = TypeItem.objects.exclude(id__in=lista_type_item)#Verifica qual tipo de quesito não existe neste laudo      
-        for type_item in type_items:                  
-            print("Valor da validação question", type_item.name)
-            marc2 = 1
-            aux2 += type_item.name + " "
+        for type_item in type_items:                                          
+            if type_item.id == 1:
+                aux2 += type_item.name + " "
+                marc2 = 1
+            elif type_item.id == 2:
+                aux2 += type_item.name + " "
+                marc2 = 1
 
     # Testa se é o perito cadastrado que está aprovando o laudo
     if report.profile_person_type.person.cpf == request.user.username:
@@ -812,14 +841,20 @@ def valid_report_item(request,pk):
             for n in valid:
                 aux += n + " "
             if marc2 == 1:
-                aux += aux2                 
+                aux += aux2                                         
             messages.warning(request, 'Existem campos não preenchidos.Não é possível validar. {}'.format(aux))                     
+        
+         #INFORMA SE TEM DIAGNÓSTICO
+        elif not cid_number:            
+            messages.warning(request, 'Aprovação negada. Diagnóstico não cadastrado.')
+
         #INFORMA SE EXISTEM QUESITOS NESTE LAUDO
         elif not marc:
             messages.warning(request, 'Aprovação negada. Não existem quesitos para este Laudo.')
         #NÃO APAGAR ISSO. ISSO VALIDAR E INFORMA QUAL QUESITO FALTA PREENCHER. OS QUESITOS OBRIGATÓRIOS SÃO JUIZ E PROCURADORIA. OS OUTROS SÃO OPCIONAIS
-        # elif marc2 == 1:
-        #     messages.warning(request, 'Existem campos não preenchidos.Não é possível validar. {}'.format(aux2))
+        elif marc2 == 1:
+            messages.warning(request, 'Existem campos não preenchidos.Não é possível validar. {}'.format(aux2))
+
         else:        
             aprovar = ReportStatus.objects.get(id=2)# Esse é o id para aprovar
             report.report_status = aprovar # Deixa o status validado
@@ -929,42 +964,17 @@ def print_docx(request,pk):
 
 @login_required
 def print_pdf(request,pk):
-    context = print_report(pk)
-
-    #Calculo da Idade
-    agora = datetime.now()
-    niver = context['report'].proficient.dt_birthday.strftime('%d-%m-%Y')
-    niver = niver.split("-")   
-    aniversario = datetime(int(niver[2]),int(niver[1]),int(niver[0]))
-    idade=(agora - aniversario)
-    idade = (idade.days)/365
-    context['idade'] = int(idade)
-
-    soup = BeautifulSoup(context['report'].location_objective.forensic_scan,'lxml')
-    context['report'].location_objective.forensic_scan = soup.get_text().strip()
-
-    soup = BeautifulSoup(context['report'].location_objective.goal,'lxml')
-    context['report'].location_objective.goal = soup.get_text().strip()
-
-    documento = ""
-    if context['medicaldocuments']:
-        for medicaldocument in context['medicaldocuments']:
-            documento += "{} <br/>".format(medicaldocument.document)           
-        context['documents'] = documento
-    else:
-        context['documents'] = "Não há."
-
-    cid = ""
-    if context['cid_numbers']:
-        for cid_number in context['cid_numbers']:
-            cid += "-{} <br/>".format(cid_number.description)           
-        context['cid_numbers'] = cid
-    else:
-        context['cid_numbers'] = "Não há."
-
-
-    #Essa função fica em um arquivo chamado utils.py nesta App Report
-    pdf = render_to_pdf('report/print_report_pdf.html',context)
+    template_name = 'report/report_view_after_save.html'
+    title = 'Visualização do Laudo - Aprovado'
+    report = Report.objects.get(pk=pk)    
+    valores = report.impress
+    context = {
+        'view': valores,
+        'title': title,
+    }
+        #Essa função fica em um arquivo chamado utils.py nesta App Report
+    pdf = render_to_pdf('report/print_report_pdf.html',context)  
+    
     if pdf:
         response = HttpResponse(pdf, content_type='application/pdf')
         filename = "Laudo{}.{}".format(datetime.now().strftime('%d_%m_%Y'),'pdf') # colocar aqui a data
@@ -975,7 +985,19 @@ def print_pdf(request,pk):
         response['Content-Disposition'] = content
         return response
     return HttpResponse("Não encontrado")
-    #response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'   
+    #response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
+
+@login_required
+def report_view_after_save(request,pk):
+    template_name = 'report/report_view_after_save.html'
+    title = 'Visualização do Laudo - Aprovado'
+    report = Report.objects.get(pk=pk)    
+    valores = report.impress
+    context = {
+        'view': valores,
+        'title': title,
+    }
+    return render(request,template_name,context)
 
 def print_ckeditor(pk):
     context = print_report(pk)
@@ -987,16 +1009,14 @@ def print_ckeditor(pk):
     aniversario = datetime(int(niver[2]),int(niver[1]),int(niver[0]))
     idade=(agora - aniversario)
     idade = (idade.days)/365
-    context['idade'] = int(idade)
-
-    soup = BeautifulSoup(context['report'].discussion,'lxml')
-    context['report'].discussion = soup.get_text().strip()
-    soup = BeautifulSoup(context['report'].conclusion,'lxml')
-    context['report'].conclusion = soup.get_text().strip()
-    soup = BeautifulSoup(context['report'].location_objective.forensic_scan,'lxml')
-    context['report'].location_objective.forensic_scan = soup.get_text().strip()
-    soup = BeautifulSoup(context['report'].location_objective.goal,'lxml')
-    context['report'].location_objective.goal = soup.get_text().strip()
+    context['idade'] = int(idade)    
+    
+    if context['report'].location_objective:# Senão existir ele gera um erro
+        soup = BeautifulSoup(context['report'].location_objective.forensic_scan,'lxml')
+        context['report'].location_objective.forensic_scan = soup.get_text().strip()
+        soup = BeautifulSoup(context['report'].location_objective.goal,'lxml')
+        context['report'].location_objective.goal = soup.get_text().strip()
+    
     
     documento = ""
     if context['medicaldocuments']:
@@ -1004,7 +1024,7 @@ def print_ckeditor(pk):
             documento += "{} <br/>".format(medicaldocument.document)           
         context['documents'] = documento
     else:
-        context['documents'] = "Não há."
+        context['documents'] = "Não há.<br/>"
 
     cid = ""
     if context['cid_numbers']:
@@ -1012,7 +1032,7 @@ def print_ckeditor(pk):
             cid += "-{} <br/>".format(cid_number.description)           
         context['cid_numbers'] = cid
     else:
-        context['cid_numbers'] = "Não há."
+        context['cid_numbers'] = "Não há.<br/>"
 
     return context
 
@@ -1060,6 +1080,23 @@ def print_report(pk):
         'medicaldocuments': medicaldocuments,
         'cid_numbers': cid_numbers,    
     }
+    
+    #Utiliza a biblioteca BeautifulSoup para retirar as tags html e inserir no DOCX. O PDF não tem esse problema
+    soup = BeautifulSoup(context['report'].anamnesis_history,'lxml')
+    context['report'].anamnesis_history = soup.get_text().strip()
+    soup = BeautifulSoup(context['report'].anamnesis_personal_background,'lxml')
+    context['report'].anamnesis_personal_background = soup.get_text().strip()
+    soup = BeautifulSoup(context['report'].anamnesis_family_background,'lxml')
+    context['report'].anamnesis_family_background = soup.get_text().strip()
+    soup = BeautifulSoup(context['report'].anamnesis_general_exam,'lxml')
+    context['report'].anamnesis_general_exam = soup.get_text().strip()
+    soup = BeautifulSoup(context['report'].anamnesis_mental_exam,'lxml')
+    context['report'].anamnesis_mental_exam = soup.get_text().strip()
+    soup = BeautifulSoup(context['report'].discussion,'lxml')
+    context['report'].discussion = soup.get_text().strip()
+    soup = BeautifulSoup(context['report'].conclusion,'lxml')
+    context['report'].conclusion = soup.get_text().strip()
+    
     return context
 
 #Lista os Laudo aprovados e cancelados
@@ -1458,13 +1495,15 @@ def item2_detail(request, pk=None, *args, **kwargs):
 def item2_edit(request, pk):    
     template_name='item2/form.html'
     request.session['tabs'] = "quesito-tab" # Isso é para quando redirecionar para o report, fica na tab certa
+    title = "Editar a pergunta:"
     data = {}     
     item2 = get_object_or_404(Item2, pk=pk)  
     report = Report.objects.get(pk=item2.report_id)
     type_item = TypeItem.objects.get(pk=item2.type_item_id)
     data['report'] = report
     data['type_item'] = type_item 
-    data['item2'] = item2     
+    data['item2'] = item2   
+    data['title'] = title     
     type_item_id = item2.type_item_id     
     user_created = item2.user_created # Esta linha faz com que o user_created não seja modificado, para mostrar quem criou esta pessoa
     form = Item2Form(request.POST or None, instance=item2)
@@ -1484,6 +1523,7 @@ def item2_edit(request, pk):
 def item2_answer(request, pk):
     template_name='item2/form.html'
     request.session['tabs'] = "quesito-tab" # Isso é para quando redirecionar para o report, fica na tab certa
+    title = "Editar a resposta"
     data = {}     
     item2 = get_object_or_404(Item2, pk=pk)  
     report = Report.objects.get(pk=item2.report_id)
@@ -1491,6 +1531,7 @@ def item2_answer(request, pk):
     data['report'] = report
     data['type_item'] = type_item
     data['item2'] = item2 
+    data['title'] = title 
     data['answer'] = "answer"# Marcador para saber se estou respondendo     
     type_item_id = item2.type_item_id     
     user_created = item2.user_created # Esta linha faz com que o user_created não seja modificado, para mostrar quem criou esta pessoa

@@ -4,7 +4,7 @@
 </button> {% endcomment %}
 
 <!-- Modal -->
-<div class="modal fade" id="id_aprovar" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="id_aprovar_{{report.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -18,7 +18,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>        
-        <a class="btn btn-primary" href="{% url 'url_valid_report_item' report.id %}"> Enviar </a>
+        <a class="btn btn-primary" href="{% url 'url_valid_report_item' report.id %}"> Aprovar </a>
       </div>
     </div>
   </div>

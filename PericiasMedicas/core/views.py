@@ -2,12 +2,20 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .forms import UserCreate, UpdateUserForm
+from django.contrib.auth import logout
+from django.contrib import messages
+from .forms import UserCreate, UpdateUserForm, PasswordChangeUserForm
 from PericiasMedicas.person.models import Person, ProfilePersonType, PersonType
 from PericiasMedicas.company.models import Company, Department
 
 @login_required
 def home(request):
+    verifica = Person.objects.filter(cpf=request.user.username).exists()
+    if not verifica:
+        logout(request)
+        messages.warning(request, 'Usuário não possui cadastro. Contacte o administrador')
+        return redirect('/accounts/login')
+
     template_name='core/home.html' 
     #person =  Department.objects.filter(profilepersontype__person__cpf=request.user.username)  
     # person = ProfilePersonType.objects.raw('''
@@ -82,6 +90,7 @@ def edit_user(request,pk):
     template_name = 'registration/edit_user.html'
     form = {}
     user = get_object_or_404(User, pk=pk)
+    user_form = user
     if request.method == 'POST':
         form = UpdateUserForm(request.POST or None, instance=user)        
 
@@ -90,15 +99,76 @@ def edit_user(request,pk):
             return redirect('url_detail_user', user.id)
     else:
         form = UpdateUserForm(instance=user)
-    return render(request, template_name, {'form': form})
+    return render(request, template_name, {'form': form, 'user_form': user_form})
 
+@login_required# Esse troca de senha foi customizado para trocar a senha sem estar logado, mas tem que saber a senha antiga
+def password_change(request,pk):
+    template_name = 'registration/custom_user_password_change.html'
+    user = get_object_or_404(User, pk=pk)
+    data = {}
+    data['user'] = user
+    if request.method == 'POST':        
+        form = PasswordChangeUserForm(user=user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('url_detail_user', user.id)            
+    else:
+        form = PasswordChangeUserForm(user=user)
+    data['form'] = form
+    return render(request,template_name,data)
+    
+@login_required# Aqui esta customizado para usuário que não sabe a senha. Resseta e inseri uma senha padrão
+def custom_resset_password(request,pk):
+    if request.method == 'GET':
+        user = get_object_or_404(User, pk=pk)
+        user.set_password('@1q2w3e4r@')
+        user.save()
+        messages.success(request, 'Senha ressetada com sucesso.')        
+    return redirect('url_list_user')
+@login_required
 def detail_user(request,pk):    
     template_name = 'registration/detail_user.html'    
     user = get_object_or_404(User, pk=pk)
     return render(request, template_name, {'user': user})
 
-def user_disable(request):
-    pass
+@login_required
+def disable_user(request,pk):    
+    if request.method == 'GET':
+        user = get_object_or_404(User, pk=pk)
+        if user.is_active:
+            user.is_active = False
+            messages.success(request, 'Usuário desabilitado com sucesso.')
+        else:
+            user.is_active = True
+            messages.success(request, 'Usuário habilitado com sucesso.')
+        user.save()        
+    return redirect('url_list_user')
+
+@login_required
+def super_user(request,pk):    
+    if request.method == 'GET':
+        user = get_object_or_404(User, pk=pk)
+        if user.is_superuser:
+            user.is_superuser = False
+            messages.success(request, 'Perfil Super Usuário ativado com sucesso.')
+        else:
+            user.is_superuser = True
+            messages.success(request, 'Perfil Super Usuário desativado com sucesso.')
+        user.save()        
+    return redirect('url_list_user')
+
+@login_required
+def staff_user(request,pk):
+    if request.method == 'GET':
+        user = get_object_or_404(User, pk=pk)
+        if user.is_staff:
+            user.is_staff = False
+            messages.success(request, 'Perfil Super Usuário ativado com sucesso.')
+        else:
+            user.is_staff = True
+            messages.success(request, 'Perfil Super Usuário desativado com sucesso.')
+        user.save()        
+    return redirect('url_list_user')
 
 @login_required
 def profile(request):

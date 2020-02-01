@@ -7,6 +7,7 @@ from .forms import CompanyForm, DepartmentForm
 from .models import Company, Department
 from crispy_forms.utils import render_crispy_form
 from django.template.context_processors import csrf
+from django.db import IntegrityError
 
 ####### COMPANY
 def company_create(request):
@@ -62,13 +63,16 @@ def company_edit(request, pk):
     return render(request,template_name,data)
 
 @login_required
-def company_delete(request,pk):
-    company = get_object_or_404(Company, pk=pk)
-    print("request", request.method)
+def company_delete(request,pk):    
+    company = get_object_or_404(Company, pk=pk)    
     if request.method == 'GET':        
-        company.delete()
-        messages.success(request, 'Ação concluída com sucesso.')
-        return redirect('url_companies_list')
+        try:
+            company.delete()
+            messages.success(request, 'Ação concluída com sucesso.')
+            return redirect('url_companies_list')
+        except IntegrityError:
+            messages.warning(request, 'Não é possível excluir. Esta Empresa possui departamento existentes.')
+            return redirect('url_companies_list') 
     else:
         messages.warning(request, 'Ação não concluída.')
         return redirect('url_companies_list')
@@ -148,12 +152,15 @@ def department_edit(request, pk):
 @login_required
 def department_delete(request,pk):
     department = get_object_or_404(Department, pk=pk)
-    company_id = department.company_id
-    print("request", request.method)
+    company_id = department.company_id    
     if request.method == 'GET':        
-        department.delete()
-        messages.success(request, 'Ação concluída com sucesso.')
-        return redirect('url_show_departments_company', company_id)
+        try:
+            department.delete()
+            messages.success(request, 'Ação concluída com sucesso.')
+            return redirect('url_show_departments_company', company_id)
+        except IntegrityError:
+            messages.warning(request, 'Não é possível excluir este departamento. Ele possui funcionários.')
+            return redirect('url_show_departments_company', company_id)
     else:
         messages.warning(request, 'Ação não concluída.')
         return redirect('url_show_departments_company', company_id)

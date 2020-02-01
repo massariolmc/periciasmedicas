@@ -32,7 +32,7 @@ $(document).ready( function(){
         var query = $(this).val(); 
         $.ajax({
         type: "GET",
-        url: "{% url 'url_report_forensic' %}",
+        url: "{% url 'url_report_location_objective' %}",
         data: {'ff': query},
         success: function(data){
             $("#forensic").html(data);

@@ -56,7 +56,7 @@ class Patients(models.Model):
     name_father = models.CharField("Nome do Pai", max_length=100, blank=True)
     sex = models.CharField("Sexo", max_length = 100, choices=sex_choices, blank=False)
     uf_natural = models.CharField("Naturalidade",max_length=100, blank=False, help_text="Ex: Campo Grande/MS, Porto Alegre/RS, Vitória/ES, Natal/RN")
-    origin = models.CharField("Procedência",max_length=100, choices=states_choices, blank=False)
+    origin = models.CharField("Procedência",max_length=2, choices=states_choices, blank=False)
     schooling = models.CharField("Escolaridade", max_length=100, choices=schooling_choices, blank=False)
     maritalstatus = models.ForeignKey(MaritalStatus, verbose_name="Estado Civil",on_delete=models.PROTECT, blank=False)
     religion = models.ForeignKey(Religions, verbose_name="Religião", blank=False, on_delete=models.PROTECT)

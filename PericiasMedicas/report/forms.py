@@ -181,9 +181,7 @@ class DiscussionConclusionForm(ModelForm):
             'cid_number': TextInput(attrs={'class': 'form-control'}),
             'profile_person_type': Select(attrs={'class': 'form-control'}),                                                       
             'discussion': Textarea(attrs={'class': 'form-control'}),                                           
-            'conclusion': Textarea(attrs={'class': 'form-control'}),                                           
-            'inability_professional': Select(attrs={'class': 'form-control'}),                                           
-            'inability_temporal': Select(attrs={'class': 'form-control'}),                                           
+            'conclusion': Textarea(attrs={'class': 'form-control'}),                                                               
             'version': TextInput(attrs={'class': 'form-control'}),                                                       
             'user_created': HiddenInput(attrs={'class': 'form-control'}),
             'user_updated': HiddenInput(attrs={'class': 'form-control'}),            
@@ -226,18 +224,15 @@ class DiscussionConclusionForm(ModelForm):
             Hidden('user_created', '{{ user.id }}'),
             Hidden('user_updated', '{{ user.id }}'),
             'profile_person_type',
+            'version',
             Row(
                 Column('cid_number', css_class='form-group col-md-6'),
                 Column('cid_textarea', css_class='form-group col-md-6'),                         
                 css_class='form-row'
-            ), 
-            Row(
-                Column('inability_professional', css_class='form-group col-md-4'),
-                Column('inability_temporal', css_class='form-group col-md-4'),
-                Column('version', css_class='form-group col-md-4'),                
-                css_class='form-row'
-            ),  
-            'discussion',                                                                                         
+            ),      
+            HTML('<hr class="divider">'),       
+            'discussion',
+            HTML('<hr class="divider">'),                                                                                                                  
             'conclusion',            
             HTML('''               
                  <div class="row">    
@@ -264,7 +259,7 @@ class ReportForm(ModelForm):
     question = forms.CharField(label="Pergunta",widget=CKEditorWidget(),required=False)
     cid_number = forms.CharField(label="Código CID",max_length=100, required=False, widget=forms.TextInput(attrs={'class': 'form-control cid_number'}))
     cid_description = forms.CharField(label="Descrição",max_length=300, required=False, widget=forms.Textarea(attrs={'class': 'form-control'}))
-    impress = forms.CharField(label="Impressão",widget=CKEditorWidget(),required=False)# Usado na tab-imp
+    #impress = forms.CharField(label="Impressão",widget=CKEditorWidget(attrs={'disabled': 'disabled'}),required=False)# Usado na tab-imp 
     class Meta:
         model = Report
         fields = '__all__'
@@ -285,9 +280,12 @@ class ReportForm(ModelForm):
             'anamnesis_mental_exam': Textarea(attrs={'class': 'form-control'}),
             'anamnesis_medical_documents': Textarea(attrs={'class': 'form-control'}),                                     
             'discussion': Textarea(attrs={'class': 'form-control'}),
-            'conclusion': Textarea(attrs={'class': 'form-control'}),                                           
+            'conclusion': Textarea(attrs={'class': 'form-control'}),    
+            'inability_professional': Select(attrs={'class': 'form-control'}),                                           
+            'inability_temporal': Select(attrs={'class': 'form-control'}),                                         
             'report_status': Select(attrs={'class': 'form-control'}), 
-            'obs': Textarea(attrs={'class': 'form-control'}),             
+            'obs': Textarea(attrs={'class': 'form-control'}),  
+            'impress': Textarea(attrs={'class': 'form-control'}),  
             'user_created': HiddenInput(attrs={'class': 'form-control'}),
             'user_updated': HiddenInput(attrs={'class': 'form-control'}),
             'value_tab': HiddenInput(attrs={'class': 'form-control'}),#APENAS SERVE PARA SABER QUAL TAB ESTÁ            
@@ -296,11 +294,9 @@ class ReportForm(ModelForm):
     def __init__(self, *args, **kwargs):     
         #Serve para pegar qual Empresa pertence os peritos                   
         self.department_id = kwargs.get('department_id',None)    
-        self.user_id = kwargs.get('user_id',None) 
-        self.impress = kwargs.get('impress',None)                      
+        self.user_id = kwargs.get('user_id',None)                              
         del(kwargs['department_id'])
-        del(kwargs['user_id'])
-        del(kwargs['impress'])
+        del(kwargs['user_id'])        
         super().__init__(*args, **kwargs)           
         #A linha abaixo serve para sobreescrever os valores que vão aparecer no Select do profile person type    
         self.fields['profile_person_type'].empty_label= "-----------"
@@ -311,8 +307,8 @@ class ReportForm(ModelForm):
             self.fields['forensic_scan'].queryset = ForensicScan.objects.filter(profile_person_type__id=self.instance.profile_person_type.id, nature_of_action=self.instance.nature_of_action)                   
             self.fields['location_objective'].queryset = LocationObjective.objects.filter(profile_person_type__id=self.instance.profile_person_type.id)                   
             #Aqui vai listar apenas quesitos que o usuário cadastrou e o tipo de natureza de ação que o Laudo possui
-            self.fields['type_item_by_nature_of_action'].queryset = TypeItemByNatureOfAction.objects.filter(nature_of_action=self.instance.nature_of_action,type_item__user_created=self.user_id)
-            self.fields['impress'].initial = self.impress
+            self.fields['type_item_by_nature_of_action'].queryset = TypeItemByNatureOfAction.objects.filter(nature_of_action=self.instance.nature_of_action,type_item__user_created=self.user_id)                        
+            self.fields['impress'].widget.attrs.update({'disabled': 'disabled'})
 
 class CidNumberForm(ModelForm):    
     
