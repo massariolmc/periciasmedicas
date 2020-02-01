@@ -32,7 +32,8 @@
               <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                   <thead>
-                    <tr>                                                              
+                    <tr>
+                      <th class="text-sm-center">Ordem</th>                                                              
                       <th class="text-sm-center">Perguntas</th>                                                                                           
                       <th class="text-sm-center">Status da Resposta</th>
                       <th class="text-sm-center">Opções</th>   
@@ -41,6 +42,7 @@
                   </thead>
                   <tfoot>
                     <tr>                         
+                      <th class="text-sm-center">Ordem</th>
                       <th class="text-sm-center">Perguntas</th>       
                       <th class="text-sm-center">Status da Resposta</th>                                                                                    
                       <th class="text-sm-center">Opções</th>                      
@@ -49,7 +51,8 @@
                   </tfoot>
                   <tbody>
                     {% for item in items %}
-                    <tr data-id={{item.id}} >                       
+                    <tr data-id={{item.id}} > 
+                      <td class="text-sm-center">{{ forloop.counter }}</td>                      
                       <td>{{ item.question|safe }}</td> 
                       {% if item.answer_status %}
                         <td class="text-sm-center"><a href="{% url 'url_item2_answer' item.id %}" > <i class="fa fa-check-square" aria-hidden="true"></i> </a></td>

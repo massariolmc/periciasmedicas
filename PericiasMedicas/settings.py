@@ -75,6 +75,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                
             ],
         },
     },
@@ -142,6 +143,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 STATIC_URL = '/static/'
+#Serve para no modo produção deixar todos os arquivos estaticos em uma pasta somente
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
@@ -158,6 +161,8 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 #Faz parte da APP crispy para habilitar o bootstrap
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+
 
 # Log no terminal para ver as consultas no banco
 # LOGGING = {

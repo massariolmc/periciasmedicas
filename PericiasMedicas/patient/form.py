@@ -1,4 +1,4 @@
-from django.forms import ModelForm, TextInput, DateInput, Select, SelectDateWidget, HiddenInput, DateTimeInput
+from django.forms import ModelForm, TextInput, DateInput, FileInput, Select, SelectDateWidget, HiddenInput, DateTimeInput
 from .models import Patients
 from django.utils.translation import gettext_lazy as _
 
@@ -36,6 +36,7 @@ class PatientForm(ModelForm):
             'cep': TextInput(attrs={'class': 'form-control cep', 'onkeypress':'return somenteNumeros(event)'}),
             'phone': TextInput(attrs={'class': 'form-control phone'}),
             'user': HiddenInput(attrs={'class': 'form-control'}),
+            'avatar': FileInput(attrs={'class': 'form-control'}),
         }
         error_messages = {
             'name': {

@@ -92,8 +92,7 @@
         <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Configurações:</h6>
-            <a class="collapse-item" href="{% url 'url_medicalspecialties_list' %}">Especialidade Médicas</a>            
-            <a class="collapse-item" href="">Perfil - Perito</a>
+            <a class="collapse-item" href="{% url 'url_medicalspecialties_list' %}">Especialidade Médicas</a>                        
             <a class="collapse-item" href="{% url 'url_natureofactions_list' %}">Naturaza da Ação</a>
             <a class="collapse-item" href="{% url 'url_reportstatus_list' %}">Status</a>
             <a class="collapse-item" href="{% url 'url_typeitems_list' %}">Autoridades/Quesitos</a>
@@ -134,7 +133,7 @@
             <h6 class="collapse-header">Modelos</h6>
             <a class="collapse-item" href="{% url 'url_authorityrequesting_list' %}">Autoridade Requisitante</a>
             <a class="collapse-item" href="{% url 'url_locationobjectives_list' %}">Local e Objetivos</a>
-            <a class="collapse-item" href="{% url 'url_forensicscans_list' %}">Circunstância do Exame</a>            
+            <a class="collapse-item" href="{% url 'url_forensicscans_list' %}">Modelos de Anamnese</a>            
             <a class="collapse-item" href="{% url 'url_discussionconclusions_list' %}">Discussão e Conclusão</a>
             <a class="collapse-item" href="{% url 'url_typeitembynatureofactions_list' %}">Quesitos dos Interessados</a>                                   
         </div>
@@ -348,7 +347,7 @@
             <li class="nav-item dropdown no-arrow">
               <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ user.first_name }}</span>
-                <img class="img-profile rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60">
+                <img class="img-profile rounded-circle" src="">
               </a>
               <!-- Dropdown - User Information -->
               <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">

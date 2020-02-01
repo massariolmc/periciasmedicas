@@ -12,14 +12,21 @@
     </div>
 {% endif %}
  
-<form method="POST" novalidate>
+<form method="POST" enctype="multipart/form-data" novalidate>
 {% csrf_token %}
 
 
 <!-- CAMPOS OCULTOS -->
 <input type="hidden" name="user" class="form-control" value="{{ user.id }}" id="id_user">
 <!-- FIM DOS CAMPOS OCULTOS-->
-
+  <div class="form-row justify-content-center">
+      <div class="form-group">
+      {{ form.avatar.errors }}
+      <label for="form.avatar.label">{{ form.avatar.label_tag }}</label>
+      {{ form.avatar }}                
+      </div>
+  </div>
+  
   <div class="form-row">
     <div class="form-group col-md-3">
       {{ form.name.errors }}

@@ -14,7 +14,7 @@ def patient_create(request):
     #form = PatientForm(request.POST or None)
     if request.method == 'POST':
         print("Entrei no method")
-        form = PatientForm(request.POST)
+        form = PatientForm(request.POST,request.FILES)
         if form.is_valid():
             print("Entrei no is_valid")
             form.save()
@@ -54,7 +54,7 @@ def patient_edit(request, pk):
     template_name='patients/form.html'
     data = {}
     patient = get_object_or_404(Patients, pk=pk)    
-    form = PatientForm(request.POST or None, instance=patient)
+    form = PatientForm(request.POST or None, request.FILES or None, instance=patient)
     if form.is_valid():            
         form.save()
         return redirect('url_patient_detail',pk=pk)    

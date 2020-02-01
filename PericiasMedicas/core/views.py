@@ -10,6 +10,8 @@ from PericiasMedicas.company.models import Company, Department
 
 @login_required
 def home(request):
+    #Antes de entrar faz o teste se o usuário possui um cadastro no Model Person.
+    #Para logar, além de ter usuário no auth_user, tem que ter uma person criada
     verifica = Person.objects.filter(cpf=request.user.username).exists()
     if not verifica:
         logout(request)

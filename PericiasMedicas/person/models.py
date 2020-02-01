@@ -49,7 +49,7 @@ class Person(models.Model):
     dt_birthday = models.DateField("Data de Nascimento", max_length=100, blank=False, null=False)
     cpf = models.CharField("CPF", max_length=11, unique=True, blank=False, null=False, help_text="Apenas números")    
     sex = models.CharField("Sexo", max_length = 50, choices=sex_choices, blank=False, null=False)    
-    uf_natural = models.CharField("Natural",max_length=100, blank=False, null=False)
+    uf_natural = models.CharField("Natural",max_length=100, blank=False, null=False, help_text="Ex: Campo Grande/MS, Porto Alegre/RS, Vitória/ES, Natal/RN")
     maritalstatus = models.ForeignKey(MaritalStatus, verbose_name="Estado Civil", blank=False, null=False,on_delete=models.PROTECT)    
     rg = models.CharField("Nº RG", max_length = 30, blank=True, help_text="Apenas números")
     rg_exped = models.CharField("Orgão Expedidor", max_length = 100,blank=True, help_text="Ex: SSP / DETRAN / FORÇAS ARMADAS / CREA / OAB" )
@@ -61,10 +61,10 @@ class Person(models.Model):
     voter_title_uf = models.CharField("UF - Titulo Eleitor", choices=states_choices,max_length = 2, blank=True )
     cnh_num = models.CharField(("Número CNH"), max_length=100, blank=True, help_text = "Apenas Números")
     cnh_uf = models.CharField("CNH - UF", choices=states_choices,max_length = 2, blank=True)
-    cnh_validate = models.DateField(("Validade"), max_length=100, blank=True, null=True)
-    cnh_category = models.CharField(("Categoria"), choices=cnh_category_choices, max_length=100, blank=True)
+    cnh_validate = models.DateField(("CNH - Validade"), max_length=100, blank=True, null=True)
+    cnh_category = models.CharField(("CNH - Categoria"), choices=cnh_category_choices, max_length=100, blank=True)
     address = models.CharField(("Endereço"), max_length=100, blank=True)
-    address_num = models.CharField(("Nº"), max_length=100, blank=True)
+    address_num = models.CharField(("Nº"), max_length=100, blank=True, help_text="Apenas Números")
     address_city_uf = models.CharField(("Cidade/UF"), max_length=100, blank=True, help_text="Ex: Campo Grande/MS, Porto Alegre/RS, Vitória/ES, Natal/RN")
     cep = models.CharField(("CEP"), max_length=8, blank=True, help_text = "Apenas Números")        
     email = models.EmailField("Email", max_length=100, blank=True)
@@ -76,6 +76,7 @@ class Person(models.Model):
     so = models.CharField(("Sistema Operacional"), max_length=100, blank=True)
     ip = models.CharField(("IP"), max_length=100, blank=True)
     browser = models.CharField(("Navegador"), max_length=100, blank=True)
+    avatar = models.ImageField("Foto", upload_to='photo/peoples/', blank=True)
     
     class Meta:
         verbose_name = "Person"

@@ -26,7 +26,7 @@ def person_create(request):
     ip = request.META['REMOTE_ADDR']
     so = request.META['HTTP_USER_AGENT'].split() # Essa linha mostra o sistema operacional e navegador do usuário   
     if request.method == 'POST':        
-        form = PersonForm(request.POST)
+        form = PersonForm(request.POST, request.FILES)
         if form.is_valid():
             person = form.save(commit=False)            
             person.ip = ip
@@ -70,7 +70,7 @@ def person_edit(request, pk):
     so = request.META['HTTP_USER_AGENT'].split() # Essa linha mostra o sistema operacional e navegador do usuário   
     person = get_object_or_404(Person, pk=pk)        
     user_created = person.user_created # Esta linha faz com que o user_created não seja modificado, para mostrar quem criou esta pessoa
-    form = PersonForm(request.POST or None, instance=person)
+    form = PersonForm(request.POST or None, request.FILES or None, instance=person)
     if form.is_valid():        
         person = form.save(commit=False)
         person.user_created = user_created
@@ -78,7 +78,9 @@ def person_edit(request, pk):
         person.so = so[2] + so[3] + so[4]
         person.browser = so[-1]         
         person.save()
-        return redirect('url_person_detail',pk=pk)    
+        return redirect('url_person_detail',pk=pk)
+    else:
+        print("Algo não está valido", form.errors)    
     
     data['form'] = form
     return render(request,template_name,data)

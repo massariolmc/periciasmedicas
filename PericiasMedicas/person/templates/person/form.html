@@ -11,12 +11,20 @@
         <h6 class="font-weight-bold text-primary">{{ title }}</h6>
     </div>
     <div class="card-body">
-      <form method="post" novalidate>
+      <form method="post" enctype="multipart/form-data" novalidate>
         {% csrf_token %}
         <!-- CAMPOS OCULTOS -->
         <input type="hidden" name="user_created" class="form-control" value="{{ user.id }}" id="id_user_created">
         <input type="hidden" name="user_updated" class="form-control" value="{{ user.id }}" id="id_user_updated">
         <!-- FIM DOS CAMPOS OCULTOS-->
+            <div class="form-row justify-content-center">
+                <div class="form-group">
+                {{ form.avatar.errors }}
+                <label for="form.avatar.label">{{ form.avatar.label_tag }}</label>
+                {{ form.avatar }}                
+                </div>
+            </div>
+            <hr class="divider">
             <div class="form-row">
                 <div class="form-group col-md-3">
                 {{ form.name.errors }}
@@ -53,6 +61,9 @@
                 {{ form.uf_natural.errors }}
                 <label for="form.uf_natural.label">{{form.uf_natural.label_tag}}</label>
                 {{ form.uf_natural }}
+                {% if form.uf_natural.help_text %}
+                    <p class="help">{{ form.uf_natural.help_text|safe }}</p>
+                {% endif %}
                 </div>    
                 <div class="form-group col-md-3">
                 {{ form.pis_pasep.errors }}
@@ -169,6 +180,9 @@
                 {{ form.address_num.errors }}
                 <label for="form.address_num.label">{{form.address_num.label_tag}}</label>
                 {{ form.address_num }}
+                {% if form.address_num.help_text %}
+                    <p class="help">{{ form.address_num.help_text|safe }}</p>
+                {% endif %}
                 </div>    
                 <div class="form-group col-md-3">
                 {{ form.address_city_uf.errors }}
@@ -196,7 +210,7 @@
             </div>
             <div class="col-sm-6">
                 <span class="float-right">
-                    <a href="{% url 'url_people_list'%}" class="btn btn-warning">Voltar</a>
+                    <a href="javascript:history.back()" class="btn btn-warning">Voltar</a>
                 </span>  
             </div>
         </div>

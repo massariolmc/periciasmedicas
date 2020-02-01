@@ -1,4 +1,4 @@
-from django.forms import ModelForm, TextInput, Textarea, DateInput, Select, SelectDateWidget, HiddenInput, DateTimeInput, EmailInput
+from django.forms import ModelForm, TextInput, Textarea, DateInput, Select, FileInput, SelectDateWidget, HiddenInput, DateTimeInput, EmailInput
 from django import forms
 from .models import MedicalSpecialty, PersonType, Person, ProfilePersonType, Doctor, MedicalSpecialty, DoctorList
 from PericiasMedicas.company.models import Company,Department
@@ -31,13 +31,14 @@ class PersonForm(ModelForm):
             'cnh_validate': DateInput(format='%d/%m/%Y', attrs={'class': 'form-control calendario'}),
             'cnh_category': Select(attrs={'class': 'form-control'}),            
             'address': TextInput(attrs={'class': 'form-control'}),
-            'address_num': TextInput(attrs={'class': 'form-control'}),
+            'address_num': TextInput(attrs={'class': 'form-control','onkeypress':'return somenteNumeros(event)'}),
             'address_city_uf': TextInput(attrs={'class': 'form-control cidade_estado'}),
             'cep': TextInput(attrs={'class': 'form-control cep','onkeypress':'return somenteNumeros(event)'}),
             'email': EmailInput(attrs={'class': 'form-control'}),            
             'phone': TextInput(attrs={'class': 'form-control phone','onkeypress':'return somenteNumeros(event)'}),
             'user_created': HiddenInput(attrs={'class': 'form-control'}),
             'user_updated': HiddenInput(attrs={'class': 'form-control'}),
+            'avatar': FileInput(attrs={'class': 'form-control'}),
             #SO, IP e BROWSER serão direto na view
         }
         error_messages = {

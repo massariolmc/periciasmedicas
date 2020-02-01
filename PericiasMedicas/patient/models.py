@@ -74,6 +74,7 @@ class Patients(models.Model):
     created_at = models.DateTimeField('Criado em',auto_now_add=True)
     updated_at = models.DateTimeField('Atualizado em', auto_now=True) 
     user = models.ForeignKey(User, verbose_name="Usuário", on_delete=models.PROTECT)
+    avatar = models.ImageField("Foto", upload_to='photo/patients/', blank=True)
 
     class Meta:
         verbose_name = "Patient"

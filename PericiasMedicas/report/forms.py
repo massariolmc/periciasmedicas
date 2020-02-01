@@ -104,7 +104,7 @@ class LocationObjectiveForm(ModelForm):
         )                
               
 class ForensicScanForm(ModelForm): 
-    
+    cid_textarea = forms.CharField(label="CID-Descrição", max_length=200, required=False, widget=forms.Textarea(attrs={'class': 'form-control', 'readonly':'readonly'}))
     class Meta:
         model = ForensicScan
         fields = '__all__'
@@ -123,6 +123,22 @@ class ForensicScanForm(ModelForm):
             'user_created': HiddenInput(attrs={'class': 'form-control'}),
             'user_updated': HiddenInput(attrs={'class': 'form-control'}),            
         }  
+    def clean(self):
+        cleaned_data = super(ForensicScanForm,self).clean()
+        cid_number = self.cleaned_data.get('cid_number')
+        profile_person_type = cleaned_data.get('profile_person_type')        
+        n = Cid10.objects.filter(category__iexact=cid_number.strip()).exists()        
+        if not n:            
+            self.add_error('cid_number',"Cid incorreto. Informe um CID válido.")
+        elif self.instance.id:
+            n = ForensicScan.objects.filter(cid_number__iexact=cid_number.strip(),profile_person_type=profile_person_type).exclude(id=self.instance.id).exists()
+            if n:
+                self.add_error('cid_number',"Um modelo para este CID já existe. Altere o CID ou o modelo correspondente ao CID.")
+        else:
+            n = ForensicScan.objects.filter(cid_number__iexact=cid_number.strip(),profile_person_type=profile_person_type).exists()
+            if n:                
+                self.add_error('cid_number',"Um modelo para este CID já existe. Altere o CID ou o modelo correspondente ao CID.")           
+        return cleaned_data
     
     def __init__(self, *args, **kwargs):     
         #Serve para pegar qual Empresa pertence os peritos                   
@@ -134,7 +150,11 @@ class ForensicScanForm(ModelForm):
         #Neste caso, preciso no seletec que apareça apenas os peritos da Empresa do usuário que está logado
         self.fields['profile_person_type'].queryset = ProfilePersonType.objects.filter(department__id__in=self.department_id, person_type=3)        
         #self.fields['profile_person_type'].queryset = ProfilePersonType.objects.filter(department_id__in=self.department_id, person_type=3)                
-        self.fields['nature_of_action'].empty_label= "ESCOLHA"      
+        self.fields['nature_of_action'].empty_label= "ESCOLHA"
+
+        if self.instance.pk:            
+            cid_textarea = Cid10.objects.get(category__iexact=self.instance.cid_number)              
+            self.fields['cid_textarea'].initial = cid_textarea.description      
 
 class ReportStatusForm(ModelForm):    
     
@@ -200,8 +220,7 @@ class DiscussionConclusionForm(ModelForm):
                 self.add_error('cid_number',"Um modelo para este CID já existe. Altere o CID ou o modelo correspondente ao CID.")
         else:
             n = DiscussionConclusion.objects.filter(cid_number__iexact=cid_number.strip(),profile_person_type=profile_person_type).exists()
-            if n:
-                print("Entrei aqui clean")
+            if n:                
                 self.add_error('cid_number',"Um modelo para este CID já existe. Altere o CID ou o modelo correspondente ao CID.")           
         return cleaned_data
     

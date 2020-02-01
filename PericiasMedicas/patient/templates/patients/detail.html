@@ -28,6 +28,12 @@
             <table class="table table-user-information">
                 <tbody>
                     <tr>
+                        <th class="text-right">Foto</th>
+                        {% if patient.avatar %}
+                            <td><img class="img-profile rounded-circle" src="{{ patient.avatar.url }}" style="width:100px"></td>
+                        {% endif %}
+                    </tr>
+                    <tr>
                         <th class="text-right">Nome</th>
                         <td>{{ patient.name }}</td>
                     </tr>

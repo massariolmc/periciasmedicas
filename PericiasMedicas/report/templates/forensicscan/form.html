@@ -136,43 +136,16 @@
                 </div>
                 <div class="form-row justify-content-center">
                     <div class="form-group">
-                        {{ form.anamnesis_diagnosis.errors }}
+                        {{ form.cid_textarea.errors }}
                         <div class="row justify-content-center">
-                        <label for="form.anamnesis_diagnosis.label"><strong>{{ form.anamnesis_diagnosis.label_tag }}</strong></label>
+                        <label for="form.cid_textarea.label"><strong>{{ form.cid_textarea.label_tag }}</strong></label>
                         </div>
                         <div class="row justify-content-center">
-                        {{ form.anamnesis_diagnosis }}
+                        {{ form.cid_textarea }}
                         </div>
                     </div>                 
                 </div>
-                <hr class="divider" />
-
-                <div class="form-row">
-                  <div class="form-group col-md">
-                    {{ form.discussion.errors }}
-                    <div class="row justify-content-center">
-                    <label for="form.discussion.label"><strong>{{ form.discussion.label_tag }}</strong></label>
-                    </div>
-                    <div class="row justify-content-center">
-                      {{ form.discussion  }}
-                    </div>
-                  </div>    
-                </div> 
-                <hr class="divider" />
-
-                <div class="form-row">
-                    <div class="form-group col-md">
-                        {{ form.conclusion.errors }}
-                        <div class="row justify-content-center">
-                        <label for="form.conclusion.label"><strong>{{ form.conclusion.label_tag }}</strong></label>
-                        </div>
-                        <div class="row justify-content-center">
-                          {{ form.conclusion  }}
-                        </div>
-                    </div>   
-                </div>
-                <hr class="divider" />
-
+                <hr class="divider" />                
                  <div class="row">    
                     <div class="col-sm-6">
                         <span class="float-left">
@@ -213,8 +186,8 @@ $(document).ready( function(){
             data: {'ff': query},
             success: function(data){
                 console.log(data);                 
-                $("#id_anamnesis_diagnosis").val(data);
-                $("#id_cid_number").val("");                                    
+                $("#id_cid_textarea").val(data);
+                //$("#id_cid_number").val("");                                    
             },
             failure: function(data){  
                 console.log("erro"+data);             
