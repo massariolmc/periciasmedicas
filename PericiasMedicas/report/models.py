@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from PericiasMedicas.patient.models import Patients
-from PericiasMedicas.person.models import Person, ProfilePersonType
+from PericiasMedicas.person.models import Person, ProfilePersonType,Doctor
 from PericiasMedicas.company.models import Company, Department
 from PericiasMedicas.person.models import MedicalSpecialty
 from ckeditor.fields import RichTextField
@@ -23,11 +23,11 @@ class ReportStatus(models.Model):
     def __str__(self):
         return self.status
   
-
 class AuthorityRequesting(models.Model):
     name = models.CharField("Forma de tratamento da Autoridade", max_length=100, blank=False)
     abbreviation = models.CharField("OBS", max_length=100, blank=True)
-    profile_person_type = models.ForeignKey(ProfilePersonType, verbose_name=("Perito"), default="7", on_delete=models.PROTECT)    
+    #profile_person_type = models.ForeignKey(ProfilePersonType, verbose_name=("Perito"), default="7", on_delete=models.PROTECT)    
+    doctor = models.ForeignKey(Doctor, verbose_name=("Perito"), on_delete=models.PROTECT)    
     created_at = models.DateTimeField('Criado em',auto_now_add=True)
     updated_at = models.DateTimeField('Atualizado em', auto_now=True) 
     user_created = models.ForeignKey(User, related_name="authorityrequesting_user_created_id", verbose_name="Criado por", on_delete=models.PROTECT)
@@ -59,7 +59,7 @@ class NatureOfAction(models.Model):
 class LocationObjective(models.Model):
     forensic_scan = RichTextField("Circunstância da Perícia", blank=False, null=False, default="")
     goal = RichTextField("Objetivo", blank=False, null=False)    
-    profile_person_type = models.ForeignKey(ProfilePersonType, verbose_name=("Perito"), on_delete=models.PROTECT)
+    doctor = models.ForeignKey(Doctor, verbose_name=("Perito"), on_delete=models.PROTECT)    
     version = models.CharField("Versão", max_length=100, blank=False, null=False, default="")
     created_at = models.DateTimeField('Criado em',auto_now_add=True)
     updated_at = models.DateTimeField('Atualizado em', auto_now=True) 
@@ -70,12 +70,12 @@ class LocationObjective(models.Model):
         verbose_name_plural = "LocationObjectives" 
 
     def __str__(self):
-        return "Modelo - Local e Objetivos - Versão: {} - Perito: {}".format(self.version,self.profile_person_type)
+        return "Versão: {} - Perito: {}".format(self.version,self.doctor)
 
 class ForensicScan(models.Model):    
     nature_of_action = models.ForeignKey(NatureOfAction, verbose_name=("Natureza da Ação"), on_delete=models.PROTECT)
-    version = models.CharField(("Versão"), max_length=100, blank=False, null=False)
-    profile_person_type = models.ForeignKey(ProfilePersonType, verbose_name=("Perito"), on_delete=models.PROTECT)
+    version = models.CharField(("Versão"), max_length=100, blank=False, null=False)    
+    doctor = models.ForeignKey(Doctor,verbose_name=("Perito"), on_delete=models.PROTECT)
     anamnesis_history = RichTextField("Anamnese: História Pregressa da Doença Atual",blank=True)
     anamnesis_personal_background = RichTextField("Anamnese: Antecedentes Patológicos Pessoais",blank=True)
     anamnesis_family_background = RichTextField("Anamnese: Antecedentes Patológicos Familiares",blank=True)
@@ -91,19 +91,14 @@ class ForensicScan(models.Model):
         verbose_name_plural = "ForensicScans" 
 
     def __str__(self):
-        return "Modelo: Circunstância da Perícia: Perito{} - Versão: {}".format(self.profile_person_type,self.version)
+        return "Perito: {} - Versão: {}".format(self.doctor,self.version)
 
-class DiscussionConclusion(models.Model):
+class DiscussionConclusion(models.Model):   
 
-    #INABILITY_PROFESSIONAL_CHOICES = [("","ESCOLHA"),("uniprofissional","uniprofissional"),("multiprofissional", "multiprofissional"), ("omniprofissional", "omniprofissional")]    
-    #INABILITY_TEMPORAL_CHOICES = [("","ESCOLHA"),("temporária","temporária"),("permanente", "permanente")]    
-
-    cid_number = models.CharField(("Informe o CID"), max_length=7, blank=False, null=False)
-    profile_person_type = models.ForeignKey(ProfilePersonType, verbose_name=("Perito"), default=13, on_delete=models.PROTECT)    
+    cid_number = models.CharField(("Informe o CID"), max_length=7, blank=False, null=False)    
+    doctor = models.ForeignKey(Doctor, default=7,verbose_name=("Perito"), on_delete=models.PROTECT)    
     discussion = RichTextField("Discussão",blank=True)
-    conclusion = RichTextField("Conclusão",blank=True)
-    #inability_professional = models.CharField("Incapacidade Profissional", choices=INABILITY_PROFESSIONAL_CHOICES, max_length=100, blank=False, null=False)
-    #inability_temporal = models.CharField("Duração da Incapacidade", max_length=100, choices=INABILITY_TEMPORAL_CHOICES, blank=False, null=False)
+    conclusion = RichTextField("Conclusão",blank=True)    
     version = models.CharField("Versão", max_length=100, blank=False, null=False)
     created_at = models.DateTimeField('Criado em',auto_now_add=True)
     updated_at = models.DateTimeField('Atualizado em', auto_now=True) 
@@ -114,7 +109,7 @@ class DiscussionConclusion(models.Model):
         verbose_name_plural = "DiscussionConclusions" 
 
     def __str__(self):
-        return "Modelo - Conclusão e Discussão: Perito: {} - Cid: {}".format(self.profile_person_type,self.cid_number)
+        return "Modelo - Conclusão e Discussão: Perito: {} - Cid: {}".format(self.doctor,self.cid_number)
 
 # A partir daqui tem que criar o report primeiro
 class Report(models.Model):
@@ -126,8 +121,8 @@ class Report(models.Model):
     process_number = models.CharField(("Número do Processo"), max_length=50,  unique=True, blank=False, null=False)
     autor = models.ForeignKey(Patients, related_name = "autor_patient_id", verbose_name=("Autor"), blank=False, null=False, on_delete=models.PROTECT)
     proficient = models.ForeignKey(Patients, related_name = "proficient_patient_id", verbose_name=("Periciando"), blank=False, null=False, on_delete=models.PROTECT)
-    date_report = models.DateField(("Data da Perícia"), auto_now=False, auto_now_add=False, blank=False)
-    profile_person_type = models.ForeignKey(ProfilePersonType, verbose_name=("Perito"), on_delete=models.PROTECT)
+    date_report = models.DateField(("Data da Perícia"), auto_now=False, auto_now_add=False, blank=False)    
+    doctor = models.ForeignKey(Doctor, default=7,verbose_name=("Perito"), on_delete=models.PROTECT)
     location_objective = models.ForeignKey(LocationObjective, blank=True, null=True, verbose_name=("Local e Objetivo"), on_delete=models.PROTECT)
     forensic_scan = models.ForeignKey(ForensicScan, blank=True, null=True, verbose_name=("Qual modelo de anamnese?"), on_delete=models.PROTECT)    
     anamnesis_history = RichTextField("Anamnese: História Pregressa da Doença Atual",blank=True)
@@ -201,10 +196,11 @@ class TypeItem(models.Model):
 class TypeItemByNatureOfAction(models.Model):    
     type_item = models.ForeignKey(TypeItem, verbose_name=("Tipo do Quesito"), on_delete=models.PROTECT)
     version = models.TextField(("Versão"), blank=True)
+    doctor = models.ForeignKey(Doctor, default=3,verbose_name=("Perito"), on_delete=models.PROTECT)    
     nature_of_action = models.ForeignKey(NatureOfAction, verbose_name=("Natureza da Ação"), on_delete=models.PROTECT)
     question = RichTextField("Pergunta?", blank=True)
     answer = RichTextField("Resposta", blank=True)   
-    company = models.ForeignKey(Company, verbose_name=("Empresa"),on_delete=models.PROTECT)
+    #company = models.ForeignKey(Company, verbose_name=("Empresa"),on_delete=models.PROTECT)
     cid_number = models.CharField("CID-10", max_length=100, blank=False, null=False)
     created_at = models.DateTimeField('Criado em',auto_now_add=True)
     updated_at = models.DateTimeField('Atualizado em', auto_now=True) 

@@ -52,7 +52,7 @@ def authorityrequesting_list(request):
     template_name = "authorityrequesting/list.html"
     title = "Lista das Autoridades Requisitantes"
     #authorityrequesting = AuthorityRequesting.objects.all()    
-    authorityrequesting = AuthorityRequesting.objects.filter(profile_person_type__department_id__in=get_department(request.user.username))
+    authorityrequesting = AuthorityRequesting.objects.filter(doctor__profile_person_type__department__in=get_department(request.user.username))
     context = {
         'authorityrequesting': authorityrequesting,
         'title': title      
@@ -126,7 +126,7 @@ def locationobjectives_list(request):
     template_name = "locationobjective/list.html"
     title = "Lista - Locais e Objetivos do Exames Periciais"    
     #localobjectives = LocalObjective.objects.all()                    
-    locationobjectives = LocationObjective.objects.filter(profile_person_type__department_id__in=get_department(request.user.username))            
+    locationobjectives = LocationObjective.objects.filter(doctor__profile_person_type__department_id__in=get_department(request.user.username))            
     context = {
         'locationobjectives': locationobjectives,
         'title': title,                      
@@ -190,7 +190,7 @@ def forensicscan_create(request):
             form.save()                        
             return redirect('url_forensicscans_list')
         else:
-            print("algo não está valido.")
+            print("algo não está valido.",form.errors)
     else:
         form = ForensicScanForm(department_id=get_department(request.user.username))             
     
@@ -202,7 +202,7 @@ def forensicscans_list(request):
     template_name = "forensicscan/list.html"
     title = "Lista dos Modelos de Anamnese"    
     #forensicscans = ForensicScan.objects.all()                    
-    forensicscans = ForensicScan.objects.filter(profile_person_type__department_id__in=get_department(request.user.username))            
+    forensicscans = ForensicScan.objects.filter(doctor__profile_person_type__department_id__in=get_department(request.user.username))            
     context = {
         'forensicscans': forensicscans,
         'title': title,                      
@@ -513,7 +513,7 @@ def discussionconclusions_list(request):
     template_name = "discussionconclusion/list.html"
     title = "Modelos de Discussão e Conclusão"
     #discussionconclusions = DiscussionConclusion.objects.all() 
-    discussionconclusions = DiscussionConclusion.objects.filter(profile_person_type__department_id__in=get_department(request.user.username))               
+    discussionconclusions = DiscussionConclusion.objects.filter(doctor__profile_person_type__department_id__in=get_department(request.user.username))               
     context = {
         'discussionconclusions': discussionconclusions,
         'title': title      
@@ -613,9 +613,9 @@ def reports_list(request):
     template_name = "report/list.html"
     title = "Lista do Laudos"
     if not status:
-        reports = Report.objects.filter(profile_person_type__department_id__in=get_department(request.user.username))    
+        reports = Report.objects.filter(doctor__profile_person_type__department_id__in=get_department(request.user.username))    
     else:
-        reports = Report.objects.filter(report_status=int(status),profile_person_type__department_id__in=get_department(request.user.username))            
+        reports = Report.objects.filter(report_status=int(status),doctor__profile_person_type__department_id__in=get_department(request.user.username))            
     context = {
         'reports': reports,
         'title': title      
@@ -664,9 +664,9 @@ def report_edit(request, pk):
         cidnumbers = CidNumber.objects.filter(report_id=report.id)
         cid_primario = CidNumber.objects.get(report_id=report.id, type_cid=True)
         #Verifica se existem modelo para este diagnóstico para este Perito
-        discon = DiscussionConclusion.objects.filter(cid_number=cid_primario.category, profile_person_type=report.profile_person_type).exists()
+        discon = DiscussionConclusion.objects.filter(cid_number=cid_primario.category, doctor=report.doctor).exists()
         if discon:
-            discon = DiscussionConclusion.objects.get(cid_number=cid_primario.category, profile_person_type=report.profile_person_type)
+            discon = DiscussionConclusion.objects.get(cid_number=cid_primario.category, doctor=report.doctor)
         else:
             discon = "Não existe modelo para este diagnóstico."    
     else:
@@ -724,7 +724,7 @@ def get_report_location_objective(request):
         print("Valor do location_objective",location_objective)
         marc = 1
         context['location_objective'] = location_objective 
-        context['doctor'] = Doctor.objects.get(profile_person_type_id=location_objective.profile_person_type)
+        context['doctor'] = Doctor.objects.get(id=location_objective.doctor_id)
     
     context['marc'] = marc
     return render(request, 'report/_location_objective.html',context)
@@ -734,7 +734,7 @@ def get_report_location_objective(request):
 def forensic_copy_report(request):    
     ff = request.GET.get('ff','')
     id_tab = request.GET.get('tab','')
-    profile_person_type = request.GET.get('perito','')   
+    doctor = request.GET.get('perito','')   
     id_anamnese = request.GET.get('anamnese','')   
     context = {}       
     marc = 0    
@@ -753,18 +753,18 @@ def forensic_copy_report(request):
                 context['forensicscan'] = forensicscan.anamnesis_mental_exam
 
         elif id_tab == "discussao-tab":            
-            copy = DiscussionConclusion.objects.filter(cid_number=ff, profile_person_type=profile_person_type).exists()
+            copy = DiscussionConclusion.objects.filter(cid_number=ff, doctor=doctor).exists()
             if copy:
-                copy = DiscussionConclusion.objects.get(cid_number=ff, profile_person_type=profile_person_type)
+                copy = DiscussionConclusion.objects.get(cid_number=ff, doctor=doctor)
                 context['forensicscan'] = copy.discussion                
             else:
                 print("caiu aqui no else do copy")
                 context['forensicscan'] = "Não existe modelo para este diagnóstico." 
             
         elif id_tab == "conclusao-tab":
-            copy = DiscussionConclusion.objects.filter(cid_number=ff, profile_person_type=profile_person_type).exists()
+            copy = DiscussionConclusion.objects.filter(cid_number=ff, doctor=doctor).exists()
             if copy:
-                copy = DiscussionConclusion.objects.get(cid_number=ff, profile_person_type=profile_person_type)
+                copy = DiscussionConclusion.objects.get(cid_number=ff, doctor=doctor)
                 context['forensicscan'] = copy.conclusion          
             else:
                 context['forensicscan'] = 'Não existe modelo para este diagnóstico.' 
@@ -1039,7 +1039,7 @@ def print_ckeditor(pk):
 #Função que pega os valores para inserir no template para impressão
 def print_report(pk):
     report = Report.objects.get(pk=pk)
-    doctor = Doctor.objects.get(profile_person_type_id=report.profile_person_type.id)    
+    doctor = Doctor.objects.get(pk=report.doctor.id)    
     medicaldocuments = MedicalDocument.objects.filter(report_id=report.id)
     marc = Item2.objects.filter(report_id=report.id).exists()
     cid_numbers = CidNumber.objects.filter(report_id=report.id)
@@ -1268,14 +1268,14 @@ def typeitembynatureofaction_create(request):
     data = {}
     data['title'] = "Cadastro dos Tipos de Quesitos"             
     if request.method == 'POST':        
-        form = TypeItemByNatureOfActionForm(request.POST, company=request.session['company_id'])
+        form = TypeItemByNatureOfActionForm(request.POST, department_id=get_department(request.user.username))
         if form.is_valid():
             form.save()                        
             return redirect('url_typeitembynatureofactions_list')
         else:
             print("algo não está valido.",form.errors)
     else:
-        form = TypeItemByNatureOfActionForm(company=request.session['company_id'])             
+        form = TypeItemByNatureOfActionForm(department_id=get_department(request.user.username))             
     
     data['form'] = form
     return render(request,template_name,data)
@@ -1285,7 +1285,7 @@ def typeitembynatureofactions_list(request):
     template_name = "typeitembynatureofaction/list.html"
     title = "Lista dos Modelos de Quesitos"    
     #typeitembynatureofactions = TypeItemByNatureOfAction.objects.all()                            
-    typeitembynatureofactions = TypeItemByNatureOfAction.objects.filter(company_id=request.session['company_id'])       
+    typeitembynatureofactions = TypeItemByNatureOfAction.objects.filter(doctor__profile_person_type__department__in = get_department(request.user.username))       
     context = {
         'typeitembynatureofactions': typeitembynatureofactions,
         'title': title,                            
@@ -1307,7 +1307,7 @@ def typeitembynatureofaction_edit(request, pk):
     data = {}      
     typeitembynatureofaction = get_object_or_404(TypeItemByNatureOfAction, pk=pk)        
     user_created = typeitembynatureofaction.user_created # Esta linha faz com que o user_created não seja modificado, para mostrar quem criou esta pessoa
-    form = TypeItemByNatureOfActionForm(request.POST or None, instance=typeitembynatureofaction,company=request.session['company_id'])
+    form = TypeItemByNatureOfActionForm(request.POST or None, instance=typeitembynatureofaction,department_id=get_department(request.user.username))
     if form.is_valid():        
         typeitembynatureofaction = form.save(commit=False)
         typeitembynatureofaction.user_created = user_created               

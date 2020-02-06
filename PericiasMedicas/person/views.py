@@ -412,11 +412,10 @@ def doctor_edit(request, pk):
 
 @login_required
 def doctor_delete(request,pk):
-    doctor = get_object_or_404(Doctor, pk=pk) 
-    verifica = Report.objects.filter(profile_person_type__doctor__id=pk, profile_person_type__doctor__medical_specialty_id=doctor.medical_specialty_id)
-    print("verifica",verifica.query)
-    if not verifica:
-        doctor = get_object_or_404(Doctor, pk=pk)        
+    doctor = Doctor.objects.get(pk=pk)    
+    verifica = Report.objects.filter(doctor=doctor.id, doctor__medical_specialty_id=doctor.medical_specialty_id)
+    #print("verifica",verifica.query)
+    if not verifica:                
         if request.method == 'GET':        
             doctor.delete()
             messages.success(request, 'Ação concluída com sucesso.')

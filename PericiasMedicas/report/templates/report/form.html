@@ -141,7 +141,8 @@ $("#copy_anamnesis_mental_exam").on("click", { id:"id_anamnesis_mental_exam" }, 
 $(document).ready( function(){
    $("#copy_discussao").click(function() {               
     var query = $("#id_button_copy_discussion").val();
-    var perito = $("#id_profile_person_type").val();     
+    //var perito = $("#id_profile_person_type").val();     
+    var perito = $("#id_doctor").val();     
     console.log("Valor da query"+query);          
         $.ajax({
             type: "GET",
@@ -169,7 +170,8 @@ $(document).ready( function(){
 $(document).ready( function(){
    $("#copy_conclusao").click(function() {                      
     var query = $("#id_button_copy_conclusion").val();
-    var perito = $("#id_profile_person_type").val();            
+    //var perito = $("#id_profile_person_type").val();            
+    var perito = $("#id_doctor").val();            
         $.ajax({
             type: "GET",
             url: "{% url 'url_forensic_copy_report' %}",

@@ -16,7 +16,7 @@ class AuthorityRequestingForm(ModelForm):
         model = AuthorityRequesting
         fields = '__all__'
         widgets = {
-            'profile_person_type': Select(attrs={'class': 'form-control'}),
+            'doctor': Select(attrs={'class': 'form-control'}),
             'name': TextInput(attrs={'class': 'form-control'}),
             'abbreviation': TextInput(attrs={'class': 'form-control'}),                                
             'user_created': HiddenInput(attrs={'class': 'form-control'}),
@@ -29,15 +29,15 @@ class AuthorityRequestingForm(ModelForm):
         del(kwargs['department_id'])                      
         super().__init__(*args, **kwargs)  
         #A linha abaixo serve para sobreescrever os valores que vão aparecer no Select do profile person type    
-        self.fields['profile_person_type'].empty_label= "-----------"
+        self.fields['doctor'].empty_label= "-----------"
         #Neste caso, preciso no seletec que apareça apenas os peritos da Empresa do usuário que está logado        
-        self.fields['profile_person_type'].queryset = ProfilePersonType.objects.filter(department_id__in=self.department_id, person_type__name="Perito")              
+        self.fields['doctor'].queryset = Doctor.objects.filter(profile_person_type__department_id__in=self.department_id)              
         
         self.helper = FormHelper()       
         self.helper.layout = Layout(
             Hidden('user_created', '{{ user.id }}'),
             Hidden('user_updated', '{{ user.id }}'), 
-            'profile_person_type',                      
+            'doctor',                      
             'name',
             'abbreviation',                                                                                  
             HTML('''               
@@ -62,7 +62,7 @@ class LocationObjectiveForm(ModelForm):
         model = LocationObjective
         fields = '__all__'
         widgets = {
-            'profile_person_type': Select(attrs={'class': 'form-control'}),                        
+            'doctor': Select(attrs={'class': 'form-control'}),                        
             'forensic_scan': Textarea(attrs={'class': 'form-control'}),
             'goal': Textarea(attrs={'class': 'form-control'}),
             'version': TextInput(attrs={'class': 'form-control'}),          
@@ -76,14 +76,14 @@ class LocationObjectiveForm(ModelForm):
         del(kwargs['department_id'])                 
         super().__init__(*args, **kwargs)           
         #A linha abaixo serve para sobreescrever os valores que vão aparecer no Select do profile person type    
-        self.fields['profile_person_type'].empty_label= "ESCOLHA"
+        self.fields['doctor'].empty_label= "ESCOLHA"
         #Neste caso, preciso no seletec que apareça apenas os peritos da Empresa do usuário que está logado        
-        self.fields['profile_person_type'].queryset = ProfilePersonType.objects.filter(department_id__in=self.department_id, person_type=3)
+        self.fields['doctor'].queryset = Doctor.objects.filter(profile_person_type__department__in=self.department_id)
         self.helper = FormHelper()       
         self.helper.layout = Layout(
             Hidden('user_created', '{{ user.id }}'),
             Hidden('user_updated', '{{ user.id }}'),                      
-            'profile_person_type',  
+            'doctor',  
             'version',
             'forensic_scan', 
             'goal',                                                                                        
@@ -112,7 +112,7 @@ class ForensicScanForm(ModelForm):
             'location_objective': Select(attrs={'class': 'form-control'}),
             'nature_of_action': Select(attrs={'class': 'form-control'}),
             'version': TextInput(attrs={'class': 'form-control'}),
-            'profile_person_type': Select(attrs={'class': 'form-control'}),            
+            'doctor': Select(attrs={'class': 'form-control'}),            
             'anamnesis_history': Textarea(attrs={'class': 'form-control'}),
             'anamnesis_personal_background': Textarea(attrs={'class': 'form-control'}),
             'anamnesis_family_background': Textarea(attrs={'class': 'form-control'}),
@@ -126,16 +126,16 @@ class ForensicScanForm(ModelForm):
     def clean(self):
         cleaned_data = super(ForensicScanForm,self).clean()
         cid_number = self.cleaned_data.get('cid_number')
-        profile_person_type = cleaned_data.get('profile_person_type')        
+        doctor = cleaned_data.get('doctor')        
         n = Cid10.objects.filter(category__iexact=cid_number.strip()).exists()        
         if not n:            
             self.add_error('cid_number',"Cid incorreto. Informe um CID válido.")
         elif self.instance.id:
-            n = ForensicScan.objects.filter(cid_number__iexact=cid_number.strip(),profile_person_type=profile_person_type).exclude(id=self.instance.id).exists()
+            n = ForensicScan.objects.filter(cid_number__iexact=cid_number.strip(),doctor=doctor).exclude(id=self.instance.id).exists()
             if n:
                 self.add_error('cid_number',"Um modelo para este CID já existe. Altere o CID ou o modelo correspondente ao CID.")
         else:
-            n = ForensicScan.objects.filter(cid_number__iexact=cid_number.strip(),profile_person_type=profile_person_type).exists()
+            n = ForensicScan.objects.filter(cid_number__iexact=cid_number.strip(),doctor=doctor).exists()
             if n:                
                 self.add_error('cid_number',"Um modelo para este CID já existe. Altere o CID ou o modelo correspondente ao CID.")           
         return cleaned_data
@@ -146,9 +146,9 @@ class ForensicScanForm(ModelForm):
         del(kwargs['department_id'])                 
         super().__init__(*args, **kwargs)           
         #A linha abaixo serve para sobreescrever os valores que vão aparecer no Select do profile person type    
-        self.fields['profile_person_type'].empty_label= "ESCOLHA"
+        self.fields['doctor'].empty_label= "ESCOLHA"
         #Neste caso, preciso no seletec que apareça apenas os peritos da Empresa do usuário que está logado
-        self.fields['profile_person_type'].queryset = ProfilePersonType.objects.filter(department__id__in=self.department_id, person_type=3)        
+        self.fields['doctor'].queryset = Doctor.objects.filter(profile_person_type__department__in=self.department_id)        
         #self.fields['profile_person_type'].queryset = ProfilePersonType.objects.filter(department_id__in=self.department_id, person_type=3)                
         self.fields['nature_of_action'].empty_label= "ESCOLHA"
 
@@ -199,7 +199,7 @@ class DiscussionConclusionForm(ModelForm):
         fields = '__all__'
         widgets = {
             'cid_number': TextInput(attrs={'class': 'form-control'}),
-            'profile_person_type': Select(attrs={'class': 'form-control'}),                                                       
+            'doctor': Select(attrs={'class': 'form-control'}),                                                       
             'discussion': Textarea(attrs={'class': 'form-control'}),                                           
             'conclusion': Textarea(attrs={'class': 'form-control'}),                                                               
             'version': TextInput(attrs={'class': 'form-control'}),                                                       
@@ -210,16 +210,16 @@ class DiscussionConclusionForm(ModelForm):
     def clean(self):
         cleaned_data = super(DiscussionConclusionForm,self).clean()
         cid_number = self.cleaned_data.get('cid_number')
-        profile_person_type = cleaned_data.get('profile_person_type')        
+        doctor = cleaned_data.get('doctor')        
         n = Cid10.objects.filter(category__iexact=cid_number.strip()).exists()        
         if not n:            
             self.add_error('cid_number',"Cid incorreto. Informe um CID válido.")
         elif self.instance.id:
-            n = DiscussionConclusion.objects.filter(cid_number__iexact=cid_number.strip(),profile_person_type=profile_person_type).exclude(id=self.instance.id).exists()
+            n = DiscussionConclusion.objects.filter(cid_number__iexact=cid_number.strip(),doctor=doctor).exclude(id=self.instance.id).exists()
             if n:
                 self.add_error('cid_number',"Um modelo para este CID já existe. Altere o CID ou o modelo correspondente ao CID.")
         else:
-            n = DiscussionConclusion.objects.filter(cid_number__iexact=cid_number.strip(),profile_person_type=profile_person_type).exists()
+            n = DiscussionConclusion.objects.filter(cid_number__iexact=cid_number.strip(),doctor=doctor).exists()
             if n:                
                 self.add_error('cid_number',"Um modelo para este CID já existe. Altere o CID ou o modelo correspondente ao CID.")           
         return cleaned_data
@@ -230,9 +230,9 @@ class DiscussionConclusionForm(ModelForm):
         del(kwargs['department_id'])                     
         super().__init__(*args, **kwargs)
         #A linha abaixo serve para sobreescrever os valores que vão aparecer no Select do profile person type    
-        self.fields['profile_person_type'].empty_label= "ESCOLHA"
+        self.fields['doctor'].empty_label= "ESCOLHA"
         #Neste caso, preciso no seletec que apareça apenas os peritos da Empresa do usuário que está logado
-        self.fields['profile_person_type'].queryset = ProfilePersonType.objects.filter(department__id__in=self.department_id, person_type=3)        
+        self.fields['doctor'].queryset = Doctor.objects.filter(profile_person_type__department__id__in=self.department_id)        
         
         if self.instance.pk:            
             cid_textarea = Cid10.objects.get(category__iexact=self.instance.cid_number)              
@@ -242,7 +242,7 @@ class DiscussionConclusionForm(ModelForm):
         self.helper.layout = Layout(
             Hidden('user_created', '{{ user.id }}'),
             Hidden('user_updated', '{{ user.id }}'),
-            'profile_person_type',
+            'doctor',
             'version',
             Row(
                 Column('cid_number', css_class='form-group col-md-6'),
@@ -288,8 +288,8 @@ class ReportForm(ModelForm):
             'process_number': TextInput(attrs={'class': 'form-control','onkeypress':'return somenteNumeros(event)'}),
             'autor': Select(attrs={'class': 'form-control'}),
             'proficient': Select(attrs={'class': 'form-control'}),
-            'date_report': DateInput(attrs={'class': 'form-control calendario'}),
-            'profile_person_type': Select(attrs={'class': 'form-control'}),
+            'date_report': DateInput(attrs={'class': 'form-control calendario'}),            
+            'doctor': Select(attrs={'class': 'form-control'}),
             'location_objective': Select(attrs={'class': 'form-control'}),
             'forensic_scan': Select(attrs={'class': 'form-control'}),
             'anamnesis_history': Textarea(attrs={'class': 'form-control'}),
@@ -318,13 +318,15 @@ class ReportForm(ModelForm):
         del(kwargs['user_id'])        
         super().__init__(*args, **kwargs)           
         #A linha abaixo serve para sobreescrever os valores que vão aparecer no Select do profile person type    
-        self.fields['profile_person_type'].empty_label= "-----------"
+        #self.fields['profile_person_type'].empty_label= "-----------"
+        self.fields['doctor'].empty_label= "-----------"
         #Neste caso, preciso no seletec que apareça apenas os peritos da Empresa do usuário que está logado            
-        self.fields['profile_person_type'].queryset = ProfilePersonType.objects.filter(department_id__in=self.department_id, person_type=3)        
+        #self.fields['profile_person_type'].queryset = ProfilePersonType.objects.filter(department_id__in=self.department_id, person_type=3)        
+        self.fields['doctor'].queryset = Doctor.objects.filter(profile_person_type__department__in=self.department_id)        
         #Neste caso, preciso dsa circunstância deste perito. Cada perito tem sua circunstância.        
         if self.instance.pk:            
-            self.fields['forensic_scan'].queryset = ForensicScan.objects.filter(profile_person_type__id=self.instance.profile_person_type.id, nature_of_action=self.instance.nature_of_action)                   
-            self.fields['location_objective'].queryset = LocationObjective.objects.filter(profile_person_type__id=self.instance.profile_person_type.id)                   
+            self.fields['forensic_scan'].queryset = ForensicScan.objects.filter(doctor__profile_person_type__id=self.instance.doctor.profile_person_type.id, nature_of_action=self.instance.nature_of_action)                   
+            self.fields['location_objective'].queryset = LocationObjective.objects.filter(doctor__profile_person_type__id=self.instance.doctor.profile_person_type.id)                   
             #Aqui vai listar apenas quesitos que o usuário cadastrou e o tipo de natureza de ação que o Laudo possui
             self.fields['type_item_by_nature_of_action'].queryset = TypeItemByNatureOfAction.objects.filter(nature_of_action=self.instance.nature_of_action,type_item__user_created=self.user_id)                        
             self.fields['impress'].widget.attrs.update({'disabled': 'disabled'})
@@ -460,6 +462,7 @@ class TypeItemByNatureOfActionForm(ModelForm):
         model = TypeItemByNatureOfAction
         fields = '__all__'
         widgets = {
+            'doctor': Select(attrs={'class': 'form-control'}),
             'type_item': Select(attrs={'class': 'form-control'}),                                           
             'version': TextInput(attrs={'class': 'form-control'}),
             'nature_of_action': Select(attrs={'class': 'form-control'}),
@@ -480,9 +483,11 @@ class TypeItemByNatureOfActionForm(ModelForm):
         return cid_number# sempre retornar um dado, de preferencia o valor que estava no campo.
 
     def __init__(self, *args, **kwargs):                       
-        self.company = kwargs.get("company","")        
-        del(kwargs["company"])         
+        self.department = kwargs.get("department_id","")        
+        del(kwargs["department_id"])         
         super().__init__(*args, **kwargs)
+        #Somente poderá cadastrar
+        self.fields['doctor'].queryset = Doctor.objects.filter(profile_person_type__department__in = self.department)
         if self.instance.pk:            
             cid_textarea = Cid10.objects.get(category__iexact=self.instance.cid_number)              
             self.fields['cid_textarea'].initial = cid_textarea.description
@@ -490,11 +495,10 @@ class TypeItemByNatureOfActionForm(ModelForm):
         self.helper = FormHelper()       
         self.helper.layout = Layout(
             Hidden('user_created', '{{ user.id }}'),
-            Hidden('user_updated', '{{ user.id }}'),
-            Hidden('company', self.company),                         
+            Hidden('user_updated', '{{ user.id }}'),                                   
+            'doctor',
             'type_item',
-            'nature_of_action',
-            #'cid',
+            'nature_of_action',            
             'cid_number',
             'cid_textarea',            
             'version',              

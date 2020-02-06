@@ -50,7 +50,7 @@
                   <tbody>
                     {% for fs in forensicscans %}
                     <tr>
-                      <td>{{ fs.profile_person_type|safe }}</td>
+                      <td>{{ fs.doctor|safe }}</td>
                       <td class="text-sm-center">{{ fs.nature_of_action|safe }}</td>
                       <td class="text-sm-center">{{ fs.version|safe }}</td>                      
                       <td class="text-center">

@@ -118,7 +118,7 @@ class Doctor(models.Model):
         ordering = ["profile_person_type"]
     
     def __str__(self):
-        return self.person.profile_person_type.person.name
+        return "{} - Especialidade: {}".format(self.profile_person_type.person.name, self.medical_specialty)
 
 class DoctorList(models.Model):
     ''' Lista de Médicos. Busca Feita no site do CRM '''
