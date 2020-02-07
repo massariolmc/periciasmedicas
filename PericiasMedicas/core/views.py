@@ -9,25 +9,7 @@ from PericiasMedicas.person.models import Person, ProfilePersonType, PersonType
 from PericiasMedicas.company.models import Company, Department
 
 @login_required
-def home(request):
-    #Antes de entrar faz o teste se o usuário possui um cadastro no Model Person.
-    #Para logar, além de ter usuário no auth_user, tem que ter uma person criada
-    verifica = Person.objects.filter(cpf=request.user.username).exists()
-    if not verifica:
-        logout(request)
-        messages.warning(request, 'Usuário não possui cadastro. Contacte o administrador')
-        return redirect('/accounts/login')
-
-    template_name='core/home.html' 
-    #person =  Department.objects.filter(profilepersontype__person__cpf=request.user.username)  
-    # person = ProfilePersonType.objects.raw('''
-    #     select * from person_profilepersontype pppt
-    #     inner join company_department cd on (cd.id=pppt.department_id)
-    #     inner join person_person pp on (pppt.person_id = pp.id)
-    #     inner join person_persontype ppt on (pppt.person_type_id = ppt.id)
-    #     where pp.cpf= %s
-    # ''',[request.user.username])
-
+def load_sessions(request):
     #ISSO TEM QUE SER COLOCADO LOGO APÓS LOGAR, PARA AS QUERYS SEREM EXECUTADO APENAS UMA VEZ.
     person = ProfilePersonType.objects.raw('''
         select * from person_profilepersontype pppt       
@@ -53,7 +35,7 @@ def home(request):
         request.session['person_id'] = pp.person.id
         request.session['person_name'] = pp.person.name
         request.session['profile_person_type_id'] = pp.id
-        request.session['company_id'] = pp.department.company_id
+        request.session['company_id'] = pp.department.company_id        
     #print("Valor do person_deparement", person_department)
     aux = list()
     for pp in person_department:
@@ -64,8 +46,21 @@ def home(request):
     for pp in person_type:        
         aux.append(pp.person_type.id)
     request.session['type_name'] = aux
-    return render(request,template_name,{'person':person})
 
+    return redirect('/')
+
+@login_required
+def home(request):    
+    template_name='core/home.html' 
+    person = Person.objects.filter(cpf=request.user.username).exists()
+    if not person:
+        logout(request)
+        messages.warning(request, 'Usuário não possui cadastro. Contacte o administrador')
+        return redirect('/accounts/login')    
+    else:
+        person = Person.objects.get(cpf=request.user.username)
+    return render(request,template_name,{'person': person})
+    
 
 @login_required
 def signup(request):
@@ -84,7 +79,9 @@ def signup(request):
 def list_user(request):
     template_name = 'registration/list_user.html'
     title = 'Lista de Usuários'
-    users = User.objects.all
+    #users = User.objects.all
+    #Não deve mostrar o admin. Ele é usado apenas pelo administrador
+    users = User.objects.exclude(username='admin')
     return render(request, template_name, {'users': users , 'title': title})
 
 @login_required
@@ -152,10 +149,10 @@ def super_user(request,pk):
         user = get_object_or_404(User, pk=pk)
         if user.is_superuser:
             user.is_superuser = False
-            messages.success(request, 'Perfil Super Usuário ativado com sucesso.')
+            messages.success(request, 'Perfil Super Usuário desativado com sucesso.')
         else:
             user.is_superuser = True
-            messages.success(request, 'Perfil Super Usuário desativado com sucesso.')
+            messages.success(request, 'Perfil Super Usuário ativado com sucesso.')
         user.save()        
     return redirect('url_list_user')
 

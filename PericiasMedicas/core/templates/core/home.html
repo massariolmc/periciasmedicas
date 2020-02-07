@@ -8,5 +8,9 @@
 {% for dt in person.values %}
     {{ dt }}
 {% endfor %}
+{% for data in request.session.values %}
+    {{ data }}
+{% endfor %}
 
 {% endblock content %}
+

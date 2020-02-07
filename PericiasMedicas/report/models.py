@@ -100,6 +100,7 @@ class DiscussionConclusion(models.Model):
     discussion = RichTextField("Discussão",blank=True)
     conclusion = RichTextField("Conclusão",blank=True)    
     version = models.CharField("Versão", max_length=100, blank=False, null=False)
+    #version = models.TextField("Versão", blank=False, null=False)
     created_at = models.DateTimeField('Criado em',auto_now_add=True)
     updated_at = models.DateTimeField('Atualizado em', auto_now=True) 
     user_created = models.ForeignKey(User, related_name="discussionconclusion_user_created_id", verbose_name="Criado por", on_delete=models.PROTECT)
@@ -109,7 +110,7 @@ class DiscussionConclusion(models.Model):
         verbose_name_plural = "DiscussionConclusions" 
 
     def __str__(self):
-        return "Modelo - Conclusão e Discussão: Perito: {} - Cid: {}".format(self.doctor,self.cid_number)
+        return "Cid: {}".format(self.cid_number)
 
 # A partir daqui tem que criar o report primeiro
 class Report(models.Model):
@@ -196,11 +197,10 @@ class TypeItem(models.Model):
 class TypeItemByNatureOfAction(models.Model):    
     type_item = models.ForeignKey(TypeItem, verbose_name=("Tipo do Quesito"), on_delete=models.PROTECT)
     version = models.TextField(("Versão"), blank=True)
-    doctor = models.ForeignKey(Doctor, default=3,verbose_name=("Perito"), on_delete=models.PROTECT)    
+    doctor = models.ForeignKey(Doctor,verbose_name=("Perito"), on_delete=models.PROTECT)    
     nature_of_action = models.ForeignKey(NatureOfAction, verbose_name=("Natureza da Ação"), on_delete=models.PROTECT)
     question = RichTextField("Pergunta?", blank=True)
-    answer = RichTextField("Resposta", blank=True)   
-    #company = models.ForeignKey(Company, verbose_name=("Empresa"),on_delete=models.PROTECT)
+    answer = RichTextField("Resposta", blank=True)       
     cid_number = models.CharField("CID-10", max_length=100, blank=False, null=False)
     created_at = models.DateTimeField('Criado em',auto_now_add=True)
     updated_at = models.DateTimeField('Atualizado em', auto_now=True) 

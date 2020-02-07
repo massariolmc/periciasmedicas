@@ -150,7 +150,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 # Faz parte do redirect do login
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/load_sessions'
 LOGOUT_REDIRECT_URL = '/accounts/login'
 
 # Serve apenas para o modo desenvolvimento para testar a troca de senha por email

@@ -835,7 +835,7 @@ def valid_report_item(request,pk):
                 marc2 = 1
 
     # Testa se é o perito cadastrado que está aprovando o laudo
-    if report.profile_person_type.person.cpf == request.user.username:
+    if report.doctor.profile_person_type.person.cpf == request.user.username:
         if len(valid) > 0:         
             aux = "Os campos não validados são: "
             for n in valid:
@@ -1092,10 +1092,6 @@ def print_report(pk):
     context['report'].anamnesis_general_exam = soup.get_text().strip()
     soup = BeautifulSoup(context['report'].anamnesis_mental_exam,'lxml')
     context['report'].anamnesis_mental_exam = soup.get_text().strip()
-    soup = BeautifulSoup(context['report'].discussion,'lxml')
-    context['report'].discussion = soup.get_text().strip()
-    soup = BeautifulSoup(context['report'].conclusion,'lxml')
-    context['report'].conclusion = soup.get_text().strip()
     
     return context
 

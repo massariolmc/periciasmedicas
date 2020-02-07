@@ -9,7 +9,9 @@
     <div class="card-body">
     <div class="row">
         <div class="col-sm-4">
-            <a href="{% url 'url_people_list'%}" class="btn btn-info float-left">Listar todos</a>
+            {% if user.is_superuser %}
+                <a href="{% url 'url_people_list'%}" class="btn btn-info float-left">Listar todos</a>
+            {% endif %}
         </div>
         <div class="col-sm-4">
             <h3><strong>{{ person.name }}</strong></h3>

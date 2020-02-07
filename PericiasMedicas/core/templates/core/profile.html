@@ -10,9 +10,8 @@
             {% if user.is_superuser %}
             <a href="{% url 'url_list_user' %}"> <li>Listar todos os usuários</li></a>
             {% endif %}
-            <a href="{% url 'url_person_edit' person.id %}"> <li>Alterar Dados Pessoais</li></a>
-            <a href="{% url 'password_change' %}"> <li>Alterar senha</li></a>
-            <a href="#"> <li>Alterar Foto</li> </a>
+            <a href="{% url 'url_person_detail' person.id %}"> <li>Visualizar Dados Pessoais</li></a>
+            <a href="{% url 'password_change' %}"> <li>Alterar senha</li></a>            
             <a href="{% url 'url_show_profile_person_deparment'%}"> <li>Informações da Empresa</li> </a>
         </ul>
     </div>

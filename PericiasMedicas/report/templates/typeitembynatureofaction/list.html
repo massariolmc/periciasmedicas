@@ -41,6 +41,7 @@
                       <th class="text-sm-center">Natureza da Ação</th>
                       <th class="text-sm-center">Quesito/Autoridade</th>                                                                     
                       <th class="text-sm-center">CID</th>
+                      <th class="text-sm-center">Pergunta</th>
                       <th class="text-sm-center">Versão</th>
                       <th class="text-sm-center">Opções</th>                                                                                  
                     </tr>
@@ -51,6 +52,7 @@
                       <th class="text-sm-center">Natureza da Ação</th>
                       <th class="text-sm-center">Quesito/Autoridade</th>                                                                     
                       <th class="text-sm-center">CID</th>
+                      <th class="text-sm-center">Pergunta</th>
                       <th class="text-sm-center">Versão</th>
                       <th class="text-sm-center">Opções</th>                     
                     </tr>
@@ -61,7 +63,8 @@
                       <td class="text-sm-center" ><input type="checkbox" name="quesitos", value="{{ typeitembynatureofaction.id }}"></td>
                       <td class="text-sm-center">{{ typeitembynatureofaction.nature_of_action }}</td>
                       <td class="text-sm-center">{{ typeitembynatureofaction.type_item }}</td>
-                      <td class="text-sm-center">{{ typeitembynatureofaction.cid_number }}</td> 
+                      <td class="text-sm-center">{{ typeitembynatureofaction.cid_number }}</td>
+                      <td class="text-sm-center">{{ typeitembynatureofaction.question|safe }}</td> 
                       <td class="text-sm-center">{{ typeitembynatureofaction.version }}</td>                                                                                 
                       <td class="text-center">
                         <a href="{% url 'url_typeitembynatureofaction_detail' typeitembynatureofaction.id %}">  <i class="fa fa-list" aria-hidden="true"></i> </a>

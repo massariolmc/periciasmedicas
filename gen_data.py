@@ -1,12 +1,13 @@
 import os
 import django
 import string
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "pericias.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "PericiasMedicas.settings")
 django.setup()
-from pericias.statescity.models import Countries, States2, Cities
-from pericias.person.models import Person, DoctorList, MedicalSpecialty
-from pericias.patient.models import MaritalStatus
-from pericias.company.models import Company, CompanyTaxRegime, CompanyType, Department
+from PericiasMedicas.statescity.models import Countries, States2, Cities
+from PericiasMedicas.person.models import Person, DoctorList, MedicalSpecialty, Doctor
+from PericiasMedicas.patient.models import MaritalStatus
+from PericiasMedicas.company.models import Company, CompanyTaxRegime, CompanyType, Department
+from PericiasMedicas.report.models import DiscussionConclusion,TypeItemByNatureOfAction, TypeItem, NatureOfAction
 from django.contrib.auth.models import User
 from datetime import datetime
 
@@ -38,7 +39,7 @@ class CountriesClass:
             aux2.append(obj)
         States2.objects.bulk_create(aux2)
 
-CountriesClass.inserir_pais()
+#CountriesClass.inserir_pais()
 
 class PersonPopulate():
     def inserir_person():
@@ -177,3 +178,57 @@ class MedicalSpecialtyPopulate():
             aux2.append(obj)
         MedicalSpecialty.objects.bulk_create(aux2)
 #MedicalSpecialtyPopulate.inserir_medicalspecialtylist() 
+
+class DiscussionConclusionPopulate():
+    ''' Inserir Discussion e Conclusion '''
+    def inserir_discussion_conclusion():
+        aux = []
+        aux2 = []
+        arq = open('/home/massariol/Documentos/Apps/DJANGO/JACKSON_DISCUSSAO.csv','r')
+        for read in arq.readlines():            
+            #aux = read[1:-3].split(",")
+            aux = read.split(";")
+            print(read)#Lista a linha que vai ser inserida
+            print(aux)#Lista a linha que vai ser inserida                        
+            data = dict(
+                cid_number = aux[0].strip(),
+                doctor = Doctor.objects.get(pk=int(aux[1])),
+                discussion = aux[2].strip(),
+                conclusion = aux[3].strip(),    
+                version = aux[4].strip(),                                                               
+                user_created = User.objects.get(pk=1), 
+                user_updated = User.objects.get(pk=1),
+            )
+            print("Valor do data",data)
+            obj = DiscussionConclusion(**data)            
+            aux2.append(obj)
+        DiscussionConclusion.objects.bulk_create(aux2)
+#DiscussionConclusionPopulate.inserir_discussion_conclusion() 
+
+class TypeItemByNatureOfActionPopulate():
+    ''' Inserir modelos dos quesitos '''
+    def inserir_modelos_quesitos():
+        aux = []
+        aux2 = []
+        arq = open('/home/massariol/Documentos/Apps/DJANGO/COMPILADO_QUESITOS_JACKSON.csv','r')
+        for read in arq.readlines():            
+            #aux = read[1:-3].split(",")
+            aux = read.split(";")
+            print(read)#Lista a linha que vai ser inserida
+            print(aux)#Lista a linha que vai ser inserida                        
+            data = dict(
+                type_item = TypeItem.objects.get(pk=int(aux[0])),
+                nature_of_action = NatureOfAction.objects.get(pk=int(aux[1])),
+                doctor = Doctor.objects.get(pk=int(aux[2])),
+                cid_number = aux[3].strip(),    
+                question = aux[4].strip(),   
+                answer = aux[5].strip(),   
+                version = aux[6].strip(),                                                               
+                user_created = User.objects.get(pk=1), 
+                user_updated = User.objects.get(pk=1),
+            )
+            print("Valor do data",data)
+            obj = TypeItemByNatureOfAction(**data)            
+            aux2.append(obj)
+        TypeItemByNatureOfAction.objects.bulk_create(aux2)
+TypeItemByNatureOfActionPopulate.inserir_modelos_quesitos() 
