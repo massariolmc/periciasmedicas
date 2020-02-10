@@ -50,9 +50,9 @@
             <div class="logo-trigger-area d-flex align-items-center">
 
                 <!-- logo -->
-                <a href="dashboard-1.html" class="logo">
+                <a href="{% url 'home' %}" class="logo">
                    <span class="big-logo">
-                       <img src="{% static 'themeforest/img/core-img/logo.png' %}" alt="">
+                       <img src="{% static 'themeforest/img/core-img/logo.png' %}" alt="">                       
                    </span>
                     <span class="small-logo">
                         <img src="{% static 'themeforest/img/core-img/logo2.png' %}" alt="">
@@ -74,11 +74,12 @@
                 <div class="topbar-profile">
                     <!-- Thumb -->
                     <div class="user---thumb">
-                        {% if person.avatar %}
+                        <h6 style="color: white;">{{ user.first_name }}</h6>
+                        {% comment %} {% if person.avatar %}
                             <img src="{{ person.avatar.url }}" alt="">                        
                         {% else %}
                             <img src="{% static 'themeforest/img/member-img/member-5.jpg' %}" alt="">
-                        {% endif %}
+                        {% endif %} {% endcomment %}
                     </div>
                     <!-- Profile Data -->
                     <div class="profile-data">
@@ -86,11 +87,11 @@
                         <div class="profile-user--details" >
                             <!-- Thumb -->
                             <div class="profile---thumb-det">
-                                {% if person.avatar %}
+                                {% comment %} {% if person.avatar %}
                                     <img src="{{ person.avatar.url }}" alt="">                        
                                 {% else %}
                                     <img src="{% static 'themeforest/img/member-img/member-5.jpg' %}" alt="">
-                                {% endif %}
+                                {% endif %} {% endcomment %}
                             </div>
                             
                             <!-- Profile Text -->
@@ -226,7 +227,10 @@
     <script src="{% static 'themeforest/assets/js/bootstrap/popper.min.js' %}"></script>
     <script src="{% static 'themeforest/assets/js/bootstrap/bootstrap.min.js' %}"></script>
     <script src="{% static 'themeforest/js/plugins-js/classy-nav.js' %}"></script>
-
+    
+    {% block js %}
+    {% endblock js %}
+    
     <!-- Active js -->
     <script src="{% static 'themeforest/js/active.js' %}"></script>    
     
@@ -273,8 +277,6 @@ function somenteNumeros(e) {
 </script>
 
 
-  {% block js %}
-  {% endblock js %}
 
 <!-- FIM NÃO FAZ PARTE DO THEMEFOREST -->
 

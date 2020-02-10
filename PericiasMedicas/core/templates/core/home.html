@@ -1,16 +1,52 @@
 {% extends 'core/base.html' %}
-
+{% load static %}
 {% block title %} Perícias
 {% endblock title %}
 
 {% block content %}
+<div class="row align-content-center">
+    <div class="col-sm-12">
+        <h1 class="text-center">Bem Vindo ao Sistema de Laudos Periciais.</h1>
+    </div>
+</div>
 
-{% for dt in person.values %}
-    {{ dt }}
-{% endfor %}
-{% for data in request.session.values %}
-    {{ data }}
-{% endfor %}
+<div class="row">
+    <div class="col-lg-6">
+        <!-- Ibox -->
+        <div class="ibox bg-boxshadow mb-50">
+            <!-- Title -->
+            <div class="ibox-title mb-30">
+                <h6>Bar Chart</h6>
+            </div>
+            <!-- Ibox Content -->
+            <div class="ibox-content">
+                <div>
+                    <canvas id="barChart" height="150"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <!-- Ibox -->
+        <div class="ibox bg-boxshadow mb-50">
+            <!-- Title -->
+            <div class="ibox-title mb-30">
+                <h6>Pie Chart</h6>
+            </div>
+            <!-- Ibox Content -->
+            <div class="ibox-content">
+                <div>
+                    <canvas id="doughnutChart" height="140"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 {% endblock content %}
 
+{% block js %}
+    <script src="{% static 'themeforest/js/plugins-js/chart-js/chart.min.js' %}"></script>
+    <script src="{% static 'themeforest/js/plugins-js/chart-js/chart-demo.js' %}"></script>
+{% endblock js %}

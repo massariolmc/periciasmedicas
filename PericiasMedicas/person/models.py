@@ -76,7 +76,7 @@ class Person(models.Model):
     so = models.CharField(("Sistema Operacional"), max_length=100, blank=True)
     ip = models.CharField(("IP"), max_length=100, blank=True)
     browser = models.CharField(("Navegador"), max_length=100, blank=True)
-    avatar = models.ImageField("Foto", upload_to='photo/peoples/', blank=True)
+    avatar = models.ImageField("Foto", upload_to='photo/peoples/', blank=True)    
     
     class Meta:
         verbose_name = "Person"
