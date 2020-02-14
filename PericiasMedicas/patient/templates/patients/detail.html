@@ -31,6 +31,8 @@
                         <th class="text-right">Foto</th>
                         {% if patient.avatar %}
                             <td><img class="img-profile rounded-circle" src="{{ patient.avatar.url }}" style="width:100px"></td>
+                        {% else %}
+                            <td></td>
                         {% endif %}
                     </tr>
                     <tr>
@@ -79,7 +81,7 @@
                     </tr>
                     <tr>
                         <th class="text-right">Escolaridade</th>
-                        <td>{{ patient.get_schooling_display }}</td>
+                        <td>{{ patient.schooling }}</td>
                     </tr>
                     <tr>
                         <th class="text-right">Estado Civil</th>
@@ -95,7 +97,11 @@
                     </tr>
                     <tr>
                         <th class="text-right">Acompanhante</th>
-                        <td>{{ patient.scort }} - {{ patient.get_scort_type_display }}</td>
+                        {% if patient.scort %}
+                            <td>{{ patient.scort }} - {{ patient.get_scort_type_display }}</td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
                     </tr>
                     <tr>
                         <th class="text-right">Email</th>

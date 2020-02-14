@@ -45,17 +45,21 @@
 <p style="text-align:justify"><strong>NATURALIDADE: </strong>{{ report.proficient.uf_natural }}</p>
 
 <p style="text-align:justify"><strong>PROCED&Ecirc;NCIA: </strong>{{ report.proficient.origin}}</p>
-
-<p style="text-align:justify"><strong>ESCOLARIDADE: </strong>{{ report.proficient.get_schooling_display }}</p>
-
+{% if report.proficient.schooling %}
+<p style="text-align:justify"><strong>ESCOLARIDADE: </strong>{{ report.proficient.schooling }}</p>
+{% endif %}
+{% if report.proficient.maritalstatus.name %}
 <p style="text-align:justify"><strong>ESTADO CIVIL: </strong>{{ report.proficient.maritalstatus.name }}</p>
-
+{% endif %}
+{% if report.proficient.religion.name %}
 <p style="text-align:justify"><strong>RELIGI&Atilde;O: </strong>{{ report.proficient.religion.name }}</p>
-
+{% endif %}
+{% if report.proficient.situation_inss %}
 <p style="text-align:justify"><strong>SITUA&Ccedil;&Atilde;O ATUAL JUNTO AO INSS: </strong>{{ report.proficient.situation_inss }}</p>
-
+{% endif %}
+{% if report.proficient.scort %}
 <p style="text-align:justify"><strong>ACOMPANHANTE: </strong>{{ report.proficient.scort }} - {{ report.proficient.get_scort_type_display }}</p>
-
+{% endif %}
 <p style="text-align:justify"><u><strong>3. ANAMNESE:</strong></u></p>
 
 <p style="text-align:justify"><strong>Hist&oacute;ria Pregressa da Doen&ccedil;a Atual:</strong><br />

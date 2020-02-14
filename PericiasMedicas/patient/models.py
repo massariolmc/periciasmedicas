@@ -35,7 +35,7 @@ class MaritalStatus(models.Model):
 class Patients(models.Model):
     sex_choices = [("","ESCOLHA"),("Masculino","Masculino"), ("Feminino","Feminino")]
     schooling_choices = [("","ESCOLHA"),("Analfabeto","Analfabeto"),("Ensino Fundamental Incompleto","Ensino Fundamental Incompleto"),("Ensino Fundamental Completo","Ensino Fundamental Completo"), ("Ensino Médio Completo","Ensino Médio Completo"), ("Ensino Médio Incompleto","Ensino Médio Incompleto"), ("Ensino Superior Completo","Ensino Superior Completo"), ("Ensino Superior Incompleto","Ensino Superior Incompleto")]
-    type_escort_choices = [("","ESCOLHA"),("Esposo(a)","Esposo(a)"),("Filho(a)","Filho(a)"),("Pai","Pai"),("Mãe","Mãe"),("Tio(a)","Tio(a)"),("Primo(a)","Primo(a)"),("Advogado(a)","Advogado(a)"),("Avô(ó)","Avô(ó)"),("9","Amigo(a)"),("Não Informado","Não Informado")]
+    type_escort_choices = [("","ESCOLHA"),("Esposo(a)","Esposo(a)"),("Filho(a)","Filho(a)"),("Pai","Pai"),("Mãe","Mãe"),("Tio(a)","Tio(a)"),("Primo(a)","Primo(a)"),("Advogado(a)","Advogado(a)"),("Avô(ó)","Avô(ó)"),("Amigo(a)","Amigo(a)"),("Não Informado","Não Informado"),("Sem acompanhante","Sem acompanhante")]
     situation_inss_choices = [("","ESCOLHA"),("ATIVO","ATIVO"),("INATIVO","INATIVO")]
     blood_type_choices = [("A","A"),("B","B"),("O","O"),("AB","AB")]
     blood_rh_choices = [("+","+"),("-","-")]
@@ -57,10 +57,10 @@ class Patients(models.Model):
     sex = models.CharField("Sexo", max_length = 100, choices=sex_choices, blank=False)
     uf_natural = models.CharField("Naturalidade",max_length=100, blank=False, help_text="Ex: Campo Grande/MS, Porto Alegre/RS, Vitória/ES, Natal/RN")
     origin = models.CharField("Procedência",max_length=2, choices=states_choices, blank=False)
-    schooling = models.CharField("Escolaridade", max_length=100, choices=schooling_choices, blank=False)
-    maritalstatus = models.ForeignKey(MaritalStatus, verbose_name="Estado Civil",on_delete=models.PROTECT, blank=False)
-    religion = models.ForeignKey(Religions, verbose_name="Religião", blank=False, on_delete=models.PROTECT)
-    situation_inss = models.CharField("Situação INSS", choices=situation_inss_choices, max_length=100, blank=False)
+    schooling = models.CharField("Escolaridade", max_length=100, choices=schooling_choices, blank=True)
+    maritalstatus = models.ForeignKey(MaritalStatus, verbose_name="Estado Civil",on_delete=models.PROTECT, blank=True, null= True)
+    religion = models.ForeignKey(Religions, verbose_name="Religião", on_delete=models.PROTECT, blank=True, null= True)
+    situation_inss = models.CharField("Situação INSS", choices=situation_inss_choices, max_length=100, blank=True)
     scort = models.CharField("Acompanhante", max_length=100, blank=True)    
     scort_type = models.CharField("Parentesco do Acompanhante",choices=type_escort_choices, max_length=100, blank=True)    
     email = models.EmailField("Email", max_length=100, blank=True, null=True)
