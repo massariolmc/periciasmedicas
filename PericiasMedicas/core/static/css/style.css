@@ -43,7 +43,11 @@ ul.messages li{
 }
 .fa-check-square{
 	color: green;
+	
 }
 .fa-minus-square{
 	color: red;
+}
+.fa-plus-circle{
+	color: green;
 }

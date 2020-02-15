@@ -1114,7 +1114,11 @@ def search_reports(request,status):
 
 @login_required
 def medicaldocument_create(request):
-    
+    ordem = {
+        '0': 'a)', '1': 'b)', '2': 'c)', '3': 'd)', '4': 'e)', '5': 'f)', '6': 'g)', '7': 'h)', '8': 'i)', '9': 'j)',
+        '10': 'k)', '11': 'l)', '12': 'm)', '13': 'n)', '14': 'p)', '15': 'q)', '16': 'r)', '17': 's)', '18': 't)', '19': 'u)',
+        '20': 'u)', '21': 'v)', '22': 'w)','23': 'x)', '24': 'y)', '25': 'z)',
+    }
     if request.method == 'POST':               
         report_id = request.POST.get('id_document_report',"")
         tipo = request.POST.get('id_tipo',"")
@@ -1126,14 +1130,25 @@ def medicaldocument_create(request):
         user_updated = request.POST.get('id_user_updated',"")
 
         textarea_document = request.POST.get('id_textarea_document',"")
+        #Faço o split para tornar cada CID uma lista para fazer a consulta logo abaixo
+        aux = cid.split(",")
         
         results = {}
         if int(tipo) == 1:
             if tipo != "" and dt != "" and medico != "" and cid != "" and user_created != "" and user_updated != "" and report_id != "":            
                 report = Report.objects.get(pk=int(report_id))
-                user = User.objects.get(pk=int(user_created)) 
-                cid_completo = Cid10.objects.get(category=cid)                              
-                document = "-Atestado emitido em {} pelo médico(a) psiquiatra {},  com diagnóstico de Cid10 {} - {}.".format(dt.strip(),medico.strip(),cid.strip(), cid_completo.description.strip())                
+                user = User.objects.get(pk=int(user_created))                                               
+                cid_completo = Cid10.objects.filter(category__in=aux)  
+                cids = ""
+                cont = cid_completo.count()                
+                for i in cid_completo:
+                    if cont < 2:
+                        cids += "{} - {}".format(i.category,i.description)
+                    else:
+                        cids += "{} - {}, ".format(i.category,i.description)
+                    cont -= 1
+                count = MedicalDocument.objects.filter(report = report).count()                                         
+                document = "{} Atestado emitido em {} pelo médico(a) psiquiatra {},  com os seguinte(s) diagnóstico(s): {}.".format(ordem.get(str(count),""), dt.strip(),medico.strip(), cids)                
                 md = MedicalDocument(report=report, document=document, user_created=user, user_updated=user)
                 md.save()          
                 results['success'] = "Os dados foram inseridos com sucesso."

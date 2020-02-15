@@ -80,21 +80,22 @@ $(document).ready( function(){
 <script>
 $(document).ready( function(){
     
-        var query = document.getElementById("id_location_objective").value;       
-        if (query != "" && query != null && query != undefined) {
-            
-            $.ajax({
-                type: "GET",
-                url: "{% url 'url_report_location_objective' %}",
-                data: {'ff': query},
-                success: function(data){
-                    $("#location_objective").html(data);                
-                },
-                failure: function(data){               
-                },
-            }); 
-         }
-            
+        var query = document.getElementById("id_location_objective");       
+        if (query){
+            if (query.value != "" && query.value != null && query.value != undefined) {
+                
+                $.ajax({
+                    type: "GET",
+                    url: "{% url 'url_report_location_objective' %}",
+                    data: {'ff': query.value},
+                    success: function(data){
+                        $("#location_objective").html(data);                
+                    },
+                    failure: function(data){               
+                    },
+                }); 
+            }
+        }
 });
 </script>
 
@@ -289,11 +290,25 @@ $(document).ready( function(){
 <script>
 //Função usada para enviar, via AJAX(POST), para o FORM para o metodo medicaldocument_create para criar os documentos médicos
 $(document).ready( function(){
-   $("#id_add_documento").click(function() { 
+   $("#id_add_documento").click(function() {
+       var cids="";       
+       var divs = document.querySelectorAll('.add_cid');
+       var cont = divs.length;       
+        for (var i = 0; i < divs.length; i++) {            
+            if ( cont < 2 ){
+                cids += divs[i].value;                            
+            }
+            else{
+                cids += divs[i].value + ",";                            
+            }
+            cont = cont - 1;                        
+        }          
+       //return false;
     var id_tipo = $("input[name='document']:checked").val();                     
     var id_data = $("#id_document_data").val();
     var id_medico = $("#id_document_medico").val();
-    var id_cid = $("#id_document_cid").val();            
+    //var id_cid = $("#id_document_cid").val();            
+    var id_cid = cids;            
     var id_user_created = $("#id_user_created").val();
     var id_user_updated = $("#id_user_updated").val();
     var id_document_report = $("#id_medicaldocument_report").val();
@@ -371,6 +386,40 @@ $(document).ready( function(){
 });
 </script>
 
+<script>
+$(document).ready(function() {
+  var max_fields = 10; //maximum input boxes allowed
+  var wrapper = $(".input_fields_wrap"); //Fields wrapper
+  var add_button = $(".add_field_button"); //Add button ID
+
+  var x = 1; //initlal text box count
+  $(add_button).click(function(e) { //on add input button click
+    e.preventDefault();
+    var length = wrapper.find("input:text").length;
+
+    if (x < max_fields) { //max input box allowed
+      x++; //text box increment
+      $(wrapper).append('<div><input class="form-control cid_number add_cid" type="text" id="id_documento_cid' + (length+1) + '" name="cid' + (length+1) + '" /><a href="#" class="remove_field">Remove</a></div>').focus(); //add input box
+
+    }
+    $(".cid_number").autocomplete({                
+        source: "{% url 'url_cid10_autocomplete' %}",                
+        minLength: 2,             
+    });
+    //Fazendo com que cada uma escreva seu name
+    //wrapper.find("input:text").each(function() {
+    //  $(this).val($(this).attr('name'))
+    //});
+  });
+
+  $(wrapper).on("click", ".remove_field", function(e) { //user click on remove text
+    e.preventDefault();
+    $(this).parent('div').remove();
+    x--;
+  })
+
+});
+</script>
 
 <script>
 //Função usada para enviar, via AJAX(POST), para o FORM para o metodo cidnumber_create para criar os cid desta laudo
