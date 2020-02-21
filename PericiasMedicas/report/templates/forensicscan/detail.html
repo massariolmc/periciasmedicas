@@ -42,7 +42,19 @@
                     <tr>
                         <th class="text-right">Anamnese: Diagnóstico</th>
                         <td class="text-justify">{{ forensicscan.anamnesis_diagnosis|safe }}</td>
-                    </tr>                                       
+                    </tr>  
+                    <tr>
+                        <th class="text-right">Anamnese: História Familiar </th>
+                        <td class="text-justify">{{ forensicscan.anamnesis_family|safe }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Anamnese: História Profissional </th>
+                        <td class="text-justify">{{ forensicscan.anamnesis_professional|safe }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Anamnese: Condições de Parto e Desenvolvimento Neuropsicomotor </th>
+                        <td class="text-justify">{{ forensicscan.anamnesis_conditions|safe }}</td>
+                    </tr>                                     
                     <tr>
                         <th class="text-right">Anamnese: História Pregressa da Doença Atual </th>
                         <td class="text-justify">{{ forensicscan.anamnesis_history|safe }}</td>

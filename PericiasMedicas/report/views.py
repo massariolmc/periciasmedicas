@@ -658,7 +658,7 @@ def report_edit(request, pk):
     title = "Criação do Laudo" 
     report = get_object_or_404(Report, pk=pk)
     type_items = TypeItem.objects.all()# Isso é para o Mostrar os quesitos possíveis    
-    medicaldocuments = MedicalDocument.objects.filter(report_id=report.id)# Isso é para o Mostrar os documentos possíveis    
+    medicaldocuments = MedicalDocument.objects.filter(report_id=report.id).order_by('document')# Isso é para o Mostrar os documentos possíveis    
     cidnumbers = CidNumber.objects.filter(report_id=report.id).exists()# Isso é para o Mostrar os cid deste laudo    
     if cidnumbers:# Se entrar é pq existe diagnostico para este laudo
         cidnumbers = CidNumber.objects.filter(report_id=report.id)
@@ -741,7 +741,13 @@ def forensic_copy_report(request):
     if ff:                          
         if id_tab == "anamnese-tab":            
             forensicscan = ForensicScan.objects.get(pk=int(ff))
-            if id_anamnese == "id_anamnesis_history":
+            if id_anamnese == "id_anamnesis_family":
+                context['forensicscan'] = forensicscan.anamnesis_family
+            elif id_anamnese == "id_anamnesis_professional":
+                context['forensicscan'] = forensicscan.anamnesis_professional
+            elif id_anamnese == "id_anamnesis_conditions":
+                context['forensicscan'] = forensicscan.anamnesis_conditions
+            elif id_anamnese == "id_anamnesis_history":
                 context['forensicscan'] = forensicscan.anamnesis_history
             elif id_anamnese == "id_anamnesis_personal_background":
                 context['forensicscan'] = forensicscan.anamnesis_personal_background
@@ -1040,7 +1046,7 @@ def print_ckeditor(pk):
 def print_report(pk):
     report = Report.objects.get(pk=pk)
     doctor = Doctor.objects.get(pk=report.doctor.id)    
-    medicaldocuments = MedicalDocument.objects.filter(report_id=report.id)
+    medicaldocuments = MedicalDocument.objects.filter(report_id=report.id).order_by('document')
     marc = Item2.objects.filter(report_id=report.id).exists()
     cid_numbers = CidNumber.objects.filter(report_id=report.id)
      
@@ -1082,6 +1088,12 @@ def print_report(pk):
     }
     
     #Utiliza a biblioteca BeautifulSoup para retirar as tags html e inserir no DOCX. O PDF não tem esse problema
+    soup = BeautifulSoup(context['report'].anamnesis_family,'lxml')
+    context['report'].anamnesis_family = soup.get_text().strip()
+    soup = BeautifulSoup(context['report'].anamnesis_professional,'lxml')
+    context['report'].anamnesis_professional = soup.get_text().strip()
+    soup = BeautifulSoup(context['report'].anamnesis_conditions,'lxml')
+    context['report'].anamnesis_conditions = soup.get_text().strip()    
     soup = BeautifulSoup(context['report'].anamnesis_history,'lxml')
     context['report'].anamnesis_history = soup.get_text().strip()
     soup = BeautifulSoup(context['report'].anamnesis_personal_background,'lxml')
@@ -1124,6 +1136,7 @@ def medicaldocument_create(request):
         tipo = request.POST.get('id_tipo',"")
         dt = request.POST.get('id_data',"")
         medico = request.POST.get('id_medico',"")
+        sexo = request.POST.get('id_medico_sexo',"")
         cid = request.POST.get('id_cid',"")
         user_created = request.POST.get('id_user_created',"")
         user_updated = request.POST.get('id_user_updated',"")
@@ -1140,15 +1153,24 @@ def medicaldocument_create(request):
                 user = User.objects.get(pk=int(user_created))                                               
                 cid_completo = Cid10.objects.filter(category__in=aux)  
                 cids = ""
-                cont = cid_completo.count()                
+                cont = cid_completo.count() 
+                cont2 = cont               
                 for i in cid_completo:
                     if cont < 2:
-                        cids += "{} - {}".format(i.category,i.description)
+                        cids += "CID 10 {} - {}".format(i.category,i.description)
                     else:
-                        cids += "{} - {}, ".format(i.category,i.description)
+                        cids += "CID 10 {} - {}, ".format(i.category,i.description)
                     cont -= 1
-                count = MedicalDocument.objects.filter(report = report).count()                                         
-                document = "{} Atestado emitido em {} pelo médico(a) psiquiatra {},  com os seguinte(s) diagnóstico(s): {}.".format(ordem.get(str(count),""), dt.strip(),medico.strip(), cids)                
+                count = MedicalDocument.objects.filter(report = report).count()
+                print("Valor do count",count)
+                if sexo == 'M' and int(cont2) == 1:                                         
+                    document = "{} Atestado emitido em {} pelo médico psiquiatra {},  com o seguinte diagnóstico: {}.".format(ordem.get(str(count),""), dt.strip(),medico.strip(), cids)                
+                elif sexo == 'M' and int(cont2) > 1:                                         
+                    document = "{} Atestado emitido em {} pelo médico psiquiatra {},  com os seguintes diagnósticos: {}.".format(ordem.get(str(count),""), dt.strip(),medico.strip(), cids)                
+                elif sexo == 'F' and int(cont2) == 1:                                         
+                    document = "{} Atestado emitido em {} pela médica psiquiatra {},  com o seguinte diagnóstico: {}.".format(ordem.get(str(count),""), dt.strip(),medico.strip(), cids)                
+                else:
+                    document = "{} Atestado emitido em {} pela médica psiquiatra {},  com os seguintes diagnósticos: {}.".format(ordem.get(str(count),""), dt.strip(),medico.strip(), cids)                
                 md = MedicalDocument(report=report, document=document, user_created=user, user_updated=user)
                 md.save()          
                 results['success'] = "Os dados foram inseridos com sucesso."

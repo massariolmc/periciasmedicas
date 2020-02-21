@@ -47,7 +47,47 @@
                     </div>
                     {{ form.version }}
                     </div> 
-                </div>             
+                </div>    
+
+              <hr class="divider" />
+                
+                <div class="form-row">
+                  <div class="form-group col-md">
+                    {{ form.anamnesis_family.errors }}
+                    <div class="row justify-content-center">
+                      <label for="form.anamnesis_family.label"><strong>{{ form.anamnesis_family.label_tag }}</strong></label>
+                    </div>
+                    <div class="row justify-content-center">
+                      {{ form.anamnesis_family  }}
+                    </div>
+                  </div> 
+                </div>
+                <hr class="divider" />                
+                
+                <div class="form-row">
+                  <div class="form-group col-md">
+                    {{ form.anamnesis_professional.errors }}
+                    <div class="row justify-content-center">
+                      <label for="form.anamnesis_professional.label"><strong>{{ form.anamnesis_professional.label_tag }}</strong></label>
+                    </div>
+                    <div class="row justify-content-center">
+                      {{ form.anamnesis_professional  }}
+                    </div>
+                  </div> 
+                </div>
+                <hr class="divider" />                
+                
+                <div class="form-row">
+                  <div class="form-group col-md">
+                    {{ form.anamnesis_conditions.errors }}
+                    <div class="row justify-content-center">
+                      <label for="form.anamnesis_conditions.label"><strong>{{ form.anamnesis_conditions.label_tag }}</strong></label>
+                    </div>
+                    <div class="row justify-content-center">
+                      {{ form.anamnesis_conditions  }}
+                    </div>
+                  </div> 
+                </div>                
                 
                 <hr class="divider" />
                 

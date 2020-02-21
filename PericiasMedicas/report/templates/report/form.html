@@ -128,6 +128,9 @@ $(document).ready( function(){
 
 }
 
+$("#copy_anamnesis_family").on("click", { id:"id_anamnesis_family" }, copy);
+$("#copy_anamnesis_professional").on("click", { id:"id_anamnesis_professional" }, copy);
+$("#copy_anamnesis_conditions").on("click", { id:"id_anamnesis_conditions" }, copy);
 $("#copy_anamnesis_history").on("click", { id:"id_anamnesis_history" }, copy);
 $("#copy_anamnesis_personal_background").on("click", { id:"id_anamnesis_personal_background" }, copy);
 $("#copy_anamnesis_family_background").on("click", { id:"id_anamnesis_family_background" }, copy);
@@ -307,6 +310,7 @@ $(document).ready( function(){
     var id_tipo = $("input[name='document']:checked").val();                     
     var id_data = $("#id_document_data").val();
     var id_medico = $("#id_document_medico").val();
+    var id_medico_sexo = $("input[name='sexo']:checked").val();
     //var id_cid = $("#id_document_cid").val();            
     var id_cid = cids;            
     var id_user_created = $("#id_user_created").val();
@@ -319,7 +323,7 @@ $(document).ready( function(){
             $.ajax({
                 type: "POST",
                 url: "{% url 'url_medicaldocument_create' %}",
-                data: {'id_tipo': id_tipo,'id_data': id_data, 'id_medico': id_medico, 'id_cid': id_cid, 'id_user_created': id_user_created, 'id_user_updated': id_user_updated, 'id_document_report': id_document_report},
+                data: {'id_tipo': id_tipo,'id_data': id_data, 'id_medico': id_medico, 'id_medico_sexo': id_medico_sexo, 'id_cid': id_cid, 'id_user_created': id_user_created, 'id_user_updated': id_user_updated, 'id_document_report': id_document_report},
                 headers: {'X-CSRFToken': '{{ csrf_token }}'},
                 success: function(data){
                     console.log(data.success); 

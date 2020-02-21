@@ -1,3 +1,135 @@
+<div class="row">
+    <div class="col-sm-2">
+        <div class="row"><!-- INICIO DA ROW-->
+            <div class="alert alert-warning" role="alert">
+                <span class="h5"><strong>Modelo: História Familiar:</strong></span>
+
+                <button type="button" class="btn btn-link" data-toggle="modal" data-target="#modal_anamnese_family">
+                    {{ report.forensic_scan.version }}
+                </button>
+            </div>
+            <!-- Modal -->
+            <div class="modal fade" id="modal_anamnese_family" tabindex="-1" role="dialog" aria-labelledby="TituloModalCentralizado" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">      
+                    <div class="modal-body">
+                        <strong>Deseja realmento copiar as informações do modelo {{ report.forensic_scan.version }}?</strong>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                        <button type="button" id="copy_anamnesis_family" class="btn btn-primary">Copiar</button>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- FIM DA ROW-->
+    </div><!--fecha coluna-->
+
+    <div class="col-sm-10">
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                {{ form.anamnesis_family.errors }}
+                <div class="row justify-content-center">
+                    <label for="form.anamnesis_family.label"><strong>{{ form.anamnesis_family.label_tag }}</strong></label>
+                </div>
+                <div class="row justify-content-center">
+                    {{ form.anamnesis_family }}
+                </div>
+            </div>                 
+        </div>
+    </div><!--fecha coluna-->
+    
+</div><!--fecha linha-->
+
+<hr class="divider">
+<div class="row">
+    <div class="col-sm-2">
+        <div class="row"><!-- INICIO DA ROW-->
+            <div class="alert alert-warning" role="alert">
+                <span class="h5"><strong>Modelo: História Profissional:</strong></span>
+
+                <button type="button" class="btn btn-link" data-toggle="modal" data-target="#modal_anamnese_professional">
+                    {{ report.forensic_scan.version }}
+                </button>
+            </div>
+            <!-- Modal -->
+            <div class="modal fade" id="modal_anamnese_professional" tabindex="-1" role="dialog" aria-labelledby="TituloModalCentralizado" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">      
+                    <div class="modal-body">
+                        <strong>Deseja realmento copiar as informações do modelo {{ report.forensic_scan.version }}?</strong>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                        <button type="button" id="copy_anamnesis_professional" class="btn btn-primary">Copiar</button>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- FIM DA ROW-->
+    </div><!--fecha coluna-->
+
+    <div class="col-sm-10">
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                {{ form.anamnesis_professional.errors }}
+                <div class="row justify-content-center">
+                    <label for="form.anamnesis_professional.label"><strong>{{ form.anamnesis_professional.label_tag }}</strong></label>
+                </div>
+                <div class="row justify-content-center">
+                    {{ form.anamnesis_professional }}
+                </div>
+            </div>                 
+        </div>
+    </div><!--fecha coluna-->
+    
+</div><!--fecha linha-->
+
+<hr class="divider">
+<div class="row">
+    <div class="col-sm-2">
+        <div class="row"><!-- INICIO DA ROW-->
+            <div class="alert alert-warning" role="alert">
+                <span class="h5"><strong>Modelo: Condições de Parto e Desenvolvimento Neuropsicomotor:</strong></span>
+
+                <button type="button" class="btn btn-link" data-toggle="modal" data-target="#modal_anamnese_conditions">
+                    {{ report.forensic_scan.version }}
+                </button>
+            </div>
+            <!-- Modal -->
+            <div class="modal fade" id="modal_anamnese_conditions" tabindex="-1" role="dialog" aria-labelledby="TituloModalCentralizado" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">      
+                    <div class="modal-body">
+                        <strong>Deseja realmento copiar as informações do modelo {{ report.forensic_scan.version }}?</strong>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                        <button type="button" id="copy_anamnesis_conditions" class="btn btn-primary">Copiar</button>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- FIM DA ROW-->
+    </div><!--fecha coluna-->
+
+    <div class="col-sm-10">
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                {{ form.anamnesis_conditions.errors }}
+                <div class="row justify-content-center">
+                    <label for="form.anamnesis_conditions.label"><strong>{{ form.anamnesis_conditions.label_tag }}</strong></label>
+                </div>
+                <div class="row justify-content-center">
+                    {{ form.anamnesis_conditions }}
+                </div>
+            </div>                 
+        </div>
+    </div><!--fecha coluna-->
+    
+</div><!--fecha linha-->
+ 
+ <hr class="divider">
  <div class="row">
     <div class="col-sm-2">
         <div class="row"><!-- INICIO DA ROW-->

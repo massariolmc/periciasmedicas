@@ -12,7 +12,7 @@
 
 <p style="text-align:justify"><strong>PERICIANDO(A):</strong> {{ report.proficient }}</p>
 
-<p style="text-align:justify"><strong>DATA DA PER&Iacute;CIA: </strong>{{ report.date_report }}</p>
+<p style="text-align:justify"><strong>DATA DA PER&Iacute;CIA: </strong>{{ report.date_report|date:'d/m/Y' }}</p>
 
 <p style="text-align:justify"><strong>T&Iacute;TULOS E CURR&Iacute;CULO DO PERITO(A): </strong></p>
 
@@ -62,7 +62,14 @@
 {% endif %}
 <p style="text-align:justify"><u><strong>3. ANAMNESE:</strong></u></p>
 
-<p style="text-align:justify"><strong>Hist&oacute;ria Pregressa da Doen&ccedil;a Atual:</strong><br />
+<p style="text-align:justify">
+<strong>Hist&oacute;ria Familiar:</strong><br />
+{{ report.anamnesis_family|safe }}<br />
+<strong>Hist&oacute;ria Profissional:</strong><br />
+{{ report.anamnesis_professional|safe }}<br />
+<strong>Condi&ccedil;&otilde;es de Parto e Desenvolvimento Neuropsicomotor:</strong><br />
+{{ report.anamnesis_conditions|safe }}<br />
+<strong>Hist&oacute;ria Pregressa da Doen&ccedil;a Atual:</strong><br />
 {{ report.anamnesis_history|safe }}<br />
 <strong>Antecedentes Patol&oacute;gicos Pessoais:</strong><br />
 {{ report.anamnesis_personal_background|safe }}<br />
