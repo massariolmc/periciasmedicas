@@ -1,6 +1,6 @@
 beautifulsoup4==4.8.2
 cffi==1.13.2
-Django==2.2.9
+Django==2.2.22
 django-ckeditor==5.8.0
 django-crispy-forms==1.8.1
 django-js-asset==1.2.2
