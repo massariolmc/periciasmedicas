@@ -13,7 +13,7 @@ Pillow==7.0.0
 psycopg2==2.8.4
 pycparser==2.19
 pylokit==0.8.1
-PyPDF2==1.26.0
+PyPDF2==1.27.5
 python-decouple==3.3
 python-docx==0.8.7
 pytz==2019.3
